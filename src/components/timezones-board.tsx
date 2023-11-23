@@ -1,21 +1,24 @@
 import { useState, useMemo } from "react";
 import Timezones from "./timezones";
-import timezones from "~/utils/timezones";
+import timezones, { NormalisedTimezone } from "~/utils/timezones";
 import { switchTheme } from "~/utils/switch-theme";
+import Fuse, { FuseResult } from "fuse.js";
 
 export default function TimezonesBoard() {
   const [search, setSearch] = useState("");
+  const [selectedTimezones, setSelectedTimezones] = useState<
+    FuseResult<NormalisedTimezone>[]
+  >([]);
   const [selectTimezoneIndex, setSelectTimezoneIndex] = useState(0);
 
-  let filteredTimezones = useMemo(
-    () =>
-      timezones.filter((timezone) =>
-        timezone.name.toLowerCase().includes(search.toLowerCase())
-      ),
-    [search]
-  );
+  const fuse = new Fuse(timezones, {
+    keys: ["name"],
+  });
+
+  let filteredTimezones = useMemo(() => fuse.search(search), [search]);
 
   function handleSelectTimezone(e: React.KeyboardEvent) {
+    if (!search) return;
     const tzLength = filteredTimezones.length;
     if (e.code === "ArrowDown") {
       setSelectTimezoneIndex((tz) => {
@@ -25,6 +28,12 @@ export default function TimezonesBoard() {
       setSelectTimezoneIndex((tz) => {
         return tz - 1 < 0 ? tzLength - 1 : tz - 1;
       });
+    } else if (e.code === "Enter") {
+      setSelectedTimezones((tzs) =>
+        tzs.concat(filteredTimezones[selectTimezoneIndex])
+      );
+
+      setSearch("");
     }
   }
 
@@ -52,6 +61,9 @@ export default function TimezonesBoard() {
         timezones={filteredTimezones}
         selectTimezoneIndex={selectTimezoneIndex}
       />
+      {!search && (
+        <Timezones timezones={selectedTimezones} isSelectedTimezones={true} />
+      )}
     </main>
   );
 }

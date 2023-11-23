@@ -3,25 +3,22 @@ import { format } from "date-fns";
 
 interface Props {
   timezone: NormalisedTimezone;
-  selectTimezoneIndex: number;
-  timezoneIndex: number;
+  isSelected: boolean;
 }
 
-export default function TimezoneRow({
-  timezone,
-  selectTimezoneIndex,
-  timezoneIndex,
-}: Props) {
+export default function TimezoneRow({ timezone, isSelected }: Props) {
   const [continent, country, city] = timezone.name.split("/");
 
   return (
     <div
       className={`flex gap-2 justify-between items-center px-4 py-2 rounded-md ${
-        selectTimezoneIndex === timezoneIndex ? "bg-indigo-400 text-white" : ""
+        isSelected ? "bg-indigo-400 text-white" : ""
       }`}
     >
       <div className="flex gap-2">
-        <span>{timezone.offset}</span>
+        <span className="w-10 text-right border-r-white-600">
+          {timezone.offset}
+        </span>
         <div>
           <h3>{city ?? country}</h3>
           <span>

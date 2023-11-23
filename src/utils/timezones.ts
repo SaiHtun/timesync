@@ -1,9 +1,9 @@
 import timezones, { type Timezone } from "timezones.json";
 
-export type NormalisedTimezone = {
+export interface NormalisedTimezone {
   name: string;
   offset: number;
-};
+}
 
 function normalisedTimezones(timezones: Timezone[]): NormalisedTimezone[] {
   return timezones.flatMap((timezone) =>
