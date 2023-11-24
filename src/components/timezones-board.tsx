@@ -3,7 +3,10 @@ import Timezones from "./timezones";
 import { type NormalisedTimezone, useTimezones } from "~/utils/timezones";
 import { switchTheme } from "~/utils/switch-theme";
 import Fuse from "fuse.js";
-import { getCurrentUserTimezoneName } from "~/utils/current-time";
+import {
+  getCurrentUserTimezoneName,
+  getDifferenceHoursFromHome,
+} from "~/utils/current-time";
 
 export default function TimezonesBoard() {
   const [timezones] = useTimezones();
@@ -16,10 +19,15 @@ export default function TimezonesBoard() {
     keys: ["name"],
   });
 
+  console.log("T::", timezones.slice(0, 10));
   let filteredTimezones = useMemo(
     () => fuse.search(search).map((tz) => tz.item),
     [search, timezones]
   );
+
+  const otherTimezone = "Asia/Rangoon";
+  const res = getDifferenceHoursFromHome(otherTimezone);
+  console.log(res);
 
   function addToSelectedTimezones(timezone: NormalisedTimezone): void {
     setSelectedTimezones((tzs) => tzs.concat(timezone));

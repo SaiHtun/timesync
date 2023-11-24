@@ -1,5 +1,9 @@
 import timezonesRaw, { type Timezone } from "timezones.json";
-import { currentTime, getCurrentUserTimezoneName } from "./current-time";
+import {
+  currentTime,
+  getCurrentUserTimezoneName,
+  getDifferenceHoursFromHome,
+} from "./current-time";
 import { SetStateAction, useEffect, useState } from "react";
 
 const MILISECONDS_PER_MIN = 60_000;
@@ -9,6 +13,7 @@ export interface NormalisedTimezone {
   isdst: boolean;
   abbr: string;
   now: string;
+  diffHours: number;
 }
 
 function normalisedTimezones(timezones: Timezone[]): NormalisedTimezone[] {
@@ -19,6 +24,7 @@ function normalisedTimezones(timezones: Timezone[]): NormalisedTimezone[] {
       isdst: timezone.isdst,
       abbr: timezone.abbr,
       now: currentTime(tz),
+      diffHours: getDifferenceHoursFromHome(tz),
     }))
   );
 }
@@ -55,7 +61,10 @@ export function useTimezones(
 
     const intervalId = setInterval(() => {
       setTimezones((tzs) =>
-        tzs.map((tz) => ({ ...tz, now: currentTime(tz.name) }))
+        tzs.map((tz) => ({
+          ...tz,
+          now: currentTime(tz.name),
+        }))
       );
     }, requiredIntervalToBeAMinute);
 
