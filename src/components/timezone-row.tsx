@@ -1,19 +1,38 @@
 import { NormalisedTimezone } from "~/utils/timezones";
-import { format } from "date-fns";
+import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   timezone: NormalisedTimezone;
-  isSelected: boolean;
+  isSelectedTimezones?: boolean;
+  tzIndex: number;
+  selectTimezoneIndex?: number;
+  addToSelectedTimezones?: (timezone: NormalisedTimezone) => void;
+  setSelectTimezoneIndex?: Dispatch<SetStateAction<number>>;
 }
 
-export default function TimezoneRow({ timezone, isSelected }: Props) {
-  const [continent, country, city] = timezone.name.split("/");
+export default function TimezoneRow({
+  timezone,
+  isSelectedTimezones = false,
+  tzIndex,
+  selectTimezoneIndex = 0,
+  addToSelectedTimezones,
+  setSelectTimezoneIndex,
+}: Props) {
+  const [continent, country, city] = timezone.name.replace("_", " ").split("/");
+  // const now = useCurrentTime(timezone.name);
+  // console.log(timezone.name, now);
+
+  const isSelected = tzIndex === selectTimezoneIndex && isSelectedTimezones;
 
   return (
     <div
-      className={`flex gap-2 justify-between items-center px-4 py-2 rounded-md ${
+      className={`flex gap-2 justify-between items-center px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-400 hover:text-white ${
         isSelected ? "bg-indigo-400 text-white" : ""
       }`}
+      onClick={() => {
+        addToSelectedTimezones && addToSelectedTimezones(timezone);
+      }}
+      onMouseEnter={() => setSelectTimezoneIndex && setSelectTimezoneIndex(-1)}
     >
       <div className="flex gap-2">
         <span className="w-10 text-right border-r-white-600">
@@ -28,7 +47,7 @@ export default function TimezoneRow({ timezone, isSelected }: Props) {
         </div>
       </div>
       <div>
-        <h3>{format(new Date(), "p")}</h3>
+        <h3>{timezone.now}</h3>
       </div>
     </div>
   );
