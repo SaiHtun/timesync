@@ -19,8 +19,6 @@ export default function TimezoneRow({
   setSelectTimezoneIndex,
 }: Props) {
   const [continent, country, city] = timezone.name.replace("_", " ").split("/");
-  // const now = useCurrentTime(timezone.name);
-  // console.log(timezone.name, now);
 
   const isSelected = tzIndex === selectTimezoneIndex && isSelectedTimezones;
 
@@ -35,8 +33,8 @@ export default function TimezoneRow({
       onMouseEnter={() => setSelectTimezoneIndex && setSelectTimezoneIndex(-1)}
     >
       <div className="flex gap-2">
-        <span className="w-10 text-right border-r-white-600">
-          {timezone.offset}
+        <span className="w-10 text-right border-r-white-600 ">
+          {timezone.diffHours}
         </span>
         <div>
           <h3>{city ?? country}</h3>
@@ -47,7 +45,7 @@ export default function TimezoneRow({
         </div>
       </div>
       <div>
-        <h3>{timezone.now}</h3>
+        <p className="tabular-nums">{timezone.now}</p>
       </div>
     </div>
   );
