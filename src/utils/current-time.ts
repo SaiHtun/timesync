@@ -27,5 +27,7 @@ export function getDifferenceHoursFromHome(otherTimezoneName: string) {
   const parsedHome = new Date(homeTimezone) as any;
   const parsedOther = new Date(otherTimezone) as any;
 
-  return (parsedOther - parsedHome) / (60 * 60 * 1000);
+  const diffHours = (parsedOther - parsedHome) / (60 * 60 * 1000);
+
+  return diffHours > 0 ? `+${diffHours}` : diffHours;
 }

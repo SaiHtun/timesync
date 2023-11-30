@@ -2,8 +2,10 @@ import TimezonesBoard from "./components/timezones-board";
 
 function App() {
   return (
-    <div className="min-h-screen p-4 md:p-8 dark:bg-gray-800 dark:text-white">
-      <TimezonesBoard />
+    <div className="min-h-screen dark:bg-gray-800 dark:text-white py-20">
+      <main className="max-sm:px-4 min-w-[600px] w-[1024px] mx-auto ">
+        <TimezonesBoard />
+      </main>
     </div>
   );
 }

@@ -21,20 +21,23 @@ export default function TimezoneRow({
   const [continent, country, city] = timezone.name.replace("_", " ").split("/");
 
   const isSelected = tzIndex === selectTimezoneIndex && isSelectedTimezones;
+  const isPositiveDiffHour = typeof timezone.diffHoursFromHome === "string";
 
   return (
     <div
-      className={`flex gap-2 justify-between items-center px-4 py-2 rounded-md cursor-pointer hover:bg-indigo-400 hover:text-white ${
-        isSelected ? "bg-indigo-400 text-white" : ""
-      }`}
+      className="flex gap-2 h-[80px] justify-between items-center p-2 rounded-sm cursor-pointer"
       onClick={() => {
         addToSelectedTimezones && addToSelectedTimezones(timezone);
       }}
       onMouseEnter={() => setSelectTimezoneIndex && setSelectTimezoneIndex(-1)}
     >
-      <div className="flex gap-2">
-        <span className="w-10 text-right border-r-white-600 ">
-          {timezone.diffHours}
+      <div className="flex gap-2 items-center tabular-nums">
+        <span
+          className={`w-8 text-center text-xs ${
+            isPositiveDiffHour ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          {timezone.diffHoursFromHome}
         </span>
         <div>
           <h3>{city ?? country}</h3>

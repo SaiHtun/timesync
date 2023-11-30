@@ -9,3 +9,7 @@ export function switchTheme() {
     localStorage.setItem("theme", "dark");
   }
 }
+
+export function isDarkMode() {
+  return document.querySelector("html")?.classList.contains("dark");
+}

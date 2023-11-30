@@ -1,12 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import Timezones from "./timezones";
-import { type NormalisedTimezone, useTimezones } from "~/utils/timezones";
-import { switchTheme } from "~/utils/switch-theme";
+import { type NormalisedTimezone } from "~/utils/timezones";
+import { useTimezones } from "~/utils/hooks/use-timezones";
 import Fuse from "fuse.js";
-import {
-  getCurrentUserTimezoneName,
-  getDifferenceHoursFromHome,
-} from "~/utils/current-time";
+import { getCurrentUserTimezoneName } from "~/utils/current-time";
+import Navbar from "./navbar";
 
 export default function TimezonesBoard() {
   const [timezones] = useTimezones();
@@ -14,20 +12,19 @@ export default function TimezonesBoard() {
     timezones.filter((tz) => tz.name === getCurrentUserTimezoneName())
   );
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
   const [selectTimezoneIndex, setSelectTimezoneIndex] = useState(0);
-  const fuse = new Fuse(timezones, {
-    keys: ["name"],
-  });
 
-  console.log("T::", timezones.slice(0, 10));
   let filteredTimezones = useMemo(
-    () => fuse.search(search).map((tz) => tz.item),
-    [search, timezones]
+    () =>
+      new Fuse(timezones, {
+        keys: ["name"],
+      })
+        .search(deferredSearch)
+        .map((tz) => tz.item)
+        .slice(0, 10),
+    [deferredSearch]
   );
-
-  const otherTimezone = "Asia/Rangoon";
-  const res = getDifferenceHoursFromHome(otherTimezone);
-  console.log(res);
 
   function addToSelectedTimezones(timezone: NormalisedTimezone): void {
     setSelectedTimezones((tzs) => tzs.concat(timezone));
@@ -37,7 +34,8 @@ export default function TimezonesBoard() {
   }
 
   function useKeySelectTimezone(e: React.KeyboardEvent) {
-    if (!search) return;
+    if (!deferredSearch) return;
+    console.log("lol..");
     const tzLength = filteredTimezones.length;
     // normalised index, it will always within the range
     if (e.code === "ArrowDown") {
@@ -54,35 +52,29 @@ export default function TimezonesBoard() {
       addToSelectedTimezones(filteredTimezones[selectTimezoneIndex]);
     }
   }
-
   return (
     <main onKeyDown={useKeySelectTimezone}>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-center text-2xl font-bold text-indigo-600">
-          WootTime
-        </h1>
-        <button
-          onClick={switchTheme}
-          className="border border-indigo-600 hover:border-indigo-500 px-2 py-1 rounded-md text-sm font-bold text-indigo-600 hover:text-indigo-400"
-        >
-          Theme
-        </button>
+      <Navbar />
+      <div className="mt-14 flex flex-col gap-4">
+        <div className="grid grid-cols-[300px_minmax(600px,_1fr)] gap-2">
+          <input
+            type="text"
+            value={search}
+            placeholder="search.."
+            onChange={(e) => setSearch(e.target.value)}
+            className="p-2 border rounded-sm bg-transparent text-sm pl-4"
+          />
+          <div className="bg-gray-100 rounded-sm"></div>
+        </div>
+        <Timezones
+          timezones={filteredTimezones}
+          selectTimezoneIndex={selectTimezoneIndex}
+          addToSelectedTimezones={addToSelectedTimezones}
+          isSelectedTimezones={true}
+          setSelectTimezoneIndex={setSelectTimezoneIndex}
+        />
+        {!search && <Timezones timezones={selectedTimezones} />}
       </div>
-      <input
-        type="text"
-        value={search}
-        placeholder="search.."
-        onChange={(e) => setSearch(e.target.value)}
-        className="p-2 border border-indigo-600 rounded-md w-full bg-transparent text-sm pl-4"
-      />
-      <Timezones
-        timezones={filteredTimezones}
-        selectTimezoneIndex={selectTimezoneIndex}
-        addToSelectedTimezones={addToSelectedTimezones}
-        isSelectedTimezones={true}
-        setSelectTimezoneIndex={setSelectTimezoneIndex}
-      />
-      {!search && <Timezones timezones={selectedTimezones} />}
     </main>
   );
 }

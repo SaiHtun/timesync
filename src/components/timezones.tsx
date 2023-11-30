@@ -17,7 +17,7 @@ export default function Timezones({
   setSelectTimezoneIndex,
 }: Props) {
   return (
-    <main className="my-4 flex flex-col gap-4 max-h-[800px] overflow-auto">
+    <main className="flex flex-col gap-2 max-h-[880px] [&>*:nth-child(odd)]:bg-gray-100 text-gray-900">
       {timezones.map((timezone, index) => (
         <TimezoneRow
           timezone={timezone}
