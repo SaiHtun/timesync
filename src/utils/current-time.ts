@@ -7,6 +7,9 @@ export function currentTime(
       hour: "numeric",
       minute: "numeric",
       timeZone: timezoneName,
+      day: "numeric",
+      weekday: "short",
+      month: "short",
     },
     formatOptions
   );
@@ -29,5 +32,5 @@ export function getDifferenceHoursFromHome(otherTimezoneName: string) {
 
   const diffHours = (parsedOther - parsedHome) / (60 * 60 * 1000);
 
-  return diffHours > 0 ? `+${diffHours}` : diffHours;
+  return diffHours >= 0 ? `+${diffHours}` : diffHours;
 }

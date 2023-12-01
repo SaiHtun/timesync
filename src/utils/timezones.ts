@@ -17,7 +17,7 @@ export interface NormalisedTimezone {
 export function normalisedTimezones(
   timezones = timezonesRaw ?? []
 ): NormalisedTimezone[] {
-  return timezones.flatMap((timezone) =>
+  const tzs = timezones.flatMap((timezone) =>
     timezone.utc.map((tz) => ({
       name: tz,
       offset: timezone.offset,
@@ -27,20 +27,16 @@ export function normalisedTimezones(
       diffHoursFromHome: getDifferenceHoursFromHome(tz),
     }))
   );
+
+  return removeDuplicateTimezones(tzs);
+}
+
+export function removeDuplicateTimezones(timezones: NormalisedTimezone[]) {
+  return Array.from(new Map(timezones.map((tz) => [tz.name, tz])).values());
 }
 
 export function userTimezone() {
-  return normalisedTimezones(timezonesRaw).filter((tz) => {
-    const isNameInclude = tz.name.includes(getCurrentUserTimezoneName());
-
-    if (!isSummer() && isNameInclude) {
-      return tz.isdst === false;
-    } else if (isSummer() && isNameInclude) {
-      return tz.isdst === true;
-    }
-  });
-}
-
-function isSummer() {
-  return [6, 7, 8].includes(new Date().getMonth());
+  return normalisedTimezones(timezonesRaw).filter((tz) =>
+    tz.name.includes(getCurrentUserTimezoneName())
+  );
 }

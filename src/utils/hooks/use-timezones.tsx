@@ -10,9 +10,11 @@ type UseTimezonesReturnType = [
 const MILISECONDS_PER_MIN = 60_000;
 
 export function useTimezones(
-  initTimezones = normalisedTimezones()
+  initTimezones?: NormalisedTimezone[]
 ): UseTimezonesReturnType {
-  const [timezones, setTimezones] = useState(() => initTimezones);
+  const [timezones, setTimezones] = useState(
+    () => initTimezones || normalisedTimezones()
+  );
 
   useEffect(() => {
     const requiredIntervalToBeAMinute =
