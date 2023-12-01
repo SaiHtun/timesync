@@ -6,6 +6,7 @@ interface Props {
   timezone: NormalisedTimezone;
   addToSelectedTimezones?: (timezone: NormalisedTimezone) => void;
   setSelectTimezoneIndex?: Dispatch<SetStateAction<number>>;
+  currentTimezoneIndex?: string;
 }
 
 export default function TimezoneRow({
@@ -20,7 +21,7 @@ export default function TimezoneRow({
 
   return (
     <div
-      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center  p-2 rounded-sm cursor-pointer"
+      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 rounded-sm cursor-pointer"
       onClick={() => {
         addToSelectedTimezones && addToSelectedTimezones(timezone);
       }}
@@ -55,7 +56,7 @@ export default function TimezoneRow({
           </div>
         </div>
       </div>
-      <div className="h-full bg-gray-200"></div>
+      <div className="h-full w-full bg-gray-200 dark:bg-zinc-600"></div>
     </div>
   );
 }

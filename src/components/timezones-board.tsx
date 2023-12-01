@@ -1,11 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import Timezones from "./timezones";
 import { type NormalisedTimezone } from "~/utils/timezones";
 import { useTimezones } from "~/utils/hooks/use-timezones";
 import Fuse from "fuse.js";
 import { getCurrentUserTimezoneName } from "~/utils/current-time";
 import Navbar from "./navbar";
-import { useDebounce } from "~/utils/hooks/use-debounce";
+import SearchTimezones from "./searched-timezones";
 
 export default function TimezonesBoard() {
   const [timezones] = useTimezones();
@@ -13,44 +13,49 @@ export default function TimezonesBoard() {
     timezones.filter((tz) => tz.name === getCurrentUserTimezoneName())
   );
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search);
-  const [selectTimezoneIndex, setSelectTimezoneIndex] = useState(0);
+  let deferredSearch = useDeferredValue(search);
+  const [selectedTimezoneIndex, setSelectedTimezoneIndex] = useState(0);
 
-  let filteredTimezones = useMemo(
+  const filteredTimezones = useMemo(
     () =>
       new Fuse(timezones, {
         keys: ["name"],
       })
-        .search(debouncedSearch)
+        .search(deferredSearch)
         .map((tz) => tz.item)
         .slice(0, 10),
-    [debouncedSearch, timezones]
+    [deferredSearch, timezones]
   );
 
   function addToSelectedTimezones(timezone: NormalisedTimezone): void {
-    setSelectedTimezones((tzs) => tzs.concat(timezone));
+    setSelectedTimezones((tzs) =>
+      tzs.find((tz) => tz.id === timezone.id) || tzs.length > 9
+        ? tzs
+        : tzs.concat(timezone)
+    );
     setSearch("");
-    setSelectTimezoneIndex(0);
+    setSelectedTimezoneIndex(0);
   }
 
   function handleKeySelectTimezone(e: React.KeyboardEvent) {
-    if (!debouncedSearch) return;
+    if (!deferredSearch) return;
     const tzLength = filteredTimezones.length;
     // normalised index, it will always within the range
     if (e.code === "ArrowDown") {
-      setSelectTimezoneIndex((tzIndex) => {
+      setSelectedTimezoneIndex((tzIndex) => {
         return (tzIndex + 1) % tzLength;
       });
     } else if (e.code === "ArrowUp") {
-      setSelectTimezoneIndex((tzIndex) => {
+      setSelectedTimezoneIndex((tzIndex) => {
         return (tzIndex - 1 + tzLength) % tzLength;
         // can do this as well
         // return tz - 1 < 0 ? tzLength - 1 : tz - 1;
       });
     } else if (e.code === "Enter") {
-      addToSelectedTimezones(filteredTimezones[selectTimezoneIndex]);
+      addToSelectedTimezones(filteredTimezones[selectedTimezoneIndex]);
     }
   }
+
   return (
     <main onKeyDown={handleKeySelectTimezone}>
       <Navbar />
@@ -61,19 +66,18 @@ export default function TimezonesBoard() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="search.."
-            className="p-2 border rounded-sm bg-transparent text-sm pl-4"
+            className="p-2 border rounded-sm dark:border-zinc-800 bg-transparent text-sm pl-4 focus:outline-none "
           />
-          <div className="bg-gray-100 rounded-sm"></div>
+          <div className="bg-gray-50 dark:bg-zinc-800 rounded-sm"></div>
         </div>
-        {debouncedSearch ? (
-          <Timezones
+        <div className="relative w-full">
+          <Timezones timezones={selectedTimezones} />
+          <SearchTimezones
+            selectedTimezoneIndex={selectedTimezoneIndex}
             timezones={filteredTimezones}
             addToSelectedTimezones={addToSelectedTimezones}
-            setSelectTimezoneIndex={setSelectTimezoneIndex}
           />
-        ) : (
-          <Timezones timezones={selectedTimezones} />
-        )}
+        </div>
       </div>
     </main>
   );

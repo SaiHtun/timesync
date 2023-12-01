@@ -31,7 +31,7 @@ export default function Navbar() {
           <Github />
         </Button>
         <Button onClick={handleSwitchTheme}>
-          {value ? <Moon /> : <Sun />}
+          {value ? <Sun /> : <Moon />}
         </Button>
       </div>
     </div>

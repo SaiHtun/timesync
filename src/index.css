@@ -7,3 +7,15 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+
+
+@layer components {
+  .odd_childs {
+    @apply [&>*:nth-child(odd)]:bg-gray-50 dark:[&>*:nth-child(odd)]:bg-zinc-800
+  }
+
+  .even_childs {
+    @apply [&>*:nth-child(even)]:bg-white dark:[&>*:nth-child(even)]:bg-zinc-900
+  }
+}

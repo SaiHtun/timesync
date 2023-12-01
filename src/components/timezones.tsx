@@ -5,22 +5,14 @@ interface Props {
   timezones: NormalisedTimezone[];
   addToSelectedTimezones?: (timezone: NormalisedTimezone) => void;
   setSelectTimezoneIndex?: Dispatch<SetStateAction<number>>;
+  currentTimezoneIndex?: string;
 }
 
-export default function Timezones({
-  timezones,
-  addToSelectedTimezones,
-  setSelectTimezoneIndex,
-}: Props) {
+export default function Timezones({ timezones }: Props) {
   return (
-    <main className="flex flex-col max-h-[880px] [&>*:nth-child(odd)]:bg-gray-100 [&>*:nth-child(odd)]:text-gray-900">
-      {timezones.map((timezone, index) => (
-        <TimezoneRow
-          timezone={timezone}
-          key={index}
-          addToSelectedTimezones={addToSelectedTimezones}
-          setSelectTimezoneIndex={setSelectTimezoneIndex}
-        />
+    <main className="flex flex-col max-h-[880px] overflow-hidden w-full odd_childs absolute -z-1">
+      {timezones.map((timezone) => (
+        <TimezoneRow timezone={timezone} key={timezone.id} />
       ))}
     </main>
   );

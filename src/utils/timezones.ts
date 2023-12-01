@@ -1,10 +1,12 @@
 import timezonesRaw from "timezones.json";
+import { v4 as uuidv4 } from "uuid";
 import {
   currentTime,
   getCurrentUserTimezoneName,
   getDifferenceHoursFromHome,
 } from "./current-time";
 export interface NormalisedTimezone {
+  id: string;
   name: string;
   offset: number;
   isdst: boolean;
@@ -19,6 +21,7 @@ export function normalisedTimezones(
 ): NormalisedTimezone[] {
   const tzs = timezones.flatMap((timezone) =>
     timezone.utc.map((tz) => ({
+      id: uuidv4(),
       name: tz,
       offset: timezone.offset,
       isdst: timezone.isdst,
