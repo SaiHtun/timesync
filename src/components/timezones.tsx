@@ -1,6 +1,7 @@
 import type { NormalisedTimezone } from "~/utils/timezones";
 import TimezoneRow from "./timezone-row";
 import { Dispatch, SetStateAction } from "react";
+
 interface Props {
   timezones: NormalisedTimezone[];
   addToSelectedTimezones?: (timezone: NormalisedTimezone) => void;

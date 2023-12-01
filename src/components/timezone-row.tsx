@@ -1,6 +1,7 @@
 import { NormalisedTimezone } from "~/utils/timezones";
 import { Dispatch, SetStateAction } from "react";
 import Time from "./time";
+import TimeDials from "./time-dials";
 
 interface Props {
   timezone: NormalisedTimezone;
@@ -40,7 +41,7 @@ export default function TimezoneRow({
             <div>
               <p>
                 {city ?? country}{" "}
-                <sup className="p-1 text-xs border rounded-md border-gray-300">
+                <sup className="p-1 text-[10px] border rounded-md border-gray-400 text-gray-400 ">
                   {timezone.abbr}
                 </sup>
               </p>
@@ -56,7 +57,7 @@ export default function TimezoneRow({
           </div>
         </div>
       </div>
-      <div className="h-full w-full bg-gray-200 dark:bg-zinc-600"></div>
+      <TimeDials timezone={timezone} />
     </div>
   );
 }

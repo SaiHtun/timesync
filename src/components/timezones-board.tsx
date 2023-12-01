@@ -27,14 +27,19 @@ export default function TimezonesBoard() {
     [deferredSearch, timezones]
   );
 
+  function resetStates() {
+    setSearch("");
+    setSelectedTimezoneIndex(0);
+  }
+
   function addToSelectedTimezones(timezone: NormalisedTimezone): void {
     setSelectedTimezones((tzs) =>
       tzs.find((tz) => tz.id === timezone.id) || tzs.length > 9
         ? tzs
         : tzs.concat(timezone)
     );
-    setSearch("");
-    setSelectedTimezoneIndex(0);
+
+    resetStates();
   }
 
   function handleKeySelectTimezone(e: React.KeyboardEvent) {
@@ -53,6 +58,8 @@ export default function TimezonesBoard() {
       });
     } else if (e.code === "Enter") {
       addToSelectedTimezones(filteredTimezones[selectedTimezoneIndex]);
+    } else if (e.code === "Escape") {
+      resetStates();
     }
   }
 
