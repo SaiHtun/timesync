@@ -17,7 +17,8 @@ export default function TimezoneRow({
 }: Props) {
   // country is usually undefined
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
-  const [day, month, clock] = timezone.now.split(",");
+  // wtf added the "at" in mobile browser for currentTime()?
+  const [day, month, clock] = timezone.now.replace("at", "").split(",");
 
   const isPositiveDiffHour = typeof timezone.diffHoursFromHome === "string";
 
