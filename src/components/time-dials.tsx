@@ -8,8 +8,7 @@ interface Props {
 
 export default function TimeDials({ timezone }: Props) {
   const [day, month] = timezone.now.split(",");
-  const [alphaOfMonth, numberOfDay] = month?.trim().split(" ");
-
+  // const [alphaOfMonth, numberOfDay] = month?.trim().split(" ");
   const hours = useMemo(
     () =>
       arrayRange(0, 23).map((number) => (number + timezone.offset + 24) % 24),
@@ -35,14 +34,14 @@ export default function TimeDials({ timezone }: Props) {
                   : ""
               }`}
             >
-              <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
+              <span className="absolute  inset-x-0 bottom-11 text-xs text-gray-400">
                 {newDay ? day : ""}
               </span>
               {newDay ? (
                 <div className="text-xs">
                   <p className="flex flex-col ">
-                    <span>{alphaOfMonth}</span>
-                    <span>{numberOfDay}</span>
+                    <span>{month}</span>
+                    {/* <span>{numberOfDay}</span> */}
                   </p>
                 </div>
               ) : isDecimal && hour > 1 ? (
