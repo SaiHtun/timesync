@@ -1,6 +1,8 @@
 import { NormalisedTimezone } from "~/utils/timezones";
 import { arrayRange } from "~/utils/index";
 import { useMemo } from "react";
+import { format } from "date-fns";
+import { calcTime } from "~/utils/current-time";
 
 interface Props {
   timezone: NormalisedTimezone;
@@ -8,43 +10,52 @@ interface Props {
 
 export default function TimeDials({ timezone }: Props) {
   const [day, month] = timezone.now.split(",");
-  // const [alphaOfMonth, numberOfDay] = month?.trim().split(" ");
-  const hours = useMemo(
-    () =>
-      arrayRange(0, 23).map((number) => (number + timezone.offset + 24) % 24),
-    [timezone]
-  );
+  const [alphabetMonth, numberOfDay] = month?.trim().split(" ");
 
-  let isDecimal = false;
-  let newDay = false;
+  const hours = useMemo(() => {
+    const startHours = parseInt(format(calcTime(timezone), "h"));
+    return arrayRange(startHours, startHours + 23).map((number) => {
+      let h = number;
+      // some timezones have "decimal" offset. ex: +14.5 (Asia/Rangoon)
+      if (isDecimal(timezone.offset)) {
+        h += 0.5;
+      }
+      return h % 24;
+    });
+  }, [timezone]);
+
+  function isDecimal(hour: number) {
+    return hour % 1 !== 0;
+  }
+
+  function isNewDay(hour: number) {
+    return hour < 1;
+  }
 
   return (
     <main>
-      <p>{newDay ? day : ""}</p>
-      <div className="h-auto w-full  border border-zinc-150 dark:border-zinc-500 flex items-center text-center text-sm rounded-md">
+      <div className="h-auto w-[760px]  border border-zinc-150 dark:border-zinc-500 flex items-center text-center text-sm rounded-sm">
         {hours.map((hour) => {
-          isDecimal = hour % 1 !== 0;
-          newDay = hour === 0 || hour < 1;
           return (
             <div
               key={hour}
-              className={`w-[29.17px] py-1 first:rounded-l-sm last:rounded-r-sm relative ${
-                newDay
+              className={`w-[32px] py-1 first:rounded-l-sm last:rounded-r-sm relative ${
+                isNewDay(hour)
                   ? "!rounded-l-md !bg-emerald-500 box-border !text-white"
                   : ""
               }`}
             >
               <span className="absolute  inset-x-0 bottom-11 text-xs text-gray-400">
-                {newDay ? day : ""}
+                {isNewDay(hour) ? day : ""}
               </span>
-              {newDay ? (
+              {isNewDay(hour) ? (
                 <div className="text-xs">
                   <p className="flex flex-col ">
-                    <span>{month}</span>
-                    {/* <span>{numberOfDay}</span> */}
+                    <span>{alphabetMonth}</span>
+                    <span>{parseInt(numberOfDay) + 1}</span>
                   </p>
                 </div>
-              ) : isDecimal && hour > 1 ? (
+              ) : isDecimal(hour) && hour > 1 ? (
                 <p className="flex flex-col leading-3">
                   {hour
                     .toString()
@@ -57,7 +68,7 @@ export default function TimeDials({ timezone }: Props) {
                           }`}
                           key={index}
                         >
-                          {index === 1 ? 30 : parseInt(strNum)}
+                          {index === 1 ? 30 : strNum}
                         </span>
                       );
                     })}

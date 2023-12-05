@@ -71,6 +71,7 @@ export default function TimezonesBoard() {
           <input
             type="text"
             value={search}
+            name="search"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="search.."
             className="p-2 border rounded-sm dark:border-zinc-800 bg-transparent text-sm pl-4 focus:outline-none "

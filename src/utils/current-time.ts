@@ -1,3 +1,5 @@
+import { NormalisedTimezone } from "./timezones";
+
 export function currentTime(
   timezoneName = getCurrentUserTimezoneName(),
   formatOptions: Intl.DateTimeFormatOptions = {}
@@ -21,8 +23,13 @@ export function getCurrentUserTimezoneName() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
-export function getDifferenceHoursFromHome(otherTimezoneName: string) {
-  const homeTimezone = new Date().toLocaleString("en-US");
+export function getDifferenceHoursFromHome(
+  otherTimezoneName: string,
+  homeTimezoneName = getCurrentUserTimezoneName()
+) {
+  const homeTimezone = new Date().toLocaleString("en-US", {
+    timeZone: homeTimezoneName,
+  });
   const otherTimezone = new Date().toLocaleString("en-US", {
     timeZone: otherTimezoneName,
   });
@@ -33,4 +40,12 @@ export function getDifferenceHoursFromHome(otherTimezoneName: string) {
   const diffHours = (parsedOther - parsedHome) / (60 * 60 * 1000);
 
   return diffHours >= 0 ? `+${diffHours}` : diffHours;
+}
+
+export function calcTime(timezone: NormalisedTimezone) {
+  const date = new Date();
+
+  const utc = date.getTime() + date.getTimezoneOffset() * 60000;
+
+  return new Date(utc + 3600000 * timezone.offset);
 }

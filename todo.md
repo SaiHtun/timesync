@@ -1,4 +1,5 @@
 [x] done "Escape" key binding
+[] recalculate hours base on the current time!
 [] home ( home could be any place and should be easy to set up)
   [] recalculate the "diffHoursFromHome" once we changed home.
   [] rewrite "getDiffHoursFromHome" function to be dynamically accept "home"

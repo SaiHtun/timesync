@@ -15,20 +15,21 @@ export default function TimezoneRow({
   addToSelectedTimezones,
   setSelectTimezoneIndex,
 }: Props) {
-  const [continent, country, city] = timezone.name.replace("_", " ").split("/");
+  // country is usually undefined
+  const [continent, city, country] = timezone.name.replace("_", " ").split("/");
   const [day, month, clock] = timezone.now.split(",");
 
   const isPositiveDiffHour = typeof timezone.diffHoursFromHome === "string";
 
   return (
     <div
-      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 px-4 rounded-sm cursor-pointer"
+      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-sm cursor-pointer"
       onClick={() => {
         addToSelectedTimezones && addToSelectedTimezones(timezone);
       }}
       onMouseEnter={() => setSelectTimezoneIndex && setSelectTimezoneIndex(-1)}
     >
-      <div className="">
+      <div>
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
             <span
@@ -40,14 +41,13 @@ export default function TimezoneRow({
             </span>
             <div>
               <p>
-                {city ?? country}{" "}
-                <sup className="p-1 text-[10px] border rounded-md border-gray-400 text-gray-400 ">
+                {city}
+                <sup className="ml-1 p-1 text-[10px] border rounded-md border-gray-400 text-gray-400 ">
                   {timezone.abbr}
                 </sup>
               </p>
               <span className="text-sm text-gray-400">
-                {city ? `${country}, ` : ""}
-                {continent}
+                {country ? `${country}, ${continent}` : continent}
               </span>
             </div>
           </div>
