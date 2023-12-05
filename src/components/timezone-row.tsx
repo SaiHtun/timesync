@@ -22,7 +22,7 @@ export default function TimezoneRow({
 
   return (
     <div
-      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 rounded-sm cursor-pointer"
+      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 px-4 rounded-sm cursor-pointer"
       onClick={() => {
         addToSelectedTimezones && addToSelectedTimezones(timezone);
       }}

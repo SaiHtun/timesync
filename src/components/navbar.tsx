@@ -24,7 +24,7 @@ export default function Navbar() {
   }
 
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex items-center justify-between ">
       <h1 className="text-center text-4xl font-bold">何时</h1>
       <div className="flex items-center gap-3">
         <Button>

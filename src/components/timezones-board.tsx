@@ -64,10 +64,10 @@ export default function TimezonesBoard() {
   }
 
   return (
-    <main onKeyDown={handleKeySelectTimezone}>
+    <main onKeyDown={handleKeySelectTimezone} className="w-full h-full">
       <Navbar />
       <div className="mt-14 flex flex-col gap-4">
-        <div className="grid grid-cols-[300px_minmax(600px,_1fr)] gap-2">
+        <div className="grid grid-cols-[300px_1fr] gap-2">
           <input
             type="text"
             value={search}

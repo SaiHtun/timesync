@@ -11,7 +11,7 @@ interface Props {
 
 export default function Timezones({ timezones }: Props) {
   return (
-    <main className="flex flex-col max-h-[880px] overflow-hidden w-full odd_childs absolute -z-1">
+    <main className="flex flex-col max-h-[880px] w-full odd_childs absolute -z-1">
       {timezones.map((timezone) => (
         <TimezoneRow timezone={timezone} key={timezone.id} />
       ))}
