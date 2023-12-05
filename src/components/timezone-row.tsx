@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction, useMemo } from "react";
 import Time from "./time";
 import TimeDials from "./time-dials";
 import { formatTimezone } from "~/utils/current-time";
+import { cn } from "~/utils/cn";
 
 interface Props {
   timezone: NormalisedTimezone;
@@ -38,9 +39,9 @@ export default function TimezoneRow({
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
             <span
-              className={`w-8 text-center text-xs ${
-                isPositiveDiffHour ? "text-green-500" : "text-red-500"
-              }`}
+              className={cn("w-8 text-center text-xs text-red-500", {
+                "text-green-500": isPositiveDiffHour,
+              })}
             >
               {timezone.diffHoursFromHome}
             </span>

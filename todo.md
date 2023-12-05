@@ -1,4 +1,4 @@
-[] add tailwind helper "tailwind-merge + clsx"
+[x] add tailwind helper "tailwind-merge + clsx"
 [] work on "menu-bar"
   [] move "next-day"
   [] 24/12 hours format

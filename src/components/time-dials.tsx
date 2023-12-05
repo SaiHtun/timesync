@@ -36,7 +36,7 @@ export default function TimeDials({ timezone }: Props) {
 
   return (
     <main>
-      <div className="h-auto w-[760px]  border border-zinc-150 dark:border-zinc-500 flex items-center text-center text-sm rounded-sm">
+      <div className="h-auto w-[760px]  border border-zinc-150 dark:border-zinc-700 flex items-center text-center text-sm rounded-sm">
         {hours.map((hour, index) => {
           return (
             <div

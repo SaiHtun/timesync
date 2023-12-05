@@ -1,6 +1,7 @@
 import { NormalisedTimezone } from "~/utils/timezones";
 import Time from "./time";
 import { formatTimezone } from "~/utils/current-time";
+import { cn } from "~/utils/cn";
 
 interface Props {
   timezones: NormalisedTimezone[];
@@ -22,8 +23,12 @@ export default function SearchedTimezones({
         return (
           <button
             type="button"
-            className={`w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md hover:!bg-zinc-100 dark:hover:!bg-zinc-700
-            ${isSelected ? "!bg-zinc-100 dark:!bg-zinc-700" : ""}`}
+            className={cn(
+              "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md hover:bg-zinc-100 dark:hover:!bg-zinc-700",
+              {
+                "!bg-zinc-100 dark:!bg-zinc-700": isSelected,
+              }
+            )}
             key={tz.id}
             onClick={() => addToSelectedTimezones(tz)}
           >
