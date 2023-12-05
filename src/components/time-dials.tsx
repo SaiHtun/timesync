@@ -1,19 +1,21 @@
 import { NormalisedTimezone } from "~/utils/timezones";
 import { arrayRange } from "~/utils/index";
 import { useMemo } from "react";
-import { format } from "date-fns";
-import { calcTime } from "~/utils/current-time";
+import { format, addDays } from "date-fns";
+import { formatTimezone } from "~/utils/current-time";
 
 interface Props {
   timezone: NormalisedTimezone;
 }
 
 export default function TimeDials({ timezone }: Props) {
-  const [day, month] = timezone.now.split(",");
-  const [alphabetMonth, numberOfDay] = month?.trim().split(" ");
+  const nextDay = addDays(new Date(timezone.now), 1);
+  const { dayOfWeek, month, dayOfMonth } = formatTimezone(
+    nextDay.toLocaleString()
+  );
 
   const hours = useMemo(() => {
-    const startHours = parseInt(format(calcTime(timezone), "h"));
+    const startHours = parseInt(format(new Date(timezone.now), "h"));
     return arrayRange(startHours, startHours + 23).map((number) => {
       let h = number;
       // some timezones have "decimal" offset. ex: +14.5 (Asia/Rangoon)
@@ -35,24 +37,24 @@ export default function TimeDials({ timezone }: Props) {
   return (
     <main>
       <div className="h-auto w-[760px]  border border-zinc-150 dark:border-zinc-500 flex items-center text-center text-sm rounded-sm">
-        {hours.map((hour) => {
+        {hours.map((hour, index) => {
           return (
             <div
-              key={hour}
+              key={index}
               className={`w-[32px] py-1 first:rounded-l-sm last:rounded-r-sm relative ${
                 isNewDay(hour)
                   ? "!rounded-l-md !bg-emerald-500 box-border !text-white"
                   : ""
               }`}
             >
-              <span className="absolute  inset-x-0 bottom-11 text-xs text-gray-400">
-                {isNewDay(hour) ? day : ""}
+              <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
+                {isNewDay(hour) ? dayOfWeek : ""}
               </span>
               {isNewDay(hour) ? (
                 <div className="text-xs">
                   <p className="flex flex-col ">
-                    <span>{alphabetMonth}</span>
-                    <span>{parseInt(numberOfDay) + 1}</span>
+                    <span>{month}</span>
+                    <span>{dayOfMonth}</span>
                   </p>
                 </div>
               ) : isDecimal(hour) && hour > 1 ? (

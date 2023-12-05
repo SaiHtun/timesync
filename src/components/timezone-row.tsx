@@ -19,7 +19,7 @@ export default function TimezoneRow({
   // country is usually undefined
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
 
-  const { clock, day, month } = useMemo(
+  const { clock, dayOfWeek, month, dayOfMonth } = useMemo(
     () => formatTimezone(timezone.now),
     [timezone]
   );
@@ -58,7 +58,9 @@ export default function TimezoneRow({
           </div>
           <div className="text-right">
             <Time clock={clock} />
-            <span className="text-xs text-gray-400">{day + ", " + month}</span>
+            <span className="text-xs text-gray-400">
+              {dayOfWeek + ", " + month + " " + dayOfMonth}
+            </span>
           </div>
         </div>
       </div>

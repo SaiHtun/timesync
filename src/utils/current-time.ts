@@ -13,6 +13,7 @@ export function currentTime(
       day: "numeric",
       weekday: "short",
       month: "short",
+      year: "numeric",
     },
     formatOptions
   );
@@ -27,8 +28,9 @@ export function getCurrentUserTimezoneName() {
 export function formatTimezone(now: string) {
   return {
     clock: format(new Date(now), "h:mm a"),
-    day: format(new Date(now), "eee"),
-    month: format(new Date(now), "LLL d"),
+    dayOfWeek: format(new Date(now), "eee"),
+    month: format(new Date(now), "LLL"),
+    dayOfMonth: format(new Date(now), "d"),
   };
 }
 

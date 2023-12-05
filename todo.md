@@ -1,18 +1,9 @@
-[x] done "Escape" key binding
-[] recalculate hours base on the current time!
-[] home ( home could be any place and should be easy to set up)
-  [] recalculate the "diffHoursFromHome" once we changed home.
-  [] rewrite "getDiffHoursFromHome" function to be dynamically accept "home"
-[] change next day | "next-day" btn on "selected-timezone"
-[] time dials
+[] add tailwind helper "tailwind-merge + clsx"
+[] work on "menu-bar"
+  [] move "next-day"
+  [] 24/12 hours format
+[] HOME ( whose home is that )
 
-
-
-**Stretch**
-
-[] Menu bars
-  [] show hours diff
-  [] 12/24 options
 
 
 
