@@ -8,7 +8,7 @@ interface Props {
 
 export default function TimeDials({ timezone }: Props) {
   const [day, month] = timezone.now.split(",");
-  const [alphaOfMonth, numberOfDay] = month.trim().split(" ");
+  const [alphaOfMonth, numberOfDay] = month?.trim().split(" ");
 
   const hours = useMemo(
     () =>

@@ -3,7 +3,7 @@ interface Props {
 }
 
 export default function Time({ clock }: Props) {
-  const [time, amORpm] = clock.trim().split(" ");
+  const [time, amORpm] = clock?.trim().split(" ");
   const [hour, min] = time.split(":");
 
   return (
