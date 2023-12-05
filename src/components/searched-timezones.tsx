@@ -1,5 +1,6 @@
 import { NormalisedTimezone } from "~/utils/timezones";
 import Time from "./time";
+import { formatTimezone } from "~/utils/current-time";
 
 interface Props {
   timezones: NormalisedTimezone[];
@@ -15,6 +16,7 @@ export default function SearchedTimezones({
   return (
     <div className="w-[400px] min-w-[180px] max-h-[440px] overflow-hidden odd_childs even_childs z-10 absolute shadow-md rounded-md">
       {timezones.map((tz) => {
+        const { clock } = formatTimezone(tz.now);
         const isSelected = timezones[selectedTimezoneIndex].id === tz.id;
 
         return (
@@ -26,7 +28,7 @@ export default function SearchedTimezones({
             onClick={() => addToSelectedTimezones(tz)}
           >
             <p>{tz.name}</p>
-            <Time clock={tz.now.split(",")[2]} />
+            <Time clock={clock} />
           </button>
         );
       })}

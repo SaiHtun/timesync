@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { NormalisedTimezone } from "./timezones";
 
 export function currentTime(
@@ -21,6 +22,14 @@ export function currentTime(
 
 export function getCurrentUserTimezoneName() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export function formatTimezone(now: string) {
+  return {
+    clock: format(new Date(now), "h:mm a"),
+    day: format(new Date(now), "eee"),
+    month: format(new Date(now), "LLL d"),
+  };
 }
 
 export function getDifferenceHoursFromHome(

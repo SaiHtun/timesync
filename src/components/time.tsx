@@ -3,7 +3,7 @@ interface Props {
 }
 
 export default function Time({ clock = "00:00 AM" }: Props) {
-  const [time, amORpm] = clock.trim().split(" ");
+  const [time, amORpm] = clock.split(" ");
   const [hour, min] = time.split(":");
 
   return (
@@ -12,7 +12,7 @@ export default function Time({ clock = "00:00 AM" }: Props) {
         <span>{hour}</span>
         <span className="animate-blinker text-md mx-[1px]">:</span>
         <span>{min}</span>
-        <sup className="text-[10px] text-gray-400">{amORpm}</sup>
+        <sup className="ml-1 text-[10px] text-gray-400">{amORpm}</sup>
       </p>
     </div>
   );

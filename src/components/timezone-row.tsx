@@ -1,7 +1,8 @@
 import { NormalisedTimezone } from "~/utils/timezones";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import Time from "./time";
 import TimeDials from "./time-dials";
+import { formatTimezone } from "~/utils/current-time";
 
 interface Props {
   timezone: NormalisedTimezone;
@@ -17,8 +18,11 @@ export default function TimezoneRow({
 }: Props) {
   // country is usually undefined
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
-  // wtf added the "at" in mobile browser for currentTime()?
-  const [day, month, clock] = timezone.now.replace("at", "").split(",");
+
+  const { clock, day, month } = useMemo(
+    () => formatTimezone(timezone.now),
+    [timezone]
+  );
 
   const isPositiveDiffHour = typeof timezone.diffHoursFromHome === "string";
 
