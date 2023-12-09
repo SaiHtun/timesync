@@ -1,36 +1,49 @@
 import { format } from "date-fns";
-import { NormalisedTimezone } from "./timezones";
+import {
+  NormalisedTimezone,
+  TimezoneFormatType,
+} from "~/utils/hooks/use-timezones";
 
 export function currentTime(
   timezoneName = getCurrentUserTimezoneName(),
   formatOptions: Intl.DateTimeFormatOptions = {}
 ) {
-  const options: Intl.DateTimeFormatOptions = Object.assign(
-    {
-      hour: "numeric",
-      minute: "numeric",
-      timeZone: timezoneName,
-      day: "numeric",
-      weekday: "short",
-      month: "short",
-      year: "numeric",
-    },
-    formatOptions
-  );
+  const options: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: timezoneName,
+    day: "numeric",
+    weekday: "short",
+    month: "short",
+    year: "numeric",
+    hourCycle: "h23",
+  };
 
-  return new Intl.DateTimeFormat("en-En", options).format(new Date());
+  return new Intl.DateTimeFormat(
+    "en-En",
+    Object.assign(options, formatOptions)
+  ).format(new Date());
 }
 
 export function getCurrentUserTimezoneName() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
-export function formatTimezone(now: string) {
+export function formatTimezone(
+  now: string,
+  timezoneFormat: TimezoneFormatType = "h23",
+  clockFormat = "k:mm a",
+  dayOfWeekFormat = "eee",
+  monthFormat = "LLL",
+  dayOfMonthFormat = "d"
+) {
+  const currentTime = new Date(now);
+  clockFormat = timezoneFormat === "h23" ? "k:mm a" : "h:mm a";
   return {
-    clock: format(new Date(now), "h:mm a"),
-    dayOfWeek: format(new Date(now), "eee"),
-    month: format(new Date(now), "LLL"),
-    dayOfMonth: format(new Date(now), "d"),
+    clock: format(currentTime, clockFormat),
+    dayOfWeek: format(currentTime, dayOfWeekFormat),
+    month: format(currentTime, monthFormat),
+    dayOfMonth: format(currentTime, dayOfMonthFormat),
   };
 }
 

@@ -1,4 +1,7 @@
-import { NormalisedTimezone } from "~/utils/timezones";
+import {
+  NormalisedTimezone,
+  TimezoneFormatType,
+} from "~/utils/hooks/use-timezones";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import Time from "./time";
 import TimeDials from "./time-dials";
@@ -10,18 +13,20 @@ interface Props {
   addToSelectedTimezones?: (timezone: NormalisedTimezone) => void;
   setSelectTimezoneIndex?: Dispatch<SetStateAction<number>>;
   currentTimezoneIndex?: string;
+  timezoneFormat: TimezoneFormatType;
 }
 
 export default function TimezoneRow({
   timezone,
   addToSelectedTimezones,
   setSelectTimezoneIndex,
+  timezoneFormat,
 }: Props) {
   // country is usually undefined
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
 
   const { clock, dayOfWeek, month, dayOfMonth } = useMemo(
-    () => formatTimezone(timezone.now),
+    () => formatTimezone(timezone.now, timezoneFormat),
     [timezone]
   );
 

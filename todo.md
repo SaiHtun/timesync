@@ -1,7 +1,7 @@
 [x] add tailwind helper "tailwind-merge + clsx"
-[] work on "menu-bar"
-  [] move "next-day"
+[x] work on "menu-bar"
   [] 24/12 hours format
+  [] move "next-day"
 [] HOME ( whose home is that )
 
 

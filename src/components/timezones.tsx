@@ -1,19 +1,24 @@
-import type { NormalisedTimezone } from "~/utils/timezones";
+import type {
+  NormalisedTimezone,
+  TimezoneFormatType,
+} from "~/utils/hooks/use-timezones";
 import TimezoneRow from "./timezone-row";
-import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   timezones: NormalisedTimezone[];
-  addToSelectedTimezones?: (timezone: NormalisedTimezone) => void;
-  setSelectTimezoneIndex?: Dispatch<SetStateAction<number>>;
   currentTimezoneIndex?: string;
+  timezoneFormat: TimezoneFormatType;
 }
 
-export default function Timezones({ timezones }: Props) {
+export default function Timezones({ timezones, timezoneFormat }: Props) {
   return (
     <main className="flex flex-col max-h-[880px] w-full odd_childs absolute -z-1">
       {timezones.map((timezone) => (
-        <TimezoneRow timezone={timezone} key={timezone.id} />
+        <TimezoneRow
+          timezone={timezone}
+          key={timezone.id}
+          timezoneFormat={timezoneFormat}
+        />
       ))}
     </main>
   );
