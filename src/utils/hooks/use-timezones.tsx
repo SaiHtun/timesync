@@ -42,12 +42,10 @@ function getTimeDials(
       h += 0.5;
     }
     return timezoneFormat === "h23"
-      ? h % 24
+      ? h % 24 || 24
       : h % 12 === 0.5
       ? 12.5
-      : h % 12 === 0
-      ? 12
-      : h % 12;
+      : h % 12 || 12;
   });
 }
 

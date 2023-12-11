@@ -73,11 +73,11 @@ export default function TimezonesBoard() {
     <main onKeyDown={handleKeySelectTimezone} className="w-full h-full">
       <Navbar />
       <div className="mt-12 flex flex-col gap-4">
-        <div className="grid grid-cols-[1fr_300px] gap-2">
-          <div className="bg-gray-50 dark:bg-zinc-800 rounded-sm px-4 flex items-center">
+        <div className="h-12 grid grid-cols-[1fr_300px] gap-2">
+          <div className="primary_bg primary_border rounded-md px-2 flex items-center ">
             <button
               type="button"
-              className="px-2 py-1 text-xs space-x-1 border dark:border-zinc-700 border-zinc-200 hover:bg-zinc-200  dark:hover:bg-zinc-700  rounded-sm hover:rounded-md transition-all"
+              className="p-2 text-xs space-x-1 primary_border rounded-md transition-all"
               onClick={toggleTimezoneFormat}
             >
               <span
@@ -103,7 +103,7 @@ export default function TimezonesBoard() {
             name="search"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="search.."
-            className="p-2 border rounded-sm dark:border-zinc-800 bg-transparent text-sm pl-4 focus:outline-none "
+            className="p-2   rounded-md  text-sm pl-4 focus:outline-none primary_bg primary_border"
           />
         </div>
         <div className="relative w-full">
@@ -116,6 +116,7 @@ export default function TimezonesBoard() {
             timezones={filteredTimezones}
             addToSelectedTimezones={addToSelectedTimezones}
             timezoneFormat={timezoneFormat}
+            setSelectedTimezoneIndex={setSelectedTimezoneIndex}
           />
         </div>
       </div>

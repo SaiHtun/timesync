@@ -12,7 +12,7 @@ export default function Time({ clock = "00:00 AM" }: Props) {
         <span>{hour}</span>
         <span className="animate-blinker text-md mx-[1px]">:</span>
         <span>{min}</span>
-        <sup className="ml-1 text-[10px] text-gray-400">{amORpm}</sup>
+        <sup className="ml-1 text-[10px] primary_text-gray">{amORpm}</sup>
       </p>
     </div>
   );

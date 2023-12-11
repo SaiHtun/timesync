@@ -1,10 +1,10 @@
-[x] add tailwind helper "tailwind-merge + clsx"
-[x] work on "menu-bar"
-  [] 24/12 hours format
-  [] move "next-day"
-[] HOME ( whose home is that )
+[] redesign
+[x] jerusalem, Mbabane: new-date format is not correct
+[] introduce jotai
 
-
+[] splice "timezones" to cal lastHour and newStartHour to split the date wiz better looking "padding + roundex corner"
+  [] coloring -> dawn/afternoon/down
+  [] better "am/pm" UI
 
 
 **Last**

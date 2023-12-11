@@ -34,7 +34,7 @@ export default function TimezoneRow({
 
   return (
     <div
-      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-sm cursor-pointer"
+      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md cursor-pointer"
       onClick={() => {
         addToSelectedTimezones && addToSelectedTimezones(timezone);
       }}
@@ -53,18 +53,18 @@ export default function TimezoneRow({
             <div>
               <p>
                 {city}
-                <sup className="ml-1 p-1 text-[10px] border rounded-md border-gray-400 text-gray-400 ">
+                <sup className="ml-1 p-1 text-[10px] primary_border rounded-md primary_text_gray ">
                   {timezone.abbr}
                 </sup>
               </p>
-              <span className="text-sm text-gray-400">
+              <span className="text-sm primary_text_gray">
                 {country ? `${country}, ${continent}` : continent}
               </span>
             </div>
           </div>
           <div className="text-right">
             <Time clock={clock} />
-            <span className="text-xs text-gray-400">
+            <span className="text-xs primary_text_gray">
               {dayOfWeek + ", " + month + " " + dayOfMonth}
             </span>
           </div>

@@ -20,12 +20,12 @@ export default function TimeDials({ timezone }: Props) {
   const hours24 = arrayRange(start24Hours, start24Hours + 23);
 
   function isNewDay(hourIndex: number) {
-    return hours24[hourIndex] === 24;
+    return hours24[hourIndex] === 24 && hourIndex !== 0;
   }
 
   return (
     <main>
-      <div className="h-auto w-[760px]  border border-zinc-150 dark:border-zinc-700 flex items-center text-center text-sm rounded-sm">
+      <div className="h-auto w-[760px]  primary_border flex items-center text-center text-sm rounded-md">
         {timezone.timeDials.map((hour, index) => {
           function NewDay() {
             return (
