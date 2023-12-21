@@ -15,7 +15,10 @@ export default function SearchedTimezones({
   setSelectedTimezoneIndex,
 }: Props) {
   return (
-    <div className="w-[400px] min-w-[180px] max-h-[440px] overflow-hidden odd_childs even_childs z-10 absolute right-0 shadow-md rounded-md">
+    <div
+      id="searched-timezones"
+      className="w-[400px] min-w-[180px] max-h-[440px] overflow-hidden odd_childs even_childs z-10 absolute right-0 shadow-md rounded-md"
+    >
       {timezones.map((tz, index) => (
         <SearchedTimezoneRow
           key={tz.name}
