@@ -2,6 +2,7 @@ import { arrayRange } from "~/utils/index";
 import { format, addDays } from "date-fns";
 import { type Timezone, isDecimal } from "~/utils/hooks/use-timezones";
 import { formatInTimeZone } from "date-fns-tz";
+import { cn } from "~/utils/cn";
 
 interface Props {
   timezone: Timezone;
@@ -50,11 +51,13 @@ export default function TimeDials({ timezone }: Props) {
           return (
             <div
               key={index}
-              className={`w-[32px] py-1 first:rounded-l-sm last:rounded-r-sm relative ${
-                isNewDay(index)
-                  ? "!rounded-l-md !bg-emerald-500 box-border !text-white"
-                  : ""
-              }`}
+              className={cn(
+                "w-[32px] py-1 first:rounded-l-sm last:rounded-r-sm relative",
+                {
+                  "!rounded-l-md !bg-emerald-500 box-border !text-white":
+                    isNewDay(index),
+                }
+              )}
             >
               <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
                 {isNewDay(index) ? dayOfWeek : ""}
@@ -69,9 +72,9 @@ export default function TimeDials({ timezone }: Props) {
                     .map((strNum, index) => {
                       return (
                         <span
-                          className={`${
-                            index === 1 ? "text-[11px] text-zinc-400" : ""
-                          }`}
+                          className={cn({
+                            "text-[11px] text-zinc-400": index === 1,
+                          })}
                           key={index}
                         >
                           {index === 1 ? 30 : strNum}

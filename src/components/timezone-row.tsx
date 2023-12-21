@@ -44,7 +44,7 @@ export default function TimezoneRow({
           <div className="flex items-center gap-2">
             <span
               className={cn("w-8 text-center text-xs text-red-500", {
-                "text-green-500": true,
+                "text-green-500": parseInt(timezone.diffHoursFromHome) >= 0,
               })}
             >
               {timezone.diffHoursFromHome}
