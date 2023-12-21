@@ -1,7 +1,7 @@
 import { SetStateAction, useState, Dispatch, useEffect } from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
-import { arrayRange } from "..";
-import { HoursFormat } from "~/atoms/hours-format";
+import { arrayRange } from "~/utils/index";
+import type { HoursFormat } from "~/atoms/hours-format";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
@@ -13,11 +13,11 @@ export function isDecimal(hour: number) {
 export function getTimeDials(
   clock: string,
   offset: number,
-  hoursFormat: HoursFormat
+  hoursFormat: HoursFormat = "24"
 ): Array<number> {
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
-
-  return arrayRange(startHours, startHours + 23).map((hour) => {
+  const hours = arrayRange(startHours, startHours + 23);
+  return hours.map((hour) => {
     let h = hour;
     if (isDecimal(offset)) {
       h += 0.5;
@@ -57,7 +57,6 @@ export interface Timezone {
   name: string;
   value: string;
   abbr: string;
-  now: string;
   dayOfWeek: string;
   monthAndDay: string;
   year: string;
@@ -80,12 +79,10 @@ function populateTimezones(hoursFormat: HoursFormat): Timezone[] {
     const now = formatInTimeZone(date, name, strFormat);
     const [dayOfWeek, monthAndDay, year, clock, abbr, value] = now.split(", ");
     const offset = getTimezoneOffset(name, date) / (60 * 60 * 1_000);
-
     return {
       name,
       value,
       abbr,
-      now,
       dayOfWeek,
       monthAndDay,
       year,
@@ -102,8 +99,6 @@ type UseTimezonesReturnType = [
   Dispatch<SetStateAction<Timezone[]>>
 ];
 
-export type TimezoneFormatType = "h12" | "h23";
-
 const MILISECONDS_PER_MIN = 60_000;
 
 export function useTimezones(
@@ -117,15 +112,11 @@ export function useTimezones(
   const [timezones, setTimezones] = useState(initTimezones);
 
   useEffect(() => {
-    const date = new Date();
-    const hour = hoursFormat === "24" ? "k" : "h";
-    const strFormat = `${hour}:mm a`;
     setTimezones((preTimezones) => {
       return preTimezones.map((preTz) => {
-        const clock = formatInTimeZone(date, preTz.name, strFormat);
         return {
           ...preTz,
-          clock,
+          clock: currentTime(preTz.name, hoursFormat),
         };
       });
     });

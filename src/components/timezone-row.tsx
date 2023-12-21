@@ -6,6 +6,7 @@ import { cn } from "~/utils/cn";
 import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
+import AbbrBadge from "./abbr-badge";
 
 interface Props {
   timezone: Timezone;
@@ -22,8 +23,9 @@ export default function TimezoneRow({
   const [hoursFormat] = useAtom(hoursFormatAtom);
   timezone.timeDials = useMemo(
     () => getTimeDials(timezone.clock, timezone.offset, hoursFormat),
-    [hoursFormat]
+    [timezone]
   );
+
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(timezone.name);
   // country is usually undefined
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
@@ -50,9 +52,7 @@ export default function TimezoneRow({
             <div>
               <p>
                 {city}
-                <sup className="ml-1 p-1 text-[10px] primary_border rounded-md primary_text_gray ">
-                  {timezone.abbr}
-                </sup>
+                <AbbrBadge abbr={timezone.abbr} />
               </p>
               <span className="text-sm primary_text_gray">
                 {country ? `${country}, ${continent}` : continent}

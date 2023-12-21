@@ -29,7 +29,10 @@ export default function SearchedTimezoneRow({
       onClick={() => addToSelectedTimezones(timezone)}
       onMouseOver={() => setSelectedTimezoneIndex(rowIndex)}
     >
-      <p>{timezone.name}</p>
+      <p className="flex items-center gap-1">
+        <span>{timezone.name}</span>
+        <span className="text-xs primary_text_gray">{timezone.abbr}</span>
+      </p>
       <Time clock={timezone.clock} />
     </button>
   );

@@ -27,7 +27,7 @@ export default function TimezonesBoard() {
   const filteredTimezones = useMemo(
     () =>
       new Fuse(timezones, {
-        keys: ["name"],
+        keys: ["name", "abbr"],
       })
         .search(deferredSearch)
         .map((tz) => tz.item)
