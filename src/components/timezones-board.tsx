@@ -2,23 +2,26 @@ import { useState, useMemo, useDeferredValue } from "react";
 import Timezones from "~/components/timezones";
 import {
   useTimezones,
-  type NormalisedTimezone,
+  type Timezone,
   useTimezoneFormat,
 } from "~/utils/hooks/use-timezones";
 import Fuse from "fuse.js";
-import { getCurrentUserTimezoneName } from "~/utils/current-time";
+import { getCurrentUserTimezoneName } from "~/utils/hooks/use-timezones";
 import Navbar from "./navbar";
 import SearchTimezones from "~/components/searched-timezones";
 import { cn } from "~/utils/cn";
+import { useSearchParams } from "react-router-dom";
 
 export default function TimezonesBoard() {
   const [timezoneFormat, toggleTimezoneFormat] = useTimezoneFormat();
-  const [timezones] = useTimezones(timezoneFormat);
+  const [timezones] = useTimezones();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // should seperate it!
   const [selectedTimezones, setSelectedTimezones] = useTimezones(
-    timezoneFormat,
     timezones.filter((tz) => tz.name === getCurrentUserTimezoneName())
   );
+
   const [search, setSearch] = useState("");
   let deferredSearch = useDeferredValue(search);
   const [selectedTimezoneIndex, setSelectedTimezoneIndex] = useState(0);
@@ -38,12 +41,43 @@ export default function TimezonesBoard() {
     setSelectedTimezoneIndex(0);
   }
 
-  function addToSelectedTimezones(timezone: NormalisedTimezone): void {
-    setSelectedTimezones((tzs) =>
-      tzs.find((tz) => tz.id === timezone.id) || tzs.length > 9
-        ? tzs
-        : tzs.concat(timezone)
+  function paramsParser(params: string) {
+    try {
+      return JSON.parse(params);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("MeError::", e.message);
+      }
+    }
+  }
+
+  function isValidTimezones(tzsNames: string[]) {
+    return (
+      Array.isArray(tzsNames) &&
+      tzsNames.every((tzName) =>
+        Intl.supportedValuesOf("timeZone").includes(tzName)
+      )
     );
+  }
+
+  function mergedSearchParams(existingTimezones: string, newTimezone: string) {
+    const parsedData = paramsParser(existingTimezones);
+    if (isValidTimezones(parsedData) && isValidTimezones([newTimezone])) {
+      setSearchParams({
+        tzs: JSON.stringify([...parsedData, newTimezone]),
+      });
+    }
+  }
+
+  function addToSelectedTimezones(timezone: Timezone): void {
+    const isExist =
+      selectedTimezones.some((tz) => tz.name === timezone.name) ||
+      selectedTimezones.length > 9;
+
+    if (!isExist) {
+      setSelectedTimezones((tzs) => tzs.concat(timezone));
+      mergedSearchParams(searchParams.get("tzs") || "[]", timezone.name);
+    }
 
     resetStates();
   }
@@ -102,8 +136,8 @@ export default function TimezonesBoard() {
             value={search}
             name="search"
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="search.."
-            className="p-2   rounded-md  text-sm pl-4 focus:outline-none primary_bg primary_border"
+            placeholder="Place or Timezone  🔍"
+            className="p-2 rounded-md text-sm pl-4 focus:outline-none primary_bg primary_border placeholder:text-xs"
           />
         </div>
         <div className="relative w-full">

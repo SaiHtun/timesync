@@ -1,15 +1,24 @@
 import { switchTheme, isDarkMode } from "~/utils/switch-theme";
-import { Sun, Moon, Github } from "lucide-react";
+import { Sun, MoonStar, Github } from "lucide-react";
 import { useToggle } from "~/utils/hooks/use-toggle";
 import { ButtonHTMLAttributes } from "react";
+import { cn } from "~/utils/cn";
+import { ClassValue } from "clsx";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  twClassList?: ClassValue;
   children: JSX.Element;
 }
 
-function Button({ children, ...props }: ButtonProps) {
+function Button({ twClassList, children, ...props }: ButtonProps) {
   return (
-    <button {...props} className="hover:text-gray-400 transition-colors">
+    <button
+      {...props}
+      className={cn(
+        "hover:text-gray-400 transition-colors primary_border rounded-full p-2 shadow-sm",
+        twClassList
+      )}
+    >
       {children}
     </button>
   );
@@ -31,10 +40,10 @@ export default function Navbar() {
       </div>
       <div className="flex items-center gap-3">
         <Button>
-          <Github />
+          <Github size={20} />
         </Button>
         <Button onClick={handleSwitchTheme}>
-          {value ? <Sun color="rgb(255, 234, 0)" /> : <Moon />}
+          {value ? <Sun size={20} /> : <MoonStar size={20} />}
         </Button>
       </div>
     </div>

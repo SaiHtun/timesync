@@ -1,22 +1,18 @@
-import { NormalisedTimezone } from "~/utils/hooks/use-timezones";
 import { arrayRange } from "~/utils/index";
 import { format, addDays } from "date-fns";
-import { formatTimezone } from "~/utils/current-time";
-import { isDecimal } from "~/utils/hooks/use-timezones";
+import { type Timezone, isDecimal } from "~/utils/hooks/use-timezones";
 
 interface Props {
-  timezone: NormalisedTimezone;
+  timezone: Timezone;
 }
 
-const FORMAT_STR_24 = "k";
-
 export default function TimeDials({ timezone }: Props) {
-  const nextDay = addDays(new Date(timezone.now), 1);
-  const { dayOfWeek, month, dayOfMonth } = formatTimezone(
-    nextDay.toLocaleString()
-  );
+  const nextDay = addDays(new Date(timezone.monthAndDay), 0);
 
-  const start24Hours = parseInt(format(new Date(timezone.now), FORMAT_STR_24));
+  const formatStr = "eee, MMM d";
+  const [dayOfWeek, monthAndDay] = format(nextDay, formatStr).split(", ");
+
+  const start24Hours = parseInt(timezone.clock.split(":")[0]);
   const hours24 = arrayRange(start24Hours, start24Hours + 23);
 
   function isNewDay(hourIndex: number) {
@@ -26,13 +22,14 @@ export default function TimeDials({ timezone }: Props) {
   return (
     <main>
       <div className="h-auto w-[760px]  primary_border flex items-center text-center text-sm rounded-md">
-        {timezone.timeDials.map((hour, index) => {
+        {timezone.timeDials?.map((hour, index) => {
           function NewDay() {
+            const [month, day] = monthAndDay.split(" ");
             return (
               <div className="text-xs">
                 <p className="flex flex-col ">
                   <span>{month}</span>
-                  <span>{dayOfMonth}</span>
+                  <span>{day}</span>
                 </p>
               </div>
             );

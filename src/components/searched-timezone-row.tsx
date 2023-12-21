@@ -1,15 +1,11 @@
 import { cn } from "~/utils/cn";
-import { formatTimezone } from "~/utils/current-time";
-import {
-  NormalisedTimezone,
-  TimezoneFormatType,
-} from "~/utils/hooks/use-timezones";
+import type { Timezone, TimezoneFormatType } from "~/utils/hooks/use-timezones";
 import Time from "./time";
 
 interface Props {
-  timezone: NormalisedTimezone;
+  timezone: Timezone;
   timezoneFormat: TimezoneFormatType;
-  addToSelectedTimezones: (timezone: NormalisedTimezone) => void;
+  addToSelectedTimezones: (timezone: Timezone) => void;
   isSelected: boolean;
   setSelectedTimezoneIndex: (index: number) => void;
   rowIndex: number;
@@ -17,14 +13,11 @@ interface Props {
 
 export default function SearchedTimezoneRow({
   timezone,
-  timezoneFormat,
   addToSelectedTimezones,
   isSelected,
   setSelectedTimezoneIndex,
   rowIndex,
 }: Props) {
-  const { clock } = formatTimezone(timezone.now, timezoneFormat);
-
   return (
     <button
       type="button"
@@ -38,7 +31,7 @@ export default function SearchedTimezoneRow({
       onMouseOver={() => setSelectedTimezoneIndex(rowIndex)}
     >
       <p>{timezone.name}</p>
-      <Time clock={clock} />
+      <Time clock={timezone.clock} />
     </button>
   );
 }

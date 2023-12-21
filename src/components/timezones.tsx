@@ -1,11 +1,8 @@
-import type {
-  NormalisedTimezone,
-  TimezoneFormatType,
-} from "~/utils/hooks/use-timezones";
+import type { Timezone, TimezoneFormatType } from "~/utils/hooks/use-timezones";
 import TimezoneRow from "./timezone-row";
 
 interface Props {
-  timezones: NormalisedTimezone[];
+  timezones: Timezone[];
   currentTimezoneIndex?: string;
   timezoneFormat: TimezoneFormatType;
 }
@@ -16,7 +13,7 @@ export default function Timezones({ timezones, timezoneFormat }: Props) {
       {timezones.map((timezone) => (
         <TimezoneRow
           timezone={timezone}
-          key={timezone.id}
+          key={timezone.name}
           timezoneFormat={timezoneFormat}
         />
       ))}

@@ -25,6 +25,6 @@
       "~/utils/*": ["./utils/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "examples/test.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

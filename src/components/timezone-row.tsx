@@ -1,16 +1,17 @@
 import {
-  NormalisedTimezone,
-  TimezoneFormatType,
+  getTimeDials,
+  type Timezone,
+  type TimezoneFormatType,
 } from "~/utils/hooks/use-timezones";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction } from "react";
 import Time from "./time";
 import TimeDials from "./time-dials";
-import { formatTimezone } from "~/utils/current-time";
 import { cn } from "~/utils/cn";
+import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
 
 interface Props {
-  timezone: NormalisedTimezone;
-  addToSelectedTimezones?: (timezone: NormalisedTimezone) => void;
+  timezone: Timezone;
+  addToSelectedTimezones?: (timezone: Timezone) => void;
   setSelectTimezoneIndex?: Dispatch<SetStateAction<number>>;
   currentTimezoneIndex?: string;
   timezoneFormat: TimezoneFormatType;
@@ -20,17 +21,12 @@ export default function TimezoneRow({
   timezone,
   addToSelectedTimezones,
   setSelectTimezoneIndex,
-  timezoneFormat,
 }: Props) {
+  timezone.timeDials = getTimeDials(timezone.clock, timezone.offset);
+  timezone.diffHoursFromHome = getDifferenceHoursFromHome(timezone.name);
   // country is usually undefined
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
-
-  const { clock, dayOfWeek, month, dayOfMonth } = useMemo(
-    () => formatTimezone(timezone.now, timezoneFormat),
-    [timezone]
-  );
-
-  const isPositiveDiffHour = typeof timezone.diffHoursFromHome === "string";
+  const { dayOfWeek, clock, monthAndDay } = timezone;
 
   return (
     <div
@@ -45,7 +41,7 @@ export default function TimezoneRow({
           <div className="flex items-center gap-2">
             <span
               className={cn("w-8 text-center text-xs text-red-500", {
-                "text-green-500": isPositiveDiffHour,
+                "text-green-500": true,
               })}
             >
               {timezone.diffHoursFromHome}
@@ -65,7 +61,7 @@ export default function TimezoneRow({
           <div className="text-right">
             <Time clock={clock} />
             <span className="text-xs primary_text_gray">
-              {dayOfWeek + ", " + month + " " + dayOfMonth}
+              {dayOfWeek + ", " + monthAndDay}
             </span>
           </div>
         </div>
