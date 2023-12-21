@@ -106,7 +106,7 @@ export default function TimezonesBoard() {
     <main onKeyDown={handleKeySelectTimezone} className="w-full h-full">
       <Navbar />
       <MenuBar />
-      <div className="relative w-full">
+      <div className="relative w-full mt-4">
         <Timezones timezones={selectedTimezones} />
         <SearchTimezones
           selectedTimezoneIndex={selectedTimezoneIndex}

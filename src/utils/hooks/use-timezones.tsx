@@ -15,7 +15,6 @@ export function getTimeDials(
   offset: number,
   hoursFormat: HoursFormat
 ): Array<number> {
-  // const formatStr = timezoneFormat === "h23" ? "k" : "h";
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
 
   return arrayRange(startHours, startHours + 23).map((hour) => {

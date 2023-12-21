@@ -1,19 +1,31 @@
 import { arrayRange } from "~/utils/index";
 import { format, addDays } from "date-fns";
 import { type Timezone, isDecimal } from "~/utils/hooks/use-timezones";
+import { formatInTimeZone } from "date-fns-tz";
 
 interface Props {
   timezone: Timezone;
 }
 
+function getNextDay(timezoneName: string, numberOfDays: number): Date {
+  const strFormat = "yyyy-MM-dd HH:mm";
+  return addDays(
+    new Date(formatInTimeZone(new Date(), timezoneName, strFormat)),
+    numberOfDays
+  );
+}
+
 export default function TimeDials({ timezone }: Props) {
-  const nextDay = addDays(new Date(timezone.monthAndDay), 0);
-
-  const formatStr = "eee, MMM d";
-  const [dayOfWeek, monthAndDay] = format(nextDay, formatStr).split(", ");
-
-  const startHours = parseInt(timezone.clock.split(":")[0]);
-  const hours24 = arrayRange(startHours, startHours + 23);
+  const strFormat = "eee, MMM d";
+  const [dayOfWeek, monthAndDay] = format(
+    getNextDay(timezone.name, 1),
+    strFormat
+  ).split(", ");
+  // 24 hours format for easily index the "New Day"
+  const startHours24 = parseInt(
+    formatInTimeZone(new Date(), timezone.name, "k")
+  );
+  const hours24 = arrayRange(startHours24, startHours24 + 23);
 
   function isNewDay(hourIndex: number) {
     return hours24[hourIndex] === 24 && hourIndex !== 0;

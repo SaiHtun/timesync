@@ -1,5 +1,5 @@
 import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import Time from "./time";
 import TimeDials from "./time-dials";
 import { cn } from "~/utils/cn";
@@ -20,10 +20,9 @@ export default function TimezoneRow({
   setSelectTimezoneIndex,
 }: Props) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
-  timezone.timeDials = getTimeDials(
-    timezone.clock,
-    timezone.offset,
-    hoursFormat
+  timezone.timeDials = useMemo(
+    () => getTimeDials(timezone.clock, timezone.offset, hoursFormat),
+    [hoursFormat]
   );
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(timezone.name);
   // country is usually undefined
