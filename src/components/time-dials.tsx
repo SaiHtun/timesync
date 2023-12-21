@@ -12,8 +12,8 @@ export default function TimeDials({ timezone }: Props) {
   const formatStr = "eee, MMM d";
   const [dayOfWeek, monthAndDay] = format(nextDay, formatStr).split(", ");
 
-  const start24Hours = parseInt(timezone.clock.split(":")[0]);
-  const hours24 = arrayRange(start24Hours, start24Hours + 23);
+  const startHours = parseInt(timezone.clock.split(":")[0]);
+  const hours24 = arrayRange(startHours, startHours + 23);
 
   function isNewDay(hourIndex: number) {
     return hours24[hourIndex] === 24 && hourIndex !== 0;

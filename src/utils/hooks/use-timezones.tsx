@@ -1,6 +1,7 @@
-import { SetStateAction, useState, Dispatch } from "react";
+import { SetStateAction, useState, Dispatch, useEffect } from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { arrayRange } from "..";
+import { HoursFormat } from "~/atoms/hours-format";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
@@ -9,9 +10,12 @@ export function isDecimal(hour: number) {
 // const start24Hours = parseInt(format(new Date(timezone.now), FORMAT_STR_24));
 // const hours24 = arrayRange(start24Hours, start24Hours + 23);
 
-export function getTimeDials(clock: string, offset: number): Array<number> {
+export function getTimeDials(
+  clock: string,
+  offset: number,
+  hoursFormat: HoursFormat
+): Array<number> {
   // const formatStr = timezoneFormat === "h23" ? "k" : "h";
-  let timezoneFormat = "h23";
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
 
   return arrayRange(startHours, startHours + 23).map((hour) => {
@@ -19,7 +23,7 @@ export function getTimeDials(clock: string, offset: number): Array<number> {
     if (isDecimal(offset)) {
       h += 0.5;
     }
-    return timezoneFormat === "h23"
+    return hoursFormat === "24"
       ? h % 24 || 24
       : h % 12 === 0.5
       ? 12.5
@@ -50,7 +54,6 @@ export function getDifferenceHoursFromHome(
   return diffHours >= 0 ? `+${diffHours}` : `${diffHours}`;
 }
 
-const formatStr = "eee, MMM d, y, k:mm a, zzz, zzzz";
 export interface Timezone {
   name: string;
   value: string;
@@ -69,11 +72,13 @@ function getSupportedTimezonesName(): string[] {
   return Intl.supportedValuesOf("timeZone");
 }
 
-function populateTimezones(): Timezone[] {
+function populateTimezones(hoursFormat: HoursFormat): Timezone[] {
+  const hour = hoursFormat === "24" ? "k" : "h";
+  const strFormat = `eee, MMM d, y, ${hour}:mm a, zzz, zzzz`;
   const date = new Date();
 
   return getSupportedTimezonesName().map((name) => {
-    const now = formatInTimeZone(date, name, formatStr);
+    const now = formatInTimeZone(date, name, strFormat);
     const [dayOfWeek, monthAndDay, year, clock, abbr, value] = now.split(", ");
     const offset = getTimezoneOffset(name, date) / (60 * 60 * 1_000);
 
@@ -100,60 +105,55 @@ type UseTimezonesReturnType = [
 
 export type TimezoneFormatType = "h12" | "h23";
 
-// const MILISECONDS_PER_MIN = 60_000;
+const MILISECONDS_PER_MIN = 60_000;
 
 export function useTimezones(
+  hoursFormat: HoursFormat = "24",
   defaultTimezones?: Timezone[]
 ): UseTimezonesReturnType {
   function initTimezones() {
-    return defaultTimezones || populateTimezones();
+    return defaultTimezones || populateTimezones(hoursFormat);
   }
 
   const [timezones, setTimezones] = useState(initTimezones);
 
-  // useEffect(() => {
-  //   setTimezones((preTimezones) => {
-  //     return preTimezones.map((preTz) => {
-  //       const now = currentTime(preTz.name, { hourCycle: timezoneFormat });
-  //       return {
-  //         ...preTz,
-  //         now,
-  //         timeDials: getTimeDials(now, timezoneFormat, preTz.offset),
-  //       };
-  //     });
-  //   });
-  // }, [timezoneFormat]);
+  useEffect(() => {
+    const date = new Date();
+    const hour = hoursFormat === "24" ? "k" : "h";
+    const strFormat = `${hour}:mm a`;
+    setTimezones((preTimezones) => {
+      return preTimezones.map((preTz) => {
+        const clock = formatInTimeZone(date, preTz.name, strFormat);
+        return {
+          ...preTz,
+          clock,
+        };
+      });
+    });
+  }, [hoursFormat]);
 
-  // useEffect(() => {
-  //   const requiredIntervalToBeAMinute =
-  //     MILISECONDS_PER_MIN - new Date().getSeconds() * 1_000;
-  //   const intervalId = setInterval(() => {
-  //     setTimezones((tzs) =>
-  //       tzs.map((tz) => ({
-  //         ...tz,
-  //         now: currentTime(tz.name),
-  //       }))
-  //     );
-  //   }, requiredIntervalToBeAMinute);
+  useEffect(() => {
+    const requiredIntervalToBeAMinute =
+      MILISECONDS_PER_MIN - new Date().getSeconds() * 1_000;
+    const intervalId = setInterval(() => {
+      setTimezones((tzs) =>
+        tzs.map((tz) => ({
+          ...tz,
+          clock: currentTime(tz.name, hoursFormat),
+        }))
+      );
+    }, requiredIntervalToBeAMinute);
 
-  //   return () => clearInterval(intervalId);
-  // }, [timezones]);
+    return () => clearInterval(intervalId);
+  }, [timezones]);
 
   return [timezones, setTimezones];
 }
 
-type UseTimezoneFormatReturnType = [TimezoneFormatType, () => void];
+function currentTime(timezoneName: string, hoursFormat: HoursFormat) {
+  const date = new Date();
+  const hour = hoursFormat === "24" ? "k" : "h";
+  const strFormat = `${hour}:mm a`;
 
-export function useTimezoneFormat(
-  defaultValue = "h23" as const
-): UseTimezoneFormatReturnType {
-  const [timezoneFormat, setTimezoneFormat] = useState<"h23" | "h12">(
-    defaultValue
-  );
-
-  function toggleTimezoneFormat() {
-    setTimezoneFormat((preValue) => (preValue === "h23" ? "h12" : "h23"));
-  }
-
-  return [timezoneFormat, toggleTimezoneFormat];
+  return formatInTimeZone(date, timezoneName, strFormat);
 }

@@ -22,7 +22,8 @@
     "baseUrl": "./src",
     "paths": {
       "~/components/*": ["./components/*"],
-      "~/utils/*": ["./utils/*"]
+      "~/utils/*": ["./utils/*"],
+      "~/atoms/*": ["./atoms/*"]
     }
   },
   "include": ["src", "examples/test.ts"],

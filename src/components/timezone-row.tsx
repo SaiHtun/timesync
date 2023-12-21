@@ -1,20 +1,17 @@
-import {
-  getTimeDials,
-  type Timezone,
-  type TimezoneFormatType,
-} from "~/utils/hooks/use-timezones";
+import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
 import { Dispatch, SetStateAction } from "react";
 import Time from "./time";
 import TimeDials from "./time-dials";
 import { cn } from "~/utils/cn";
 import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
+import { useAtom } from "jotai";
+import { hoursFormatAtom } from "~/atoms/hours-format";
 
 interface Props {
   timezone: Timezone;
   addToSelectedTimezones?: (timezone: Timezone) => void;
   setSelectTimezoneIndex?: Dispatch<SetStateAction<number>>;
   currentTimezoneIndex?: string;
-  timezoneFormat: TimezoneFormatType;
 }
 
 export default function TimezoneRow({
@@ -22,7 +19,12 @@ export default function TimezoneRow({
   addToSelectedTimezones,
   setSelectTimezoneIndex,
 }: Props) {
-  timezone.timeDials = getTimeDials(timezone.clock, timezone.offset);
+  const [hoursFormat] = useAtom(hoursFormatAtom);
+  timezone.timeDials = getTimeDials(
+    timezone.clock,
+    timezone.offset,
+    hoursFormat
+  );
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(timezone.name);
   // country is usually undefined
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");

@@ -1,10 +1,9 @@
 import { cn } from "~/utils/cn";
-import type { Timezone, TimezoneFormatType } from "~/utils/hooks/use-timezones";
+import type { Timezone } from "~/utils/hooks/use-timezones";
 import Time from "./time";
 
 interface Props {
   timezone: Timezone;
-  timezoneFormat: TimezoneFormatType;
   addToSelectedTimezones: (timezone: Timezone) => void;
   isSelected: boolean;
   setSelectedTimezoneIndex: (index: number) => void;
