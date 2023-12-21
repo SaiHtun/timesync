@@ -26,28 +26,29 @@ export default function TimeDials({ timezone }: Props) {
   const startHours24 = parseInt(
     formatInTimeZone(new Date(), timezone.name, "k")
   );
+
   const hours24 = arrayRange(startHours24, startHours24 + 23);
 
   function isNewDay(hourIndex: number) {
     return hours24[hourIndex] === 24 && hourIndex !== 0;
   }
 
+  function NewDay() {
+    const [month, day] = monthAndDay.split(" ");
+    return (
+      <div className="text-xs">
+        <p className="flex flex-col ">
+          <span>{month}</span>
+          <span>{day}</span>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <main>
-      <div className="h-auto w-[760px]  primary_border flex items-center text-center text-sm rounded-md">
+      <div className="h-[42px] w-[760px]  primary_border flex items-center text-center text-sm rounded-md">
         {timezone.timeDials?.map((hour, index) => {
-          function NewDay() {
-            const [month, day] = monthAndDay.split(" ");
-            return (
-              <div className="text-xs">
-                <p className="flex flex-col ">
-                  <span>{month}</span>
-                  <span>{day}</span>
-                </p>
-              </div>
-            );
-          }
-
           return (
             <div
               key={index}

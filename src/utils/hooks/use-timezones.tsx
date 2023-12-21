@@ -7,9 +7,6 @@ export function isDecimal(hour: number) {
   return hour % 1 !== 0;
 }
 
-// const start24Hours = parseInt(format(new Date(timezone.now), FORMAT_STR_24));
-// const hours24 = arrayRange(start24Hours, start24Hours + 23);
-
 export function getTimeDials(
   clock: string,
   offset: number,
@@ -22,8 +19,11 @@ export function getTimeDials(
     if (isDecimal(offset)) {
       h += 0.5;
     }
+    // handling 24/12 hours and edge cases coz some countries like Myanmar is off by -30mins
     return hoursFormat === "24"
-      ? h % 24 || 24
+      ? h % 24 === 0.5
+        ? 24.5
+        : h % 24 || 24
       : h % 12 === 0.5
       ? 12.5
       : h % 12 || 12;
