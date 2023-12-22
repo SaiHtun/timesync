@@ -1,10 +1,11 @@
 import { cn } from "~/utils/cn";
 import type { Timezone } from "~/utils/hooks/use-timezones";
 import Time from "./time";
+import { useAtom } from "jotai";
+import { addSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 
 interface Props {
   timezone: Timezone;
-  addToSelectedTimezones: (timezone: Timezone) => void;
   isSelected: boolean;
   setSelectedTimezoneIndex: (index: number) => void;
   rowIndex: number;
@@ -12,11 +13,12 @@ interface Props {
 
 export default function SearchedTimezoneRow({
   timezone,
-  addToSelectedTimezones,
   isSelected,
   setSelectedTimezoneIndex,
   rowIndex,
 }: Props) {
+  const [, addSelectedTimezones] = useAtom(addSelectedTimezonesAtom);
+
   return (
     <button
       type="button"
@@ -26,7 +28,7 @@ export default function SearchedTimezoneRow({
           "!bg-zinc-100 dark:!bg-zinc-700": isSelected,
         }
       )}
-      onClick={() => addToSelectedTimezones(timezone)}
+      onClick={() => addSelectedTimezones(timezone)}
       onMouseOver={() => setSelectedTimezoneIndex(rowIndex)}
     >
       <p className="flex items-center gap-1">

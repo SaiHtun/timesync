@@ -13,6 +13,7 @@ export default function MenuBar() {
       <div className="h-12 grid grid-cols-[1fr_300px] gap-2">
         <div className="primary_bg primary_border rounded-md px-2 flex items-center ">
           <button
+            id="hoursFormat-btn"
             type="button"
             className="p-2 text-xs space-x-1 primary_border rounded-md transition-all"
             onClick={toggleHoursFormat}

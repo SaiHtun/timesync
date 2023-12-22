@@ -1,12 +1,12 @@
 import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import Time from "./time";
-import TimeDials from "./time-dials";
+import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
 import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
-import AbbrBadge from "./abbr-badge";
+import AbbrBadge from "./AbbrBadge";
 
 interface Props {
   timezone: Timezone;

@@ -1,7 +1,9 @@
 import { SetStateAction, useState, Dispatch, useEffect } from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { arrayRange } from "~/utils/index";
-import type { HoursFormat } from "~/atoms/hours-format";
+import { hoursFormatAtom, type HoursFormat } from "~/atoms/hours-format";
+import { useAtom } from "jotai";
+import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
@@ -70,7 +72,7 @@ function getSupportedTimezonesName(): string[] {
   return Intl.supportedValuesOf("timeZone");
 }
 
-function populateTimezones(hoursFormat: HoursFormat): Timezone[] {
+function populateTimezones(hoursFormat: HoursFormat = "24"): Timezone[] {
   const hour = hoursFormat === "24" ? "k" : "h";
   const strFormat = `eee, MMM d, y, ${hour}:mm a, zzz, zzzz`;
   const date = new Date();
@@ -92,6 +94,15 @@ function populateTimezones(hoursFormat: HoursFormat): Timezone[] {
       timeDials: [],
     };
   });
+}
+
+export function getTimezonesMap() {
+  const map = new Map();
+  const timezones = populateTimezones();
+
+  timezones.forEach((timezone) => map.set(timezone.name, timezone));
+
+  return map;
 }
 
 type UseTimezonesReturnType = [
@@ -146,4 +157,39 @@ function currentTime(timezoneName: string, hoursFormat: HoursFormat) {
   const strFormat = `${hour}:mm a`;
 
   return formatInTimeZone(date, timezoneName, strFormat);
+}
+
+export function useSelectedTimezones(): Timezone[] {
+  const [hoursFormat] = useAtom(hoursFormatAtom);
+  const [selectedTimezones, setSelectedTimezones] = useAtom(
+    selectedTimezonesAtom
+  );
+
+  useEffect(() => {
+    setSelectedTimezones((preTimezones) => {
+      return preTimezones.map((preTz) => {
+        return {
+          ...preTz,
+          clock: currentTime(preTz.name, hoursFormat),
+        };
+      });
+    });
+  }, [hoursFormat]);
+
+  useEffect(() => {
+    const requiredIntervalToBeAMinute =
+      MILISECONDS_PER_MIN - new Date().getSeconds() * 1_000;
+    const intervalId = setInterval(() => {
+      setSelectedTimezones((tzs) =>
+        tzs.map((tz) => ({
+          ...tz,
+          clock: currentTime(tz.name, hoursFormat),
+        }))
+      );
+    }, requiredIntervalToBeAMinute);
+
+    return () => clearInterval(intervalId);
+  }, [selectedTimezones]);
+
+  return selectedTimezones;
 }
