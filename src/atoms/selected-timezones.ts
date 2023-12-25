@@ -6,11 +6,14 @@ import {
 } from "~/utils/hooks/use-timezones";
 import { searchTimezoneAtom } from "~/atoms/search-timezone";
 
-const timezonesMap = Object.freeze(getTimezonesMap());
+let timezonesMap = new Map();
 
 function createSelectedTimezones(
   timezoneName: string
 ): PrimitiveAtom<Timezone[]> {
+  if (timezonesMap.size === 0) {
+    timezonesMap = getTimezonesMap();
+  }
   const timezone = timezonesMap.get(timezoneName);
   return atom<Timezone[]>([timezone]);
 }

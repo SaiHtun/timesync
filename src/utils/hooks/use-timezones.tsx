@@ -1,9 +1,21 @@
-import { SetStateAction, useState, Dispatch, useEffect } from "react";
+import {
+  SetStateAction,
+  useState,
+  Dispatch,
+  useEffect,
+  useDeferredValue,
+  useMemo,
+} from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { arrayRange } from "~/utils/index";
 import { hoursFormatAtom, type HoursFormat } from "~/atoms/hours-format";
 import { useAtom } from "jotai";
-import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
+import {
+  addSelectedTimezonesAtom,
+  selectedTimezonesAtom,
+} from "~/atoms/selected-timezones";
+import Fuse from "fuse.js";
+import { searchTimezoneAtom } from "~/atoms/search-timezone";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
@@ -105,51 +117,7 @@ export function getTimezonesMap() {
   return map;
 }
 
-type UseTimezonesReturnType = [
-  Timezone[],
-  Dispatch<SetStateAction<Timezone[]>>
-];
-
 const MILISECONDS_PER_MIN = 60_000;
-
-export function useTimezones(
-  hoursFormat: HoursFormat = "24",
-  defaultTimezones?: Timezone[]
-): UseTimezonesReturnType {
-  function initTimezones() {
-    return defaultTimezones || populateTimezones(hoursFormat);
-  }
-
-  const [timezones, setTimezones] = useState(initTimezones);
-
-  useEffect(() => {
-    setTimezones((preTimezones) => {
-      return preTimezones.map((preTz) => {
-        return {
-          ...preTz,
-          clock: currentTime(preTz.name, hoursFormat),
-        };
-      });
-    });
-  }, [hoursFormat]);
-
-  useEffect(() => {
-    const requiredIntervalToBeAMinute =
-      MILISECONDS_PER_MIN - new Date().getSeconds() * 1_000;
-    const intervalId = setInterval(() => {
-      setTimezones((tzs) =>
-        tzs.map((tz) => ({
-          ...tz,
-          clock: currentTime(tz.name, hoursFormat),
-        }))
-      );
-    }, requiredIntervalToBeAMinute);
-
-    return () => clearInterval(intervalId);
-  }, [timezones]);
-
-  return [timezones, setTimezones];
-}
 
 function currentTime(timezoneName: string, hoursFormat: HoursFormat) {
   const date = new Date();
@@ -159,14 +127,19 @@ function currentTime(timezoneName: string, hoursFormat: HoursFormat) {
   return formatInTimeZone(date, timezoneName, strFormat);
 }
 
-export function useSelectedTimezones(): Timezone[] {
-  const [hoursFormat] = useAtom(hoursFormatAtom);
-  const [selectedTimezones, setSelectedTimezones] = useAtom(
-    selectedTimezonesAtom
-  );
+type UpdateTimezoneDependencies = {
+  hoursFormat: HoursFormat;
+};
+
+function useUpdateTimezonesClock(
+  timezones: Timezone[],
+  setTimezonesClock: Dispatch<SetStateAction<Timezone[]>>,
+  dependencies: UpdateTimezoneDependencies
+): void {
+  const { hoursFormat } = dependencies;
 
   useEffect(() => {
-    setSelectedTimezones((preTimezones) => {
+    setTimezonesClock((preTimezones) => {
       return preTimezones.map((preTz) => {
         return {
           ...preTz,
@@ -180,7 +153,7 @@ export function useSelectedTimezones(): Timezone[] {
     const requiredIntervalToBeAMinute =
       MILISECONDS_PER_MIN - new Date().getSeconds() * 1_000;
     const intervalId = setInterval(() => {
-      setSelectedTimezones((tzs) =>
+      setTimezonesClock((tzs) =>
         tzs.map((tz) => ({
           ...tz,
           clock: currentTime(tz.name, hoursFormat),
@@ -189,7 +162,46 @@ export function useSelectedTimezones(): Timezone[] {
     }, requiredIntervalToBeAMinute);
 
     return () => clearInterval(intervalId);
-  }, [selectedTimezones]);
+  }, [timezones]);
+}
+
+export function useSelectedTimezones(): Timezone[] {
+  const [hoursFormat] = useAtom(hoursFormatAtom);
+  const [selectedTimezones, setSelectedTimezones] = useAtom(
+    selectedTimezonesAtom
+  );
+
+  useUpdateTimezonesClock(selectedTimezones, setSelectedTimezones, {
+    hoursFormat,
+  });
 
   return selectedTimezones;
+}
+
+export function useSearchedTimezones(): Timezone[] {
+  const [hoursFormat] = useAtom(hoursFormatAtom);
+  const timezones = useMemo(() => populateTimezones(), []);
+  const [searchTimezone, setSearchTimezone] = useAtom(searchTimezoneAtom);
+  const [, addSelectedTimezones] = useAtom(addSelectedTimezonesAtom);
+
+  let deferredSearch = useDeferredValue(searchTimezone);
+  // const [selectedTimezoneIndex, setSelectedTimezoneIndex] = useState(0);
+  const [filteredTimezones, setFilteredTimezones] = useState<Timezone[]>([]);
+
+  useEffect(() => {
+    const fusedTimezones = new Fuse(timezones, {
+      keys: ["name", "abbr"],
+    })
+      .search(deferredSearch)
+      .map((tz) => tz.item)
+      .slice(0, 10);
+
+    setFilteredTimezones(fusedTimezones);
+  }, [deferredSearch]);
+
+  useUpdateTimezonesClock(filteredTimezones, setFilteredTimezones, {
+    hoursFormat,
+  });
+
+  return filteredTimezones;
 }
