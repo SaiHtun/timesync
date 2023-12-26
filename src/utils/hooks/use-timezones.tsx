@@ -109,9 +109,22 @@ function populateTimezones(hoursFormat: HoursFormat = "24"): Timezone[] {
 }
 
 export function getTimezonesMap() {
-  const map = new Map();
+  const defaultTimezone: Timezone = {
+    name: "America/Los_Angeles",
+    abbr: "HW",
+    clock: "00:00 AM",
+    dayOfWeek: "lol",
+    diffHoursFromHome: "0",
+    monthAndDay: "lol",
+    offset: 0,
+    timeDials: [],
+    value: "lol",
+    year: "1992",
+  };
+  const map = new Map<string | "defaultTimezone", Timezone>();
   const timezones = populateTimezones();
 
+  map.set("defaultTimezone", defaultTimezone);
   timezones.forEach((timezone) => map.set(timezone.name, timezone));
 
   return map;

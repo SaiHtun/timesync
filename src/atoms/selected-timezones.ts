@@ -1,25 +1,33 @@
-import { PrimitiveAtom, atom } from "jotai";
-import {
-  Timezone,
-  getCurrentUserTimezoneName,
-  getTimezonesMap,
-} from "~/utils/hooks/use-timezones";
+import { atom } from "jotai";
+import { Timezone, getTimezonesMap } from "~/utils/hooks/use-timezones";
 import { searchTimezoneAtom } from "~/atoms/search-timezone";
 
-let timezonesMap = new Map();
-
-function createSelectedTimezones(
-  timezoneName: string
-): PrimitiveAtom<Timezone[]> {
-  if (timezonesMap.size === 0) {
-    timezonesMap = getTimezonesMap();
-  }
-  const timezone = timezonesMap.get(timezoneName);
-  return atom<Timezone[]>([timezone]);
+let timezonesMap = new Map<string, Timezone>();
+if (timezonesMap.size === 0) {
+  timezonesMap = getTimezonesMap();
 }
 
-export const selectedTimezonesAtom = createSelectedTimezones(
-  getCurrentUserTimezoneName()
+export const selectedTimezonesAtom = atom<Timezone[]>([]);
+
+export const syncUrlToSelectedTimezonesAtom = atom(
+  null,
+  (get, set, timezonesName: string[]) => {
+    set(selectedTimezonesAtom, (preTzs) => {
+      const timezones = timezonesName
+        .filter(
+          (tn) =>
+            !get(selectedTimezonesAtom).find(
+              (selectedTimezone) => selectedTimezone.name === tn
+            )
+        )
+        .map(
+          (timezoneName) =>
+            timezonesMap.get(timezoneName) ||
+            timezonesMap.get("defaultTimezone")!
+        );
+      return preTzs.concat(timezones);
+    });
+  }
 );
 
 export const addSelectedTimezonesAtom = atom(

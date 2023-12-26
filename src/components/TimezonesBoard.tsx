@@ -5,13 +5,13 @@ import MenuBar from "./MenuBar";
 
 export default function TimezonesBoard() {
   return (
-    <main className="w-full h-full">
+    <>
       <Navbar />
       <MenuBar />
-      <div className="relative w-full mt-4">
+      <main className="relative w-full mt-4">
         <SelectedTimezones />
         <SearchdTimezones />
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
