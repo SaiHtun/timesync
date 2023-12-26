@@ -13,7 +13,7 @@ function App() {
 
   useEffect(() => {
     z && syncUrlToSelectedTimezones(z);
-  }, [z]);
+  }, [z, syncUrlToSelectedTimezones]);
 
   return (
     <div className="h-screen w-screen dark:bg-zinc-900 dark:text-gray-100 py-20 overflow-scroll">

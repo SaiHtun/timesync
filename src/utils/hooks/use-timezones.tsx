@@ -5,15 +5,13 @@ import {
   useEffect,
   useDeferredValue,
   useMemo,
+  useCallback,
 } from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { arrayRange } from "~/utils/index";
 import { hoursFormatAtom, type HoursFormat } from "~/atoms/hours-format";
 import { useAtom } from "jotai";
-import {
-  addSelectedTimezonesAtom,
-  selectedTimezonesAtom,
-} from "~/atoms/selected-timezones";
+import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import Fuse from "fuse.js";
 import { searchTimezoneAtom } from "~/atoms/search-timezone";
 
@@ -59,8 +57,8 @@ export function getDifferenceHoursFromHome(
     timeZone: otherTimezoneName,
   });
 
-  const parsedHome = new Date(homeTimezone) as any;
-  const parsedOther = new Date(otherTimezone) as any;
+  const parsedHome = new Date(homeTimezone) as unknown as number;
+  const parsedOther = new Date(otherTimezone) as unknown as number;
 
   const diffHours = (parsedOther - parsedHome) / (60 * 60 * 1000);
 
@@ -150,9 +148,12 @@ function useUpdateTimezonesClock(
   dependencies: UpdateTimezoneDependencies
 ): void {
   const { hoursFormat } = dependencies;
+  const setTimezonesClockCb = useCallback(setTimezonesClock, [
+    setTimezonesClock,
+  ]);
 
   useEffect(() => {
-    setTimezonesClock((preTimezones) => {
+    setTimezonesClockCb((preTimezones) => {
       return preTimezones.map((preTz) => {
         return {
           ...preTz,
@@ -160,13 +161,13 @@ function useUpdateTimezonesClock(
         };
       });
     });
-  }, [hoursFormat]);
+  }, [hoursFormat, setTimezonesClockCb]);
 
   useEffect(() => {
     const requiredIntervalToBeAMinute =
       MILISECONDS_PER_MIN - new Date().getSeconds() * 1_000;
     const intervalId = setInterval(() => {
-      setTimezonesClock((tzs) =>
+      setTimezonesClockCb((tzs) =>
         tzs.map((tz) => ({
           ...tz,
           clock: currentTime(tz.name, hoursFormat),
@@ -175,7 +176,7 @@ function useUpdateTimezonesClock(
     }, requiredIntervalToBeAMinute);
 
     return () => clearInterval(intervalId);
-  }, [timezones]);
+  }, [timezones, setTimezonesClockCb, hoursFormat]);
 }
 
 export function useSelectedTimezones(): Timezone[] {
@@ -194,11 +195,9 @@ export function useSelectedTimezones(): Timezone[] {
 export function useSearchedTimezones(): Timezone[] {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const timezones = useMemo(() => populateTimezones(), []);
-  const [searchTimezone, setSearchTimezone] = useAtom(searchTimezoneAtom);
-  const [, addSelectedTimezones] = useAtom(addSelectedTimezonesAtom);
+  const [searchTimezone] = useAtom(searchTimezoneAtom);
 
-  let deferredSearch = useDeferredValue(searchTimezone);
-  // const [selectedTimezoneIndex, setSelectedTimezoneIndex] = useState(0);
+  const deferredSearch = useDeferredValue(searchTimezone);
   const [filteredTimezones, setFilteredTimezones] = useState<Timezone[]>([]);
 
   useEffect(() => {
@@ -210,7 +209,7 @@ export function useSearchedTimezones(): Timezone[] {
       .slice(0, 10);
 
     setFilteredTimezones(fusedTimezones);
-  }, [deferredSearch]);
+  }, [deferredSearch, timezones]);
 
   useUpdateTimezonesClock(filteredTimezones, setFilteredTimezones, {
     hoursFormat,

@@ -23,7 +23,7 @@ export default function TimezoneRow({
   const [hoursFormat] = useAtom(hoursFormatAtom);
   timezone.timeDials = useMemo(
     () => getTimeDials(timezone.clock, timezone.offset, hoursFormat),
-    [timezone]
+    [timezone, hoursFormat]
   );
 
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(timezone.name);
