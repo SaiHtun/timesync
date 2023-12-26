@@ -1,8 +1,8 @@
 interface Props {
-  clock: string;
+  clock?: string;
 }
 
-export default function Time({ clock = "00:00 AM" }: Props) {
+export default function Clock({ clock = "00:00 AM" }: Props) {
   const [hoursMins, amORpm] = clock.split(" ");
   const [hour, min] = hoursMins.split(":");
 

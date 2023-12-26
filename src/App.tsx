@@ -4,6 +4,7 @@ import { syncUrlToSelectedTimezonesAtom } from "./atoms/selected-timezones";
 import { useEffect } from "react";
 import { getCurrentUserTimezoneName } from "./utils/hooks/use-timezones";
 import { useParams } from "~/utils/hooks/use-params";
+
 function App() {
   const z = useParams<string[]>("timezones", [getCurrentUserTimezoneName()]);
 

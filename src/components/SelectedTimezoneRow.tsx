@@ -1,6 +1,6 @@
-import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
 import { Dispatch, SetStateAction, useMemo } from "react";
-import Time from "~/components/Time";
+import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
+import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
 import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
@@ -23,7 +23,7 @@ export default function TimezoneRow({
   const [hoursFormat] = useAtom(hoursFormatAtom);
   timezone.timeDials = useMemo(
     () => getTimeDials(timezone.clock, timezone.offset, hoursFormat),
-    [timezone, hoursFormat]
+    [timezone]
   );
 
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(timezone.name);
@@ -60,7 +60,7 @@ export default function TimezoneRow({
             </div>
           </div>
           <div className="text-right">
-            <Time clock={clock} />
+            <Clock clock={clock} />
             <span className="text-xs primary_text_gray">
               {dayOfWeek + ", " + monthAndDay}
             </span>

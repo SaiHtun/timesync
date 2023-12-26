@@ -1,6 +1,6 @@
 import { cn } from "~/utils/cn";
 import type { Timezone } from "~/utils/hooks/use-timezones";
-import Time from "~/components/Time";
+import Clock from "~/components/Clock";
 import { useAtom } from "jotai";
 import { addSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { useSearchParams, SetURLSearchParams } from "react-router-dom";
@@ -49,7 +49,7 @@ export default function SearchedTimezoneRow({ timezone }: Props) {
         <span>{timezone.name}</span>
         <span className="text-xs primary_text_gray">{timezone.abbr}</span>
       </p>
-      <Time clock={timezone.clock} />
+      <Clock clock={timezone.clock} />
     </button>
   );
 }
