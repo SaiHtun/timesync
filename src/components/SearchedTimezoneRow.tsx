@@ -1,6 +1,6 @@
 import { cn } from "~/utils/cn";
 import type { Timezone } from "~/utils/hooks/use-timezones";
-import Time from "./Time";
+import Time from "~/components/Time";
 import { useAtom } from "jotai";
 import { addSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { useSearchParams, SetURLSearchParams } from "react-router-dom";

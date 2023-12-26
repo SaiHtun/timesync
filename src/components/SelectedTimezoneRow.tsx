@@ -1,6 +1,6 @@
 import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
 import { Dispatch, SetStateAction, useMemo } from "react";
-import Time from "./Time";
+import Time from "~/components/Time";
 import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
 import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
