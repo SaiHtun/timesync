@@ -1,12 +1,14 @@
 import { useAtom } from "jotai";
 import { hoursFormatAtom, toggleHoursFormatAtom } from "~/atoms/hours-format";
-import { searchTimezoneAtom } from "~/atoms/search-timezone";
+import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 import { cn } from "~/utils/cn";
 
 export default function MenuBar() {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [, toggleHoursFormat] = useAtom(toggleHoursFormatAtom);
-  const [searchTimezone, setSearchTimezone] = useAtom(searchTimezoneAtom);
+  const [searchTimezoneName, setSearchTimezone] = useAtom(
+    searchTimezoneNameAtom
+  );
 
   return (
     <div className="mt-12 flex flex-col gap-4">
@@ -37,7 +39,7 @@ export default function MenuBar() {
         </div>
         <input
           type="text"
-          value={searchTimezone}
+          value={searchTimezoneName}
           name="search"
           onChange={(e) => setSearchTimezone(e.target.value)}
           placeholder="Place or Timezone  🔍"

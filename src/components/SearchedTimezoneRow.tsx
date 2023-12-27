@@ -31,7 +31,7 @@ export default function SearchedTimezoneRow({ timezone }: Props) {
   const [, addSelectedTimezones] = useAtom(addSelectedTimezonesAtom);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  function add(timezone: Timezone) {
+  function handleAddTimezones(timezone: Timezone) {
     addSelectedTimezones(timezone);
     appendTimezoneNameToUrl(timezone.name, [searchParams, setSearchParams]);
   }
@@ -40,9 +40,9 @@ export default function SearchedTimezoneRow({ timezone }: Props) {
     <button
       type="button"
       className={cn(
-        "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md "
+        "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md hover:bg-zinc-100 dark:hover:bg-zinc-700 "
       )}
-      onClick={() => add(timezone)}
+      onClick={() => handleAddTimezones(timezone)}
       // onMouseOver={() => setSelectedTimezoneIndex(rowIndex)}
     >
       <p className="flex items-center gap-1">

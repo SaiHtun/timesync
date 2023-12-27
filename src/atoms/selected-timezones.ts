@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { Timezone, getTimezonesMap } from "~/utils/hooks/use-timezones";
-import { searchTimezoneAtom } from "~/atoms/search-timezone";
+import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 
 let timezonesMap = new Map<string, Timezone>();
 if (timezonesMap.size === 0) {
@@ -42,7 +42,7 @@ export const addSelectedTimezonesAtom = atom(
         prevTimezones.concat(timezone)
       );
 
-      set(searchTimezoneAtom, "");
+      set(searchTimezoneNameAtom, "");
     }
   }
 );

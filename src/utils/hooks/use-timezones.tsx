@@ -1,6 +1,5 @@
 import {
   SetStateAction,
-  useState,
   Dispatch,
   useEffect,
   useDeferredValue,
@@ -13,7 +12,8 @@ import { hoursFormatAtom, type HoursFormat } from "~/atoms/hours-format";
 import { useAtom } from "jotai";
 import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import Fuse from "fuse.js";
-import { searchTimezoneAtom } from "~/atoms/search-timezone";
+import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
+import { searchedTimezonesAtom } from "~/atoms/searched-timezones";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
@@ -195,10 +195,12 @@ export function useSelectedTimezones(): Timezone[] {
 export function useSearchedTimezones(): Timezone[] {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const timezones = useMemo(() => populateTimezones(), []);
-  const [searchTimezone] = useAtom(searchTimezoneAtom);
+  const [searchTimezoneName] = useAtom(searchTimezoneNameAtom);
 
-  const deferredSearch = useDeferredValue(searchTimezone);
-  const [filteredTimezones, setFilteredTimezones] = useState<Timezone[]>([]);
+  const deferredSearch = useDeferredValue(searchTimezoneName);
+  const [filteredTimezones, setFilteredTimezones] = useAtom(
+    searchedTimezonesAtom
+  );
 
   useEffect(() => {
     const fusedTimezones = new Fuse(timezones, {
