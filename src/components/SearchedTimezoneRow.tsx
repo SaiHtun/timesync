@@ -5,15 +5,24 @@ import { useAtom } from "jotai";
 import { addSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { useSearchParams } from "react-router-dom";
 import { appendTimezoneNameToUrl } from "~/utils/hooks/use-params";
+import { searchedTimezoneIndexAtom } from "~/atoms/searched-timezone-index";
 
 interface Props {
   timezone: Timezone;
-  isSelected: boolean;
+  currentTimezoneIndex: number;
 }
 
-export default function SearchedTimezoneRow({ timezone, isSelected }: Props) {
+export default function SearchedTimezoneRow({
+  timezone,
+  currentTimezoneIndex,
+}: Props) {
   const [, addSelectedTimezones] = useAtom(addSelectedTimezonesAtom);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTimezoneIndex, setSearchedTimezoneIndex] = useAtom(
+    searchedTimezoneIndexAtom
+  );
+
+  const isSelected = searchTimezoneIndex === currentTimezoneIndex;
 
   function handleAddTimezones(timezone: Timezone) {
     addSelectedTimezones(timezone);
@@ -24,10 +33,11 @@ export default function SearchedTimezoneRow({ timezone, isSelected }: Props) {
     <button
       type="button"
       className={cn(
-        "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md hover:bg-zinc-100 dark:hover:bg-zinc-700 ",
+        "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md",
         { "!bg-zinc-100 dark:!bg-zinc-700": isSelected }
       )}
       onClick={() => handleAddTimezones(timezone)}
+      onMouseMove={() => setSearchedTimezoneIndex(currentTimezoneIndex)}
     >
       <p className="flex items-center gap-1">
         <span>{timezone.name}</span>

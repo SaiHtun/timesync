@@ -21,7 +21,13 @@ function App() {
   }, [timezonesName, syncUrlToSelectedTimezones]);
 
   function dismissSearchedTimezonesOnOuterClick(e: MouseEvent) {
-    if (!(e.target as HTMLElement).closest("#searched-timezones")) {
+    const hoursFormatBtn = (e.target as HTMLElement).closest(
+      "#hoursFormat-btn"
+    );
+    const searchedTimezonesModel = (e.target as HTMLElement).closest(
+      "#searched-timezones"
+    );
+    if (!searchedTimezonesModel && !hoursFormatBtn) {
       setSearchTimezoneName("");
     }
   }
