@@ -20,7 +20,7 @@ export function jsonParser<T>(value: string): JsonParserReturnType<T> {
     const parsedJson = JSON.parse(value) as T;
     return { err: null, data: parsedJson };
   } catch (e) {
-    let errorMessage = "";
+    let errorMessage = `Error parsing the input value: ${value}`;
     if (e instanceof Error) {
       errorMessage = `Error parsing JSON: ${e.message}`;
       console.error(errorMessage);

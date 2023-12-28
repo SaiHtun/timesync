@@ -7,6 +7,7 @@ import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
 import AbbrBadge from "./AbbrBadge";
+import { homeSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 
 interface Props {
   timezone: Timezone;
@@ -14,12 +15,16 @@ interface Props {
 
 export default memo(function SelectedTimezoneRow({ timezone }: Props) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
+  const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
   timezone.timeDials = useMemo(
     () => getTimeDials(timezone, hoursFormat),
     [timezone]
   );
 
-  timezone.diffHoursFromHome = getDifferenceHoursFromHome(timezone.name);
+  timezone.diffHoursFromHome = getDifferenceHoursFromHome(
+    timezone.name,
+    homeSelectedTimezone.name
+  );
   // country is usually undefined
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
   const { dayOfWeek, clock, monthAndDay } = timezone;

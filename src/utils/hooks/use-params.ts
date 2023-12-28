@@ -1,28 +1,49 @@
 import { SetURLSearchParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { jsonParser } from "../index";
+import { getCurrentUserTimezoneName } from "./use-timezones";
 
-export function useParams<T>(key: string, value: T): T | undefined {
+function arrangeHomeFirstParams(timezonesName: string[]) {
+  const currentTimezoneName = getCurrentUserTimezoneName();
+  const firstTimezoneName = timezonesName[0];
+
+  if (currentTimezoneName === firstTimezoneName) return timezonesName;
+
+  const homeIndex = timezonesName.indexOf(currentTimezoneName);
+  [timezonesName[0], timezonesName[homeIndex]] = [
+    timezonesName[homeIndex],
+    firstTimezoneName,
+  ];
+
+  return timezonesName;
+}
+
+export function useTimezonesParams(
+  key: string,
+  timezonesName: string[]
+): string[] {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [data, setData] = useState<T | undefined>();
+  const [data, setData] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!searchParams.get(key)) {
-      setSearchParams((pre) => {
-        pre.append(key, JSON.stringify(value));
-        return pre;
-      });
-    }
-    const { err, data } = jsonParser<T>(searchParams.get(key)!);
-    if (err !== null) {
-      setSearchParams((pre) => {
-        pre.set(key, JSON.stringify(value));
-        return pre;
-      });
+    const paramsValue = searchParams.get(key);
+
+    let updatedParams: Record<string, string> = {};
+    if (!paramsValue) {
+      updatedParams = { [key]: JSON.stringify(timezonesName) };
     } else {
-      setData(data);
+      const { err, data } = jsonParser<string[]>(paramsValue);
+      if (err === null) {
+        // uncomment this to test if caculation of "diffHoursFromHome" works.
+        // updatedParams = { [key]: JSON.stringify(data) };
+        updatedParams = {
+          [key]: JSON.stringify(arrangeHomeFirstParams(data)),
+        };
+        setData(data);
+      }
     }
-  }, []);
+    setSearchParams(updatedParams);
+  }, [searchParams]);
 
   return data;
 }
@@ -42,3 +63,7 @@ export function appendTimezoneNameToUrl(
     }
   }
 }
+
+// check if "arrangeHomePramsFirst" and "diffHoursFromHome" works!
+// [check_one] http://localhost:5173/?timezones=%5B%22Asia%2FShanghai%22%2C%22America%2FLos_Angeles%22%5D
+// [check_two] http://localhost:5173/?timezones=%5B%22Asia%2FRangoon%22%2C%22Asia%2FShanghai%22%2C%22America%2FDenver%22%2C%22America%2FNew_York%22%2C%22America%2FLos_Angeles%22%5D

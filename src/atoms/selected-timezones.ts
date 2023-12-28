@@ -31,6 +31,11 @@ export const syncUrlToSelectedTimezonesAtom = atom(
   }
 );
 
+// the first timezone will always be HOME, and "diffHoursFromHome" will be re-caculated base on HOME
+export const homeSelectedTimezonesAtom = atom(
+  (get) => get(selectedTimezonesAtom)[0]
+);
+
 export const addSelectedTimezonesAtom = atom(
   null,
   (get, set, timezone: Timezone) => {

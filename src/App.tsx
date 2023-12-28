@@ -3,12 +3,12 @@ import { useAtom } from "jotai";
 import { syncUrlToSelectedTimezonesAtom } from "./atoms/selected-timezones";
 import { useEffect } from "react";
 import { getCurrentUserTimezoneName } from "./utils/hooks/use-timezones";
-import { useParams } from "~/utils/hooks/use-params";
+import { useTimezonesParams } from "~/utils/hooks/use-params";
 import { useEventListener } from "./utils/hooks/use-event-listener";
 import { searchTimezoneNameAtom } from "./atoms/search-timezone-name";
 
 function App() {
-  const timezonesName = useParams<string[]>("timezones", [
+  const timezonesName = useTimezonesParams("timezones", [
     getCurrentUserTimezoneName(),
   ]);
   const [, setSearchTimezoneName] = useAtom(searchTimezoneNameAtom);
