@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { arrayRange } from "~/utils/index";
 import { format, addDays } from "date-fns";
 import { type Timezone, isDecimal } from "~/utils/hooks/use-timezones";
@@ -8,20 +9,17 @@ interface Props {
   timezone: Timezone;
 }
 
-function getNextDay(timezoneName: string, numberOfDays: number): Date {
-  const strFormat = "yyyy-MM-dd HH:mm";
-  return addDays(
-    new Date(formatInTimeZone(new Date(), timezoneName, strFormat)),
+function getNextDay(timezoneName: string, numberOfDays: number): string[] {
+  const ad = addDays(
+    new Date(formatInTimeZone(new Date(), timezoneName, "yyyy-MM-dd HH:mm")),
     numberOfDays
   );
+
+  return format(ad, "eee, MMM d").split(", ");
 }
 
-export default function TimeDials({ timezone }: Props) {
-  const strFormat = "eee, MMM d";
-  const [dayOfWeek, monthAndDay] = format(
-    getNextDay(timezone.name, 1),
-    strFormat
-  ).split(", ");
+export default memo(function TimeDials({ timezone }: Props) {
+  const [dayOfWeek, monthAndDay] = getNextDay(timezone.name, 1);
   // 24 hours format for easily index the "New Day"
   const startHours24 = parseInt(
     formatInTimeZone(new Date(), timezone.name, "k")
@@ -31,6 +29,10 @@ export default function TimeDials({ timezone }: Props) {
 
   function isNewDay(hourIndex: number) {
     return hours24[hourIndex] === 24 && hourIndex !== 0;
+  }
+
+  function isLastDay(hourIndex: number) {
+    return hours24[hourIndex] === 23;
   }
 
   function NewDay() {
@@ -47,17 +49,19 @@ export default function TimeDials({ timezone }: Props) {
 
   return (
     <main>
-      <div className="h-[42px] w-[760px]  primary_border flex items-center text-center text-sm rounded-md">
-        {timezone.timeDials?.map((hour, index) => {
+      <div className="h-[40px] w-[760px] flex items-center  text-center text-sm rounded-md">
+        {timezone.timeDials?.map(({ hour, dailyCircleBgColor }, index) => {
           return (
             <div
               key={index}
               className={cn(
-                "w-[32px] py-1 first:rounded-l-sm last:rounded-r-sm relative",
+                "w-[31.67px] h-full py-1 first:rounded-l-md last:rounded-r-md relative flex items-center justify-center",
                 {
-                  "!rounded-l-md !bg-emerald-500 box-border !text-white":
+                  "!rounded-l-md !bg-dial-newday  !text-white dark:!text-zinc-900":
                     isNewDay(index),
-                }
+                  "!rounded-r-md": isLastDay(index),
+                },
+                dailyCircleBgColor
               )}
             >
               <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
@@ -75,6 +79,8 @@ export default function TimeDials({ timezone }: Props) {
                         <span
                           className={cn({
                             "text-[11px] text-zinc-400": index === 1,
+                            "text-zinc-800 dark:text-white":
+                              dailyCircleBgColor === "bg-dial-midnight",
                           })}
                           key={index}
                         >
@@ -92,4 +98,4 @@ export default function TimeDials({ timezone }: Props) {
       </div>
     </main>
   );
-}
+});

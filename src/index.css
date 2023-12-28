@@ -20,7 +20,7 @@
   }
 
   .primary_border {
-    @apply border border-zinc-200 dark:border-zinc-700
+    @apply border border-zinc-200 dark:border-zinc-700 rounded-md
   }
 
   .primary_bg {
@@ -31,4 +31,34 @@
     @apply text-gray-400
   }
 
+}
+
+/* colors: {
+  "dial-dawn": {
+    light: "#e4e4e7",
+    dark: "#fafafa",
+  }, // 6am, 7am
+  "dial-midday": "#fafafa", // 8am -> 17pm
+  "dial-dusk": "#d4d4d8", // 18pm -> 21pm
+  "dial-midnight": "#a1a1aa", // 22pm -> 5am
+  "dial-newday": "#52525b", // 24 | 12
+}, */
+
+@layer base {
+
+  :root {
+    --color-dawn: #e4e4e7;
+    --color-midday: #fafafa;
+    --color-dusk: #d4d4d8;
+    --color-midnight: #a1a1aa;
+    --color-newday: #52525b;
+  }
+
+  :root[class~="dark"] {
+    --color-dawn: #37373e;
+    --color-midday: #27272a;
+    --color-dusk: #212123;
+    --color-midnight: #18181b;
+    --color-newday: #a1a1aa;
+  }
 }

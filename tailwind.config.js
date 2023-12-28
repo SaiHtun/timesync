@@ -4,6 +4,13 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
+      colors: {
+        "dial-dawn": "var(--color-dawn)", // 6am, 7am
+        "dial-midday": "var(--color-midday)", // 8am -> 17pm
+        "dial-dusk": "var(--color-dusk)", // 18pm -> 21pm
+        "dial-midnight": "var(--color-midnight)", // 22pm -> 5am
+        "dial-newday": "var(--color-newday)", // 24 | 12
+      },
       keyframes: {
         blink: {
           "50%": {

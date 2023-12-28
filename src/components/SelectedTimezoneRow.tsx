@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { useMemo, memo } from "react";
 import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
@@ -10,19 +10,12 @@ import AbbrBadge from "./AbbrBadge";
 
 interface Props {
   timezone: Timezone;
-  addToSelectedTimezones?: (timezone: Timezone) => void;
-  setSelectTimezoneIndex?: Dispatch<SetStateAction<number>>;
-  currentTimezoneIndex?: string;
 }
 
-export default function TimezoneRow({
-  timezone,
-  addToSelectedTimezones,
-  setSelectTimezoneIndex,
-}: Props) {
+export default memo(function SelectedTimezoneRow({ timezone }: Props) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   timezone.timeDials = useMemo(
-    () => getTimeDials(timezone.clock, timezone.offset, hoursFormat),
+    () => getTimeDials(timezone, hoursFormat),
     [timezone]
   );
 
@@ -32,13 +25,7 @@ export default function TimezoneRow({
   const { dayOfWeek, clock, monthAndDay } = timezone;
 
   return (
-    <div
-      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md cursor-pointer"
-      onClick={() => {
-        addToSelectedTimezones && addToSelectedTimezones(timezone);
-      }}
-      onMouseEnter={() => setSelectTimezoneIndex && setSelectTimezoneIndex(-1)}
-    >
+    <div className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md cursor-pointer">
       <div>
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
@@ -70,4 +57,4 @@ export default function TimezoneRow({
       <TimeDials timezone={timezone} />
     </div>
   );
-}
+});

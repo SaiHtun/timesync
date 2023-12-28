@@ -1,7 +1,8 @@
+import { memo } from "react";
 import TimezoneRow from "./SelectedTimezoneRow";
 import { useSelectedTimezones } from "~/utils/hooks/use-timezones";
 
-export default function Timezones() {
+export default memo(function Timezones() {
   const selectedTimezones = useSelectedTimezones();
 
   return (
@@ -11,4 +12,4 @@ export default function Timezones() {
       ))}
     </main>
   );
-}
+});

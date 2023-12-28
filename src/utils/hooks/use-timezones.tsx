@@ -19,26 +19,73 @@ export function isDecimal(hour: number) {
   return hour % 1 !== 0;
 }
 
+function getDailyCircleMap() {
+  const map = new Map();
+  map.set(arrayRange(6, 7).concat(arrayRange(6.5, 7.5)), "bg-dial-dawn");
+  map.set(arrayRange(8, 17).concat(arrayRange(8.5, 17.5)), "bg-dial-midday");
+  map.set(arrayRange(18, 21).concat(arrayRange(18.5, 21.5)), "bg-dial-dusk");
+  map.set(
+    arrayRange(22, 24)
+      .concat(arrayRange(22.5, 24.5))
+      .concat(arrayRange(1, 5))
+      .concat(arrayRange(1.5, 5.5)),
+    "bg-dial-midnight"
+  );
+
+  return map;
+}
+
+function getDailyCircle(hour: number) {
+  const dailyCircleMap = getDailyCircleMap();
+
+  for (const hours of dailyCircleMap.keys()) {
+    if (hours.includes(hour)) {
+      return dailyCircleMap.get(hours);
+    }
+  }
+}
+
+type TimeDial = {
+  hour: number;
+  dailyCircleBgColor: string;
+};
+
+function getHours24(timezoneName: string): number[] {
+  const startHours24 = parseInt(
+    formatInTimeZone(new Date(), timezoneName, "k")
+  );
+  return arrayRange(startHours24, startHours24 + 23).map(
+    (num) => num % 24 || 24
+  );
+}
+
 export function getTimeDials(
-  clock: string,
-  offset: number,
+  timezone: Timezone,
   hoursFormat: HoursFormat = "24"
-): Array<number> {
+): TimeDial[] {
+  const { name, clock, offset } = timezone;
+
+  const hours24 = getHours24(name);
+
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
   const hours = arrayRange(startHours, startHours + 23);
-  return hours.map((hour) => {
-    let h = hour;
+
+  return hours.map((h, index) => {
+    let hour = h;
     if (isDecimal(offset)) {
-      h += 0.5;
+      hour += 0.5;
     }
     // handling 24/12 hours and edge cases coz some countries like Myanmar is off by -30mins
-    return hoursFormat === "24"
-      ? h % 24 === 0.5
-        ? 24.5
-        : h % 24 || 24
-      : h % 12 === 0.5
-      ? 12.5
-      : h % 12 || 12;
+    hour =
+      hoursFormat === "24"
+        ? hour % 24 === 0.5
+          ? 24.5
+          : hour % 24 || 24
+        : hour % 12 === 0.5
+        ? 12.5
+        : hour % 12 || 12;
+
+    return { hour, dailyCircleBgColor: getDailyCircle(hours24[index]) };
   });
 }
 
@@ -75,7 +122,7 @@ export interface Timezone {
   clock: string;
   offset: number;
   diffHoursFromHome: string;
-  timeDials: number[];
+  timeDials: TimeDial[];
 }
 
 function getSupportedTimezonesName(): string[] {
