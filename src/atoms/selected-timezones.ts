@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import { Timezone, getTimezonesMap } from "~/utils/hooks/use-timezones";
-import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
+import { searchTimezoneNameAtom } from "./search-timezone-name";
+import { searchedSelectedTimezoneAtom } from "./searched-timezones";
 
 let timezonesMap = new Map<string, Timezone>();
 if (timezonesMap.size === 0) {
@@ -11,7 +12,7 @@ export const selectedTimezonesAtom = atom<Timezone[]>([]);
 
 export const syncUrlToSelectedTimezonesAtom = atom(
   null,
-  (get, set, timezonesName: string[]) => {
+  (get, set, timezonesName: string[] = []) => {
     set(selectedTimezonesAtom, (preTzs) => {
       const timezones = timezonesName
         .filter(
@@ -46,3 +47,7 @@ export const addSelectedTimezonesAtom = atom(
     }
   }
 );
+
+export const addSearchedSelectedTimezoneAtom = atom(null, (get, set) => {
+  set(addSelectedTimezonesAtom, get(searchedSelectedTimezoneAtom));
+});
