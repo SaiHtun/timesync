@@ -17,16 +17,6 @@ interface Props {
   timezone: Timezone;
 }
 
-function Divs() {
-  return ["bg-dial-teal-dawn", "bg-dial-pink-dawn", "bg-dial-indigo-dawn"].map(
-    (num) => (
-      <div key={num} className={num}>
-        {num}
-      </div>
-    )
-  );
-}
-
 export default memo(function SelectedTimezoneRow({ timezone }: Props) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
