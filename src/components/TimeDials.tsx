@@ -1,9 +1,16 @@
 import { memo } from "react";
 import { arrayRange } from "~/utils/index";
 import { format, addDays } from "date-fns";
-import { type Timezone, isDecimal } from "~/utils/hooks/use-timezones";
+import {
+  type Timezone,
+  isDecimal,
+  useTimeDials,
+} from "~/utils/hooks/use-timezones";
 import { formatInTimeZone } from "date-fns-tz";
 import { cn } from "~/utils/cn";
+import { useAtom } from "jotai";
+import { dialColorAtom } from "~/atoms/dial-colors-model";
+import { hoursFormatAtom } from "~/atoms/hours-format";
 
 interface Props {
   timezone: Timezone;
@@ -20,10 +27,16 @@ function getNextDay(timezoneName: string, numberOfDays: number): string[] {
 
 export default memo(function TimeDials({ timezone }: Props) {
   const [dayOfWeek, monthAndDay] = getNextDay(timezone.name, 1);
+  const [dialColor] = useAtom(dialColorAtom);
+  const [hoursFormat] = useAtom(hoursFormatAtom);
   // 24 hours format for easily index the "New Day"
   const startHours24 = parseInt(
     formatInTimeZone(new Date(), timezone.name, "k")
   );
+
+  const timeDials = useTimeDials(timezone, hoursFormat, dialColor);
+
+  timezone.timeDials = timeDials;
 
   const hours24 = arrayRange(startHours24, startHours24 + 23);
 
@@ -50,7 +63,7 @@ export default memo(function TimeDials({ timezone }: Props) {
   return (
     <main>
       <div className="h-[40px] w-[760px] flex items-center  text-center text-sm rounded-l-md">
-        {timezone.timeDials?.map(({ hour, dailyCircleBgColor }, index) => {
+        {timezone.timeDials.map(({ hour, dailyCircleBgColor }, index) => {
           return (
             <div
               key={index}

@@ -5,12 +5,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        // primary
-        "dial-primary-dawn": "var(--color-primary-dawn)",
-        "dial-primary-midday": "var(--color-primary-midday)",
-        "dial-primary-dusk": "var(--color-primary-dusk)",
-        "dial-primary-midnight": "var(--color-primary-midnight)",
-        "dial-primary-newday": "var(--color-primary-newday)",
+        // gray
+        "dial-gray-dawn": "var(--color-gray-dawn)",
+        "dial-gray-midday": "var(--color-gray-midday)",
+        "dial-gray-dusk": "var(--color-gray-dusk)",
+        "dial-gray-midnight": "var(--color-gray-midnight)",
+        "dial-gray-newday": "var(--color-gray-newday)",
         // teal
         "dial-teal-dawn": "var(--color-teal-dawn)", // 6am, 7am
         "dial-teal-midday": "var(--color-teal-midday)", // 8am -> 17pm

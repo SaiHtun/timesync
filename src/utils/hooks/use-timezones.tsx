@@ -5,6 +5,7 @@ import {
   useDeferredValue,
   useMemo,
   useCallback,
+  useState,
 } from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { arrayRange } from "~/utils/index";
@@ -20,37 +21,23 @@ export function isDecimal(hour: number) {
   return hour % 1 !== 0;
 }
 
-// Todo:: Need to fix this. It takes forever to update the color!!!
-function getDailyCircleMap(dialColor: "indigo" | "pink") {
-  const c = colorsMap[dialColor];
-  const map = new Map();
-  map.set(arrayRange(6, 7).concat(arrayRange(6.5, 7.5)), c["dawn"]);
-  map.set(arrayRange(8, 17).concat(arrayRange(8.5, 17.5)), c["midday"]);
-  map.set(arrayRange(18, 21).concat(arrayRange(18.5, 21.5)), c["dusk"]);
-  map.set(
-    arrayRange(22, 23)
-      .concat(arrayRange(22.5, 23.5))
-      .concat(arrayRange(1, 5))
-      .concat(arrayRange(1.5, 5.5)),
-    c["midnight"]
-  );
+function getDailyCircleColor(hour: number, dialColor: DialColors) {
+  const dailyCircleColor = colorsMap[dialColor];
 
-  map.set([24, 24.5], c["newday"]);
-
-  return map;
-}
-
-function getDailyCircle(hour: number, dialColor: any) {
-  const dailyCircleMap = getDailyCircleMap(dialColor);
-
-  for (const hours of dailyCircleMap.keys()) {
-    if (hours.includes(hour)) {
-      return dailyCircleMap.get(hours);
-    }
+  if (hour >= 6 && hour <= 7.5) {
+    return dailyCircleColor["dawn"];
+  } else if (hour >= 8 && hour <= 17.5) {
+    return dailyCircleColor["midday"];
+  } else if (hour >= 18 && hour <= 21.5) {
+    return dailyCircleColor["dusk"];
+  } else if ((hour >= 22 && hour <= 23.5) || (hour >= 1 && hour <= 5.5)) {
+    return dailyCircleColor["midnight"];
+  } else {
+    return dailyCircleColor["newday"];
   }
 }
 
-type TimeDial = {
+export type TimeDial = {
   hour: number;
   dailyCircleBgColor: string;
 };
@@ -64,38 +51,52 @@ function getHours24(timezoneName: string): number[] {
   );
 }
 
-export function getTimeDials(
+export function useTimeDials(
   timezone: Timezone,
   hoursFormat: HoursFormat = "24",
   dialColor: DialColors = "teal"
 ): TimeDial[] {
   const { name, clock, offset } = timezone;
-
   const hours24 = getHours24(name);
-
+  const [timeDials, setTimeDials] = useState<TimeDial[]>([]);
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
   const hours = arrayRange(startHours, startHours + 23);
 
-  return hours.map((h, index) => {
-    let hour = h;
-    if (isDecimal(offset)) {
-      hour += 0.5;
-    }
-    // handling 24/12 hours and edge cases coz some countries like Myanmar is off by -30mins
-    hour =
-      hoursFormat === "24"
-        ? hour % 24 === 0.5
-          ? 24.5
-          : hour % 24 || 24
-        : hour % 12 === 0.5
-        ? 12.5
-        : hour % 12 || 12;
+  useEffect(() => {
+    const td = hours.map((h, index) => {
+      let hour = h;
+      if (isDecimal(offset)) {
+        hour += 0.5;
+      }
+      // handling 24/12 hours and edge cases coz some countries like Myanmar is off by -30mins
+      hour =
+        hoursFormat === "24"
+          ? hour % 24 === 0.5
+            ? 24.5
+            : hour % 24 || 24
+          : hour % 12 === 0.5
+          ? 12.5
+          : hour % 12 || 12;
 
-    return {
-      hour,
-      dailyCircleBgColor: getDailyCircle(hours24[index], dialColor),
-    };
-  });
+      return {
+        hour,
+        dailyCircleBgColor: getDailyCircleColor(hours24[index], dialColor),
+      };
+    });
+
+    setTimeDials(td);
+  }, [hoursFormat]);
+
+  useEffect(() => {
+    setTimeDials((preTimeDials) =>
+      preTimeDials.map((td, index) => ({
+        hour: td.hour,
+        dailyCircleBgColor: getDailyCircleColor(hours24[index], dialColor),
+      }))
+    );
+  }, [dialColor]);
+
+  return timeDials;
 }
 
 export function getCurrentUserTimezoneName() {

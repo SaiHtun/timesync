@@ -10,6 +10,7 @@ export const toggleDialColorsModelAtom = atom(
 
 export const dialColorAtom = atom<DialColors>("pink");
 
-export const setDialColorAtom = atom(null, (_, set, color: DialColors) =>
-  set(dialColorAtom, color)
+export const setDialColorAtom = atom(
+  (get) => get(dialColorAtom),
+  (_, set, color: DialColors) => set(dialColorAtom, color)
 );

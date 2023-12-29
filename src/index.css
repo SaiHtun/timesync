@@ -48,12 +48,12 @@
 
   :root {
 
-    /* primary */
-    --color-primary-dawn: #ebebeb;
-    --color-primary-midday: #f4f4f5;
-    --color-primary-dusk: #e4e4e7;
-    --color-primary-midnight: #a1a1aa;
-    --color-primary-newday: #3f3f46;
+    /* gray */
+    --color-gray-dawn: #ebebeb;
+    --color-gray-midday: #f4f4f5;
+    --color-gray-dusk: #e4e4e7;
+    --color-gray-midnight: #a1a1aa;
+    --color-gray-newday: #3f3f46;
 
     /* teal */
     --color-teal-dawn: #ccfbf1;
@@ -97,12 +97,12 @@
 
   :root[class~="dark"] {
 
-    /* primary */
-    --color-primary-dawn: #52525b;
-    --color-primary-midday: #71717a;
-    --color-primary-dusk: #3f3f46;
-    --color-primary-midnight: #212125;
-    --color-primary-newday: #09090b;
+    /* gray */
+    --color-gray-dawn: #52525b;
+    --color-gray-midday: #71717a;
+    --color-gray-dusk: #3f3f46;
+    --color-gray-midnight: #212125;
+    --color-gray-newday: #09090b;
     /* teal */
     --color-teal-dawn: #0d9488;
     --color-teal-midday: #14b8a6;

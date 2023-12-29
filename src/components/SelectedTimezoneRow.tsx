@@ -1,28 +1,19 @@
-import { useMemo, memo } from "react";
-import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
+import { memo } from "react";
+import { type Timezone } from "~/utils/hooks/use-timezones";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
 import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
 import { useAtom } from "jotai";
-import { hoursFormatAtom } from "~/atoms/hours-format";
 import AbbrBadge from "./AbbrBadge";
 import { homeSelectedTimezonesAtom } from "~/atoms/selected-timezones";
-import { dialColorAtom } from "~/atoms/dial-colors-model";
 
 interface Props {
   timezone: Timezone;
 }
 
 export default memo(function SelectedTimezoneRow({ timezone }: Props) {
-  const [hoursFormat] = useAtom(hoursFormatAtom);
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
-  // TODO: Need to fix this!!
-  const [dialColor] = useAtom(dialColorAtom);
-  timezone.timeDials = useMemo(
-    () => getTimeDials(timezone, hoursFormat, dialColor),
-    [timezone, dialColor]
-  );
 
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(
     timezone.name,
