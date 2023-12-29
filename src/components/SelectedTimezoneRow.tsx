@@ -1,5 +1,9 @@
-import { useMemo, memo } from "react";
-import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
+import { useMemo, memo, useState } from "react";
+import {
+  DialColor,
+  getTimeDials,
+  type Timezone,
+} from "~/utils/hooks/use-timezones";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
@@ -13,11 +17,23 @@ interface Props {
   timezone: Timezone;
 }
 
+function Divs() {
+  return ["bg-dial-teal-dawn", "bg-dial-pink-dawn", "bg-dial-indigo-dawn"].map(
+    (num) => (
+      <div key={num} className={num}>
+        {num}
+      </div>
+    )
+  );
+}
+
 export default memo(function SelectedTimezoneRow({ timezone }: Props) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
+  // TODO: menu's color wheels feature
+  const [dialColor] = useState<DialColor>("primary");
   timezone.timeDials = useMemo(
-    () => getTimeDials(timezone, hoursFormat),
+    () => getTimeDials(timezone, hoursFormat, dialColor),
     [timezone]
   );
 

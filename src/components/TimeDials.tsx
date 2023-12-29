@@ -38,7 +38,7 @@ export default memo(function TimeDials({ timezone }: Props) {
   function NewDay() {
     const [month, day] = monthAndDay.split(" ");
     return (
-      <div className="text-xs">
+      <div className={cn("text-xs")}>
         <p className="flex flex-col ">
           <span>{month}</span>
           <span>{day}</span>
@@ -49,19 +49,18 @@ export default memo(function TimeDials({ timezone }: Props) {
 
   return (
     <main>
-      <div className="h-[40px] w-[760px] flex items-center  text-center text-sm rounded-md">
+      <div className="h-[40px] w-[760px] flex items-center  text-center text-sm rounded-l-md">
         {timezone.timeDials?.map(({ hour, dailyCircleBgColor }, index) => {
           return (
             <div
               key={index}
               className={cn(
-                "w-[31.67px] h-full py-1 first:rounded-l-md last:rounded-r-md relative flex items-center justify-center",
+                "w-[31.67px] h-full py-1 first:rounded-l-md relative flex items-center justify-center text-dial-newday dark:text-white",
+                dailyCircleBgColor,
                 {
-                  "!rounded-l-md !bg-dial-newday  !text-white dark:!text-zinc-900":
-                    isNewDay(index),
+                  "!rounded-l-md !bg-dial-newday  !text-white": isNewDay(index),
                   "!rounded-r-md": isLastDay(index),
-                },
-                dailyCircleBgColor
+                }
               )}
             >
               <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
@@ -79,8 +78,8 @@ export default memo(function TimeDials({ timezone }: Props) {
                         <span
                           className={cn({
                             "text-[11px] text-zinc-400": index === 1,
-                            "text-zinc-800 dark:text-white":
-                              dailyCircleBgColor === "bg-dial-midnight",
+                            "text-zinc-800 dark:text-white": dailyCircleBgColor,
+                            dailyCircleBgColor,
                           })}
                           key={index}
                         >

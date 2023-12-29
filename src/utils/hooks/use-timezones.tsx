@@ -14,29 +14,33 @@ import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import Fuse from "fuse.js";
 import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 import { searchedTimezonesAtom } from "~/atoms/searched-timezones";
+import { colorsMap } from "~/constants/colorsMap";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
 }
 
-function getDailyCircleMap() {
+function getDailyCircleMap(dialColor: "indigo" | "pink") {
+  const c = colorsMap[dialColor];
   const map = new Map();
-  map.set(arrayRange(6, 7).concat(arrayRange(6.5, 7.5)), "bg-dial-dawn");
-  map.set(arrayRange(8, 17).concat(arrayRange(8.5, 17.5)), "bg-dial-midday");
-  map.set(arrayRange(18, 21).concat(arrayRange(18.5, 21.5)), "bg-dial-dusk");
+  map.set(arrayRange(6, 7).concat(arrayRange(6.5, 7.5)), c["dawn"]);
+  map.set(arrayRange(8, 17).concat(arrayRange(8.5, 17.5)), c["midday"]);
+  map.set(arrayRange(18, 21).concat(arrayRange(18.5, 21.5)), c["dusk"]);
   map.set(
-    arrayRange(22, 24)
-      .concat(arrayRange(22.5, 24.5))
+    arrayRange(22, 23)
+      .concat(arrayRange(22.5, 23.5))
       .concat(arrayRange(1, 5))
       .concat(arrayRange(1.5, 5.5)),
-    "bg-dial-midnight"
+    c["midnight"]
   );
+
+  map.set([24, 24.5], c["newday"]);
 
   return map;
 }
 
-function getDailyCircle(hour: number) {
-  const dailyCircleMap = getDailyCircleMap();
+function getDailyCircle(hour: number, dialColor: any) {
+  const dailyCircleMap = getDailyCircleMap(dialColor);
 
   for (const hours of dailyCircleMap.keys()) {
     if (hours.includes(hour)) {
@@ -59,9 +63,12 @@ function getHours24(timezoneName: string): number[] {
   );
 }
 
+export type DialColor = keyof typeof colorsMap;
+
 export function getTimeDials(
   timezone: Timezone,
-  hoursFormat: HoursFormat = "24"
+  hoursFormat: HoursFormat = "24",
+  dialColor: DialColor = "teal"
 ): TimeDial[] {
   const { name, clock, offset } = timezone;
 
@@ -85,7 +92,10 @@ export function getTimeDials(
         ? 12.5
         : hour % 12 || 12;
 
-    return { hour, dailyCircleBgColor: getDailyCircle(hours24[index]) };
+    return {
+      hour,
+      dailyCircleBgColor: getDailyCircle(hours24[index], dialColor),
+    };
   });
 }
 

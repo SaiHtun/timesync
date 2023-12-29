@@ -23,7 +23,8 @@
     "paths": {
       "~/components/*": ["./components/*"],
       "~/utils/*": ["./utils/*"],
-      "~/atoms/*": ["./atoms/*"]
+      "~/atoms/*": ["./atoms/*"],
+      "~/constants/*": ["./constants/*"]
     }
   },
   "include": ["src", "examples/test.ts"],

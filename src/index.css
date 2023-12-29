@@ -47,18 +47,114 @@
 @layer base {
 
   :root {
-    --color-dawn: #e4e4e7;
-    --color-midday: #fafafa;
-    --color-dusk: #d4d4d8;
-    --color-midnight: #a1a1aa;
-    --color-newday: #52525b;
+
+    /* primary */
+    --color-primary-dawn: #ebebeb;
+    --color-primary-midday: #f4f4f5;
+    --color-primary-dusk: #e4e4e7;
+    --color-primary-midnight: #a1a1aa;
+    --color-primary-newday: #27272a;
+
+    /* teal */
+    --color-teal-dawn: #ccfbf1;
+    --color-teal-midday: #f0fdfa;
+    --color-teal-dusk: #99f6e4;
+    --color-teal-midnight: #5eead4;
+    --color-teal-newday: #0f766e;
+    /* Cyan */
+    --color-cyan-dawn: #cffafe;
+    --color-cyan-midday: #ecfeff;
+    --color-cyan-dusk: #a5f3fc;
+    --color-cyan-midnight: #67e8f9;
+    --color-cyan-newday: #155e75;
+    /* Blue */
+    --color-blue-dawn: #dbeafe;
+    --color-blue-midday: #eff6ff;
+    --color-blue-dusk: #bfdbfe;
+    --color-blue-midnight: #93c5fd;
+    --color-blue-newday: #1e40af;
+    /* Purple */
+    --color-purple-dawn: #f3e8ff;
+    --color-purple-midday: #faf5ff;
+    --color-purple-dusk: #e9d5ff;
+    --color-purple-midnight: #d8b4fe;
+    --color-purple-newday: #6b21a8;
+    /* Indigo */
+    --color-indigo-dawn: #e0e7ff;
+    --color-indigo-midday: #eef2ff;
+    --color-indigo-dusk: #c7d2fe;
+    --color-indigo-midnight: #a5b4fc;
+    --color-indigo-newday: #3730a3;
+    /* Pink */
+    --color-pink-dawn: #fce7f3;
+    --color-pink-midday: #fdf2f8;
+    --color-pink-dusk: #fbcfe8;
+    --color-pink-midnight: #f9a8d4;
+    --color-pink-newday: #9d174d;
+
+
   }
 
   :root[class~="dark"] {
-    --color-dawn: #37373e;
-    --color-midday: #27272a;
-    --color-dusk: #212123;
-    --color-midnight: #18181b;
-    --color-newday: #a1a1aa;
+
+    /* primary */
+    --color-primary-dawn: #52525b;
+    --color-primary-midday: #71717a;
+    --color-primary-dusk: #3f3f46;
+    --color-primary-midnight: #212125;
+    --color-primary-newday: #09090b;
+    /* teal */
+    --color-teal-dawn: #0d9488;
+    --color-teal-midday: #14b8a6;
+    --color-teal-dusk: #0f766e;
+    --color-teal-midnight: #115e59;
+    --color-teal-newday: #042f2e;
+    /* cyan */
+    --color-cyan-dawn: #0891b2;
+    --color-cyan-midday: #06b6d4;
+    --color-cyan-dusk: #0e7490;
+    --color-cyan-midnight: #155e75;
+    --color-cyan-newday: #083344;
+    /* Blue */
+    --color-blue-dawn: #2563eb;
+    --color-blue-midday: #3b82f6;
+    --color-blue-dusk: #1d4ed8;
+    --color-blue-midnight: #1e40af;
+    --color-blue-newday: #172554;
+    /* Purple */
+    --color-purple-dawn: #9333ea;
+    --color-purple-midday: #a855f7;
+    --color-purple-dusk: #7e22ce;
+    --color-purple-midnight: #6b21a8;
+    --color-purple-newday: #3b0764;
+    /* Indigo */
+    --color-indigo-dawn: #6366f1;
+    --color-indigo-midday: #6366f1;
+    --color-indigo-dusk: #4338ca;
+    --color-indigo-midnight: #3730a3;
+    --color-indigo-newday: #1e1b4b;
+    /* Pink */
+    --color-pink-dawn: #db2777;
+    --color-pink-midday: #ec4899;
+    --color-pink-dusk: #be185d;
+    --color-pink-midnight: #9d174d;
+    --color-pink-newday: #500724;
   }
+
+  /* LIGHT:root {
+    --color-dawn: #e4e4e7; 100
+    --color-midday: #fafafa; 50
+    --color-dusk: #d4d4d8; 200
+    --color-midnight: #a1a1aa; 300
+    --color-newday: #52525b; 800
+  } */
+  /* DARK:root {
+    --color-dawn: #e4e4e7; 600
+    --color-midday: #fafafa; 500
+    --color-dusk: #d4d4d8; 700
+    --color-midnight: #a1a1aa; 800
+    --color-newday: #52525b; 950
+  } */
+
+
 }
