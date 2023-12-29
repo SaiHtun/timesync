@@ -1,9 +1,5 @@
-import { useMemo, memo, useState } from "react";
-import {
-  DialColor,
-  getTimeDials,
-  type Timezone,
-} from "~/utils/hooks/use-timezones";
+import { useMemo, memo } from "react";
+import { getTimeDials, type Timezone } from "~/utils/hooks/use-timezones";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
@@ -12,6 +8,7 @@ import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
 import AbbrBadge from "./AbbrBadge";
 import { homeSelectedTimezonesAtom } from "~/atoms/selected-timezones";
+import { dialColorAtom } from "~/atoms/dial-colors-model";
 
 interface Props {
   timezone: Timezone;
@@ -20,11 +17,11 @@ interface Props {
 export default memo(function SelectedTimezoneRow({ timezone }: Props) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
-  // TODO: menu's color wheels feature
-  const [dialColor] = useState<DialColor>("primary");
+  // TODO: Need to fix this!!
+  const [dialColor] = useAtom(dialColorAtom);
   timezone.timeDials = useMemo(
     () => getTimeDials(timezone, hoursFormat, dialColor),
-    [timezone]
+    [timezone, dialColor]
   );
 
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(

@@ -1,4 +1,13 @@
-export const colorsMap = {
+export type DialColors =
+  | "primary"
+  | "indigo"
+  | "pink"
+  | "purple"
+  | "blue"
+  | "teal";
+type DailyCircles = "dawn" | "midday" | "dusk" | "midnight" | "newday";
+
+export const colorsMap: Record<DialColors, Record<DailyCircles, string>> = {
   primary: {
     dawn: "bg-dial-primary-dawn",
     midday: "bg-dial-primary-midday",
@@ -42,3 +51,11 @@ export const colorsMap = {
     newday: "bg-dial-teal-newday",
   },
 };
+
+export const dialColors = (Object.keys(colorsMap) as Array<DialColors>).map(
+  (c) => ({
+    name: c,
+    color: colorsMap[c].midnight,
+    hoverColor: colorsMap[c].newday,
+  })
+);

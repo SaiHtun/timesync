@@ -60,6 +60,8 @@ export default memo(function TimeDials({ timezone }: Props) {
                 {
                   "!rounded-l-md !bg-dial-newday  !text-white": isNewDay(index),
                   "!rounded-r-md": isLastDay(index),
+                  "!text-white": dailyCircleBgColor.includes("newday"),
+                  "!text-zinc-100": dailyCircleBgColor.includes("midnight"),
                 }
               )}
             >
@@ -76,10 +78,10 @@ export default memo(function TimeDials({ timezone }: Props) {
                     .map((strNum, index) => {
                       return (
                         <span
-                          className={cn({
+                          className={cn("text-zinc-800 dark:text-white", {
                             "text-[11px] text-zinc-400": index === 1,
-                            "text-zinc-800 dark:text-white": dailyCircleBgColor,
-                            dailyCircleBgColor,
+                            "!text-zinc-100":
+                              dailyCircleBgColor.includes("midnight"),
                           })}
                           key={index}
                         >

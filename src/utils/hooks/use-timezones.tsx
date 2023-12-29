@@ -14,12 +14,13 @@ import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import Fuse from "fuse.js";
 import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 import { searchedTimezonesAtom } from "~/atoms/searched-timezones";
-import { colorsMap } from "~/constants/colorsMap";
+import { colorsMap, DialColors } from "~/constants/colorsMap";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
 }
 
+// Todo:: Need to fix this. It takes forever to update the color!!!
 function getDailyCircleMap(dialColor: "indigo" | "pink") {
   const c = colorsMap[dialColor];
   const map = new Map();
@@ -63,12 +64,10 @@ function getHours24(timezoneName: string): number[] {
   );
 }
 
-export type DialColor = keyof typeof colorsMap;
-
 export function getTimeDials(
   timezone: Timezone,
   hoursFormat: HoursFormat = "24",
-  dialColor: DialColor = "teal"
+  dialColor: DialColors = "teal"
 ): TimeDial[] {
   const { name, clock, offset } = timezone;
 
