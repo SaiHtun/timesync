@@ -31,6 +31,10 @@
     @apply text-gray-400
   }
 
+  .feature_bg {
+    @apply bg-zinc-200 dark:bg-zinc-900 transition-colors
+  }
+
 }
 
 /* colors: {

@@ -9,11 +9,11 @@ export default function DialColorsPicker() {
 
   return (
     <div
-      className="group absolute z-10 left-20 top-1 h-fit flex flex-col gap-2 cursor-pointer"
+      className="group absolute z-10 left-20 top-[6px] h-fit flex flex-col gap-2 cursor-pointer"
       onMouseOver={() => setIsModelOpen(true)}
       onMouseLeave={() => setIsModelOpen(false)}
     >
-      <button className=" p-2 w-fit h-full">
+      <button className="flex items-center justify-center p-[5px] w-fit h-full rounded-md group-hover:feature_bg">
         <PaintBucket strokeWidth={1} size={22} />
       </button>
       <DialColorsModel isModelOpen={isModelOpen} />

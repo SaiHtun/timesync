@@ -85,7 +85,7 @@ export function useTimeDials(
     });
 
     setTimeDials(td);
-  }, [hoursFormat]);
+  }, [timezone]);
 
   useEffect(() => {
     setTimeDials((preTimeDials) =>

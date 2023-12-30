@@ -10,7 +10,7 @@ export default function HoursFormatBtn() {
     <button
       id="hoursFormat-btn"
       type="button"
-      className="p-2 text-xs space-x-1 primary_border rounded-md transition-all"
+      className="p-2 text-xs space-x-1 primary_border rounded-md transition-all hover:feature_bg"
       onClick={toggleHoursFormat}
     >
       <span
