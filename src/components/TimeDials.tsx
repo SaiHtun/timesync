@@ -17,12 +17,13 @@ interface Props {
 }
 
 function getNextDay(timezoneName: string, numberOfDays: number): string[] {
-  const ad = addDays(
-    new Date(formatInTimeZone(new Date(), timezoneName, "yyyy-MM-dd HH:mm")),
-    numberOfDays
+  const date = new Date(
+    new Date().toLocaleString("en", { timeZone: timezoneName })
   );
 
-  return format(ad, "eee, MMM d").split(", ");
+  const nextDay = format(addDays(date, numberOfDays), "eee, MMM d").split(", ");
+
+  return nextDay;
 }
 
 export default memo(function TimeDials({ timezone }: Props) {
