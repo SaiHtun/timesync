@@ -8,13 +8,21 @@ import { useAtom } from "jotai";
 import AbbrBadge from "./AbbrBadge";
 import { homeSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { Home } from "lucide-react";
+import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 
 interface Props {
   timezone: Timezone;
   isHome: boolean;
+  provided: DraggableProvided;
+  snapshot: DraggableStateSnapshot;
 }
 
-export default memo(function SelectedTimezoneRow({ timezone, isHome }: Props) {
+export default function SelectedTimezoneRow({
+  timezone,
+  isHome,
+  provided,
+  snapshot,
+}: Props) {
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
 
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(
@@ -26,7 +34,12 @@ export default memo(function SelectedTimezoneRow({ timezone, isHome }: Props) {
   const { dayOfWeek, clock, monthAndDay } = timezone;
 
   return (
-    <div className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md cursor-pointer">
+    <div
+      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md cursor-pointer "
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+    >
       <div>
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
@@ -62,4 +75,4 @@ export default memo(function SelectedTimezoneRow({ timezone, isHome }: Props) {
       <TimeDials timezone={timezone} />
     </div>
   );
-});
+}

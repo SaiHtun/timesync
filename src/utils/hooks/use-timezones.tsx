@@ -235,7 +235,12 @@ function useUpdateTimezonesClock(
   }, [timezones, setTimezonesClockCb, hoursFormat]);
 }
 
-export function useSelectedTimezones(): Timezone[] {
+type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
+
+export function useSelectedTimezones(): [
+  Timezone[],
+  SetAtom<[SetStateAction<Timezone[]>], void>
+] {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [selectedTimezones, setSelectedTimezones] = useAtom(
     selectedTimezonesAtom
@@ -245,7 +250,7 @@ export function useSelectedTimezones(): Timezone[] {
     hoursFormat,
   });
 
-  return selectedTimezones;
+  return [selectedTimezones, setSelectedTimezones];
 }
 
 export function useSearchedTimezones(): Timezone[] {
