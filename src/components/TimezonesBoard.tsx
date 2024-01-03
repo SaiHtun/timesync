@@ -1,6 +1,6 @@
 import SelectedTimezones from "~/components/SelectedTimezones";
 import Navbar from "./NavBar";
-import SearchdTimezones from "./SearchedTimezones";
+import SearchdTimezonesModel from "./SearchedTimezonesModel";
 import MenuBar from "./MenuBar";
 import { useAtom } from "jotai";
 import { handleKeydownSearchedTimezoneAtom } from "~/atoms/searched-timezones";
@@ -22,7 +22,7 @@ export default function TimezonesBoard() {
       <MenuBar />
       <main className="relative w-full mt-4">
         <SelectedTimezones />
-        <SearchdTimezones />
+        <SearchdTimezonesModel />
       </main>
     </div>
   );

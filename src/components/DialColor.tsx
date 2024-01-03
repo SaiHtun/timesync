@@ -15,7 +15,7 @@ export default function DialColor({ dialColor }: Props) {
   const { name, primaryColor } = dialColor;
 
   return (
-    <div
+    <button
       className={cn(
         primaryColor,
         "rounded-full w-5 h-5 hover:scale-110 hover:saturate-200 transition-all ease-linear",
@@ -23,6 +23,7 @@ export default function DialColor({ dialColor }: Props) {
           "border-2 border-yellow-400": dialColorName === name,
         }
       )}
+      type="button"
       onClick={() => setDialColorName(name)}
     />
   );

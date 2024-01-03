@@ -3,20 +3,21 @@ import { dialColors } from "~/constants/colorsMap";
 import DialColor from "./DialColor";
 import { cn } from "~/utils/cn";
 
-export default function DialColorsModel({
-  isModelOpen,
-}: {
+interface Props {
   isModelOpen: boolean;
-}) {
+}
+
+export default function DialColorsModel({ isModelOpen }: Props) {
   return (
     <AnimatePresence>
       {isModelOpen && (
         <motion.div
+          id="colors-picker"
           initial={{ opacity: 0, translateY: "-10px" }}
-          animate={{ opacity: 1, translateY: "8px" }}
+          animate={{ opacity: 1, translateY: "14px" }}
           exit={{ opacity: 0, translateY: "-5px" }}
           className={cn(
-            "p-2 grid grid-cols-3 grid-rows-2 w-fit h-fit primary_border primary_bg gap-1"
+            "absolute left-0 top-8 p-2 grid grid-cols-3 grid-rows-2 justify-items-center w-[100px] h-fit primary_border primary_bg gap-1 shadow-md"
           )}
         >
           {dialColors.map((dialColor) => {
