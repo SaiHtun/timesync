@@ -1,9 +1,7 @@
-import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { DialColors } from "~/constants/colorsMap";
 
-export const dialColorAtom = atom<DialColors>("gray");
-
-export const setDialColorAtom = atom(
-  (get) => get(dialColorAtom),
-  (_, set, color: DialColors) => set(dialColorAtom, color)
+export const dialColorWithLocalStorageAtom = atomWithStorage<DialColors>(
+  "dialColor",
+  "gray"
 );

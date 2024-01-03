@@ -9,8 +9,8 @@ import {
 import { formatInTimeZone } from "date-fns-tz";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
-import { dialColorAtom } from "~/atoms/dial-colors-model";
 import { hoursFormatAtom } from "~/atoms/hours-format";
+import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 
 interface Props {
   timezone: Timezone;
@@ -28,7 +28,7 @@ function getNextDay(timezoneName: string, numberOfDays: number): string[] {
 
 export default memo(function TimeDials({ timezone }: Props) {
   const [dayOfWeek, monthAndDay] = getNextDay(timezone.name, 1);
-  const [dialColor] = useAtom(dialColorAtom);
+  const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
   const [hoursFormat] = useAtom(hoursFormatAtom);
   // 24 hours format for easily index the "New Day"
   const startHours24 = parseInt(

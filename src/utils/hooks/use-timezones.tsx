@@ -23,7 +23,6 @@ export function isDecimal(hour: number) {
 
 function getDailyCircleColor(hour: number, dialColor: DialColors) {
   const dailyCircleColor = colorsMap[dialColor];
-
   if (hour >= 6 && hour <= 7.5) {
     return dailyCircleColor["dawn"];
   } else if (hour >= 8 && hour <= 17.5) {

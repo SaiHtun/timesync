@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { dialColorAtom } from "~/atoms/dial-colors-model";
+import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 import { DialColors } from "~/constants/colorsMap";
 import { cn } from "~/utils/cn";
 
@@ -11,7 +11,8 @@ interface Props {
 }
 
 export default function DialColor({ dialColor }: Props) {
-  const [dialColorName, setDialColorName] = useAtom(dialColorAtom);
+  const [dialColorName, setDialColor] = useAtom(dialColorWithLocalStorageAtom);
+
   const { name, primaryColor } = dialColor;
 
   return (
@@ -24,7 +25,9 @@ export default function DialColor({ dialColor }: Props) {
         }
       )}
       type="button"
-      onClick={() => setDialColorName(name)}
+      onClick={() => {
+        setDialColor(name);
+      }}
     />
   );
 }
