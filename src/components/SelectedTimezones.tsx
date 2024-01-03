@@ -7,8 +7,12 @@ export default memo(function Timezones() {
 
   return (
     <main className="flex flex-col max-h-[880px] w-full odd_childs absolute -z-1">
-      {selectedTimezones.map((timezone) => (
-        <TimezoneRow timezone={timezone} key={timezone.name} />
+      {selectedTimezones.map((timezone, index) => (
+        <TimezoneRow
+          timezone={timezone}
+          key={timezone.name}
+          isHome={index === 0}
+        />
       ))}
     </main>
   );

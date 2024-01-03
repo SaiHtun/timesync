@@ -7,12 +7,14 @@ import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
 import { useAtom } from "jotai";
 import AbbrBadge from "./AbbrBadge";
 import { homeSelectedTimezonesAtom } from "~/atoms/selected-timezones";
+import { Home } from "lucide-react";
 
 interface Props {
   timezone: Timezone;
+  isHome: boolean;
 }
 
-export default memo(function SelectedTimezoneRow({ timezone }: Props) {
+export default memo(function SelectedTimezoneRow({ timezone, isHome }: Props) {
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
 
   timezone.diffHoursFromHome = getDifferenceHoursFromHome(
@@ -28,13 +30,17 @@ export default memo(function SelectedTimezoneRow({ timezone }: Props) {
       <div>
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
-            <span
-              className={cn("w-8 text-center text-xs text-red-500", {
-                "text-green-500": parseInt(timezone.diffHoursFromHome) >= 0,
-              })}
-            >
-              {timezone.diffHoursFromHome}
-            </span>
+            {isHome ? (
+              <Home size={20} className="w-8" />
+            ) : (
+              <span
+                className={cn("w-8 text-center text-xs text-red-500", {
+                  "text-green-500": parseInt(timezone.diffHoursFromHome) >= 0,
+                })}
+              >
+                {timezone.diffHoursFromHome}
+              </span>
+            )}
             <div>
               <p>
                 {city}
