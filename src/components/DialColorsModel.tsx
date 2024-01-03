@@ -17,7 +17,7 @@ export default function DialColorsModel({ isModelOpen }: Props) {
           animate={{ opacity: 1, translateY: "14px" }}
           exit={{ opacity: 0, translateY: "-5px" }}
           className={cn(
-            "absolute left-0 top-8 p-2 grid grid-cols-3 grid-rows-2 justify-items-center w-[100px] h-fit primary_border primary_bg gap-1 shadow-md"
+            "absolute left-0 top-8 p-2 grid grid-cols-3 grid-rows-2 justify-items-center w-[100px] primary_border primary_bg gap-1 shadow-md"
           )}
         >
           {dialColors.map((dialColor) => {
