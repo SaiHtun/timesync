@@ -1,6 +1,33 @@
 import { useAtom } from "jotai";
-import { hoursFormatAtom, toggleHoursFormatAtom } from "~/atoms/hours-format";
+import {
+  HoursFormat,
+  hoursFormatAtom,
+  toggleHoursFormatAtom,
+} from "~/atoms/hours-format";
 import { cn } from "~/utils/cn";
+
+interface HourProps {
+  hoursFormat: HoursFormat;
+  expectedHoursFormat: HoursFormat;
+}
+
+function Hour({ hoursFormat, expectedHoursFormat }: HourProps) {
+  return (
+    <p
+      className={cn(
+        " text-zinc-400 dark:text-zinc-500 transition-colors shadow-inner w-full h-full flex items-center justify-center",
+        {
+          "primary_bg text-zinc-800 dark:text-white shadow dark:shadow-zinc-900":
+            hoursFormat === expectedHoursFormat,
+          "rounded-l-md": expectedHoursFormat === "24",
+          "rounded-r-md": expectedHoursFormat === "12",
+        }
+      )}
+    >
+      {expectedHoursFormat}
+    </p>
+  );
+}
 
 export default function HoursFormatBtn() {
   const [hoursFormat] = useAtom(hoursFormatAtom);
@@ -10,24 +37,11 @@ export default function HoursFormatBtn() {
     <button
       id="hoursFormat-btn"
       type="button"
-      className="p-2 text-xs space-x-1 primary_border rounded-md transition-all hover:feature_bg shadow hover:shadow-none active:shadow-inner"
+      className="flex items-center text-xs w-20 h-full primary_border transition-all"
       onClick={toggleHoursFormat}
     >
-      <span
-        className={cn("dark:text-white text-zinc-900", {
-          "text-zinc-400 dark:text-zinc-400": hoursFormat !== "24",
-        })}
-      >
-        24
-      </span>
-      <span>/</span>
-      <span
-        className={cn("dark:text-white text-zinc-900", {
-          "text-zinc-400 dark:text-zinc-400": hoursFormat !== "12",
-        })}
-      >
-        {12}
-      </span>
+      <Hour hoursFormat={hoursFormat} expectedHoursFormat="24" />
+      <Hour hoursFormat={hoursFormat} expectedHoursFormat="12" />
     </button>
   );
 }

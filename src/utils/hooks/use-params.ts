@@ -33,9 +33,8 @@ export function useTimezonesParams(
       updatedParams = { [key]: JSON.stringify(timezonesName) };
     } else {
       const { err, data } = jsonParser<string[]>(paramsValue);
+
       if (err === null) {
-        // uncomment this to test if caculation of "diffHoursFromHome" works.
-        // updatedParams = { [key]: JSON.stringify(data) };
         updatedParams = {
           [key]: JSON.stringify(arrangeHomeFirstParams(data)),
         };
@@ -57,10 +56,14 @@ export function appendTimezoneNameToUrl(
   const { err, data: parsedTimezones } = jsonParser<string[]>(timezones);
 
   if (err === null) {
-    if (!parsedTimezones.includes(timezoneName)) {
+    // limit appending to URL. Thus, will also limit adding "SelectedTimezones"
+    if (
+      parsedTimezones.length < 10 &&
+      !parsedTimezones.includes(timezoneName)
+    ) {
       parsedTimezones.push(timezoneName);
-      setSearchParams({ timezones: JSON.stringify(parsedTimezones) });
     }
+    setSearchParams({ timezones: JSON.stringify(parsedTimezones) });
   }
 }
 

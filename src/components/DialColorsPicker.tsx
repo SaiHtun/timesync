@@ -13,11 +13,12 @@ export default function DialColorsPicker() {
       onMouseEnter={() => setIsModelOpen(true)}
       onMouseLeave={() => setIsModelOpen(false)}
     >
-      <button className="flex items-center justify-center p-2 w-fit h-full rounded-md group-hover:feature_bg hover:shadow-inner">
+      <button className="flex items-center justify-center p-2 w-fit h-full rounded-md group-hover:feature_bg group-hover:shadow-inner">
+        {" "}
         <Paintbrush strokeWidth={1} size={20} />
       </button>
       <div
-        className={cn("hidden h-8 w-10 absolute left-0 top-8 ", {
+        className={cn("hidden h-8 w-10 absolute left-0 top-8", {
           block: isModelOpen,
         })}
       >

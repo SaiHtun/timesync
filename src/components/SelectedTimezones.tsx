@@ -10,7 +10,6 @@ import {
 
 export default memo(function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
-  console.log("S::", selectedTimezones);
 
   function reorder(
     timezones: Timezone[],

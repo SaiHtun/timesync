@@ -8,7 +8,7 @@ export const keydownAddTimezoneIndexAtom = atom(
   (get, set, event: React.KeyboardEvent<HTMLDivElement>) => {
     const searchedTimezonesLength = get(searchedTimezonesLengthAtom);
     const currentIndex = get(searchedTimezoneIndexAtom);
-    let index = 0;
+    let index = currentIndex;
     if (event.code === "ArrowDown") {
       index = (currentIndex + 1) % searchedTimezonesLength;
     } else if (event.code === "ArrowUp") {

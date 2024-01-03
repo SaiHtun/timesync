@@ -2,7 +2,6 @@ import { cn } from "~/utils/cn";
 import type { Timezone } from "~/utils/hooks/use-timezones";
 import Clock from "~/components/Clock";
 import { useAtom } from "jotai";
-import { addSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { useSearchParams } from "react-router-dom";
 import { appendTimezoneNameToUrl } from "~/utils/hooks/use-params";
 import { searchedTimezoneIndexAtom } from "~/atoms/searched-timezone-index";
@@ -16,7 +15,6 @@ export default function SearchedTimezoneRow({
   timezone,
   currentTimezoneIndex,
 }: Props) {
-  const [, addSelectedTimezones] = useAtom(addSelectedTimezonesAtom);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTimezoneIndex, setSearchedTimezoneIndex] = useAtom(
     searchedTimezoneIndexAtom
@@ -25,7 +23,6 @@ export default function SearchedTimezoneRow({
   const isSelected = searchTimezoneIndex === currentTimezoneIndex;
 
   function handleAddTimezones(timezone: Timezone) {
-    addSelectedTimezones(timezone);
     appendTimezoneNameToUrl(timezone.name, [searchParams, setSearchParams]);
   }
 
