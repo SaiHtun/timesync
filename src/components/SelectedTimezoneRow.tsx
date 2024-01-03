@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { type Timezone } from "~/utils/hooks/use-timezones";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
@@ -35,7 +34,12 @@ export default function SelectedTimezoneRow({
 
   return (
     <div
-      className="grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md cursor-pointer "
+      className={cn(
+        "grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md cursor-pointer ",
+        {
+          "shadow-md": snapshot.isDragging,
+        }
+      )}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}

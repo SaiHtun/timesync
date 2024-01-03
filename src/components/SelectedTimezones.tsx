@@ -7,6 +7,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
+import { cn } from "~/utils/cn";
 
 export default memo(function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
@@ -25,21 +26,22 @@ export default memo(function SelectedTimezones() {
 
   const onDragEnd: OnDragEndResponder = (result) => {
     const { source, destination } = result;
-    if (!result.destination) {
+    if (!destination) {
       return;
     }
-
-    const items = reorder(selectedTimezones, source.index, destination?.index!);
+    const items = reorder(selectedTimezones, source.index, destination.index);
     setSelectedTimezones(items);
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
-        {(provided, snapshot) => (
+        {(provided) => (
           <main
             {...provided.droppableProps}
-            className="flex flex-col max-h-[880px] w-full odd_childs even_childs absolute -z-1"
+            className={cn(
+              "flex flex-col max-h-[880px] w-full odd_childs even_childs absolute -z-1"
+            )}
             ref={provided.innerRef}
           >
             {selectedTimezones.map((timezone, index) => (
