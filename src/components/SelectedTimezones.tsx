@@ -8,11 +8,13 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 import { cn } from "~/utils/cn";
+import { useSearchParams } from "react-router-dom";
 
 export default memo(function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
+  const [, setSearchParams] = useSearchParams();
 
-  function reorder(
+  function reorderTimezones(
     timezones: Timezone[],
     sourceIndex: number,
     destinationIndex: number
@@ -24,23 +26,36 @@ export default memo(function SelectedTimezones() {
     return result;
   }
 
+  function reorderUrl(timezonesName: string[]) {
+    setSearchParams({ timezones: JSON.stringify(timezonesName) });
+  }
+
   const onDragEnd: OnDragEndResponder = (result) => {
     const { source, destination } = result;
     if (!destination) {
       return;
     }
-    const items = reorder(selectedTimezones, source.index, destination.index);
+    const items = reorderTimezones(
+      selectedTimezones,
+      source.index,
+      destination.index
+    );
+    const timezoneName = items.map((i) => i.name);
+    reorderUrl(timezoneName);
     setSelectedTimezones(items);
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
-        {(provided) => (
+        {(provided, snapshot) => (
           <main
             {...provided.droppableProps}
             className={cn(
-              "flex flex-col max-h-[880px] w-full odd_childs even_childs absolute -z-1"
+              "flex flex-col max-h-[880px] w-full odd_childs even_childs relative -z-1",
+              {
+                "pointer-events-none": snapshot.isDraggingOver,
+              }
             )}
             ref={provided.innerRef}
           >
@@ -57,6 +72,7 @@ export default memo(function SelectedTimezones() {
                     timezone={timezone}
                     key={timezone.name}
                     isHome={index === 0}
+                    index={index}
                   />
                 )}
               </Draggable>

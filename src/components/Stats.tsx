@@ -10,7 +10,7 @@ export default function Stats() {
   return (
     <div>
       <p className="p-2 text-xs space-x-1">
-        <span>{selectedTimezonesLength || 1}</span>
+        <span>{selectedTimezonesLength}</span>
         <span>/</span>
         <span
           className={cn("primary_text_gray", {

@@ -1,13 +1,16 @@
 import { SetURLSearchParams, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { jsonParser } from "../index";
 import { getCurrentUserTimezoneName } from "./use-timezones";
+import { useEffect, useState } from "react";
 
 function arrangeHomeFirstParams(timezonesName: string[]) {
   const currentTimezoneName = getCurrentUserTimezoneName();
   const firstTimezoneName = timezonesName[0];
-
-  if (currentTimezoneName === firstTimezoneName) return timezonesName;
+  if (
+    !timezonesName.includes(currentTimezoneName) ||
+    currentTimezoneName === firstTimezoneName
+  )
+    return timezonesName;
 
   const homeIndex = timezonesName.indexOf(currentTimezoneName);
   [timezonesName[0], timezonesName[homeIndex]] = [
@@ -18,31 +21,33 @@ function arrangeHomeFirstParams(timezonesName: string[]) {
   return timezonesName;
 }
 
-export function useTimezonesParams(
-  key: string,
-  timezonesName: string[]
-): string[] {
+export function useTimezonesParams(): string[] {
+  const KEY = "timezones";
   const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState<string[]>([]);
 
   useEffect(() => {
-    const paramsValue = searchParams.get(key);
-
-    let updatedParams: Record<string, string> = {};
-    if (!paramsValue) {
-      updatedParams = { [key]: JSON.stringify(timezonesName) };
+    const searchValues = searchParams.get(KEY) as string;
+    const defaultValue = [getCurrentUserTimezoneName()];
+    if (!searchValues) {
+      setSearchParams({ [KEY]: JSON.stringify(defaultValue) });
+      setData(defaultValue);
+      // console.warn(`Couldn't get a value from URL using this key: ${KEY}`);
     } else {
-      const { err, data } = jsonParser<string[]>(paramsValue);
+      const { err, data: parsedTimezones } = jsonParser<string[]>(searchValues);
+      if (err !== null) {
+        console.error(`Error parsing the value of key: ${KEY}`);
+        setData(defaultValue);
+      } else {
+        const d =
+          parsedTimezones.length > 1
+            ? arrangeHomeFirstParams(parsedTimezones)
+            : parsedTimezones;
 
-      if (err === null) {
-        updatedParams = {
-          [key]: JSON.stringify(arrangeHomeFirstParams(data)),
-        };
-        setData(data);
+        setData(d);
       }
     }
-    setSearchParams(updatedParams);
-  }, [searchParams]);
+  }, []);
 
   return data;
 }
@@ -67,6 +72,23 @@ export function appendTimezoneNameToUrl(
   }
 }
 
+export function popTimezoneNameFromUrl(
+  timezoneName: string,
+  [searchParams, setSearchParams]: [URLSearchParams, SetURLSearchParams]
+) {
+  const timezones = searchParams.get("timezones") || "[]";
+
+  const { err, data: parsedTimezones } = jsonParser<string[]>(timezones);
+
+  if (err === null) {
+    // limit appending to URL. Thus, will also limit adding "SelectedTimezones"
+    const filteredTimezones = parsedTimezones.filter(
+      (tz) => tz !== timezoneName
+    );
+
+    setSearchParams({ timezones: JSON.stringify(filteredTimezones) });
+  }
+}
 // check if "arrangeHomePramsFirst" and "diffHoursFromHome" works!
 // [check_one] http://localhost:5173/?timezones=%5B%22Asia%2FShanghai%22%2C%22America%2FLos_Angeles%22%5D
 // [check_two] http://localhost:5173/?timezones=%5B%22Asia%2FRangoon%22%2C%22Asia%2FShanghai%22%2C%22America%2FDenver%22%2C%22America%2FNew_York%22%2C%22America%2FLos_Angeles%22%5D

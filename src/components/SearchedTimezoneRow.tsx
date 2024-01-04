@@ -5,6 +5,7 @@ import { useAtom } from "jotai";
 import { useSearchParams } from "react-router-dom";
 import { appendTimezoneNameToUrl } from "~/utils/hooks/use-params";
 import { searchedTimezoneIndexAtom } from "~/atoms/searched-timezone-index";
+import { appendSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 
 interface Props {
   timezone: Timezone;
@@ -19,10 +20,12 @@ export default function SearchedTimezoneRow({
   const [searchTimezoneIndex, setSearchedTimezoneIndex] = useAtom(
     searchedTimezoneIndexAtom
   );
+  const [, appendSelectedTimezones] = useAtom(appendSelectedTimezonesAtom);
 
   const isSelected = searchTimezoneIndex === currentTimezoneIndex;
 
   function handleAddTimezones(timezone: Timezone) {
+    appendSelectedTimezones();
     appendTimezoneNameToUrl(timezone.name, [searchParams, setSearchParams]);
   }
 

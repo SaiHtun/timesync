@@ -7,6 +7,7 @@ import {
 import { SetURLSearchParams } from "react-router-dom";
 import { appendTimezoneNameToUrl } from "~/utils/hooks/use-params";
 import { searchTimezoneNameAtom } from "./search-timezone-name";
+import { appendSelectedTimezonesAtom } from "./selected-timezones";
 
 export const searchedTimezonesAtom = atom<Timezone[]>([]);
 
@@ -36,6 +37,7 @@ export const handleKeydownSearchedTimezoneAtom = atom(
         searchParams,
         setSearchParams,
       ]);
+      set(appendSelectedTimezonesAtom);
     } else if (e.code === "Escape") {
       set(searchTimezoneNameAtom, "");
     }
