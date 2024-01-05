@@ -17,13 +17,9 @@ interface Props {
 }
 
 export default memo(function TimeDials({ timezone }: Props) {
-  const [dayOfWeek] = getNextDay(timezone.name, 1);
+  const [dayOfWeek] = getNextDay(timezone.name, 1).split(", ");
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
-  // 24 hours format for easily index the "New Day"
-  const startHours24 = parseInt(
-    formatInTimeZone(new Date(), timezone.name, "k")
-  );
 
   const timeDials = useMemo(
     () => getTimeDials(timezone, dialColor),
@@ -32,9 +28,12 @@ export default memo(function TimeDials({ timezone }: Props) {
 
   timezone.timeDials = timeDials;
 
-  const hours24 = arrayRange(startHours24, startHours24 + 23);
-
   function isLastDay(hourIndex: number) {
+    // 24 hours format for easily index the "New Day"
+    const startHours24 = parseInt(
+      formatInTimeZone(new Date(), timezone.name, "k")
+    );
+    const hours24 = arrayRange(startHours24, startHours24 + 23);
     return hours24[hourIndex] === 23;
   }
 

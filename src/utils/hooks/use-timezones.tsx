@@ -183,7 +183,6 @@ type UpdateTimezoneDependencies = {
 };
 
 function useUpdateTimezonesClock(
-  timezones: Timezone[],
   setTimezonesClock: Dispatch<SetStateAction<Timezone[]>>,
   dependencies: UpdateTimezoneDependencies
 ): void {
@@ -216,7 +215,7 @@ function useUpdateTimezonesClock(
     }, requiredIntervalToBeAMinute);
 
     return () => clearInterval(intervalId);
-  }, [timezones, setTimezonesClockCb, hoursFormat]);
+  }, []);
 }
 
 type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
@@ -230,7 +229,7 @@ export function useSelectedTimezones(): [
     selectedTimezonesAtom
   );
 
-  useUpdateTimezonesClock(selectedTimezones, setSelectedTimezones, {
+  useUpdateTimezonesClock(setSelectedTimezones, {
     hoursFormat,
   });
 
@@ -258,7 +257,7 @@ export function useSearchedTimezones(): Timezone[] {
     setFilteredTimezones(fusedTimezones);
   }, [deferredSearch, timezones]);
 
-  useUpdateTimezonesClock(filteredTimezones, setFilteredTimezones, {
+  useUpdateTimezonesClock(setFilteredTimezones, {
     hoursFormat,
   });
 
