@@ -13,7 +13,7 @@ export default function TimeSelectionOverlay() {
       const { x, y } = parentRef.current.getBoundingClientRect();
       setParentsPosition({ x, y });
     }
-  }, []);
+  }, [window.innerWidth]);
 
   function handleMouseMove(e: React.MouseEvent) {
     const numberOfJumps = Math.floor(

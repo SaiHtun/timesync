@@ -5,7 +5,6 @@ import {
   useDeferredValue,
   useMemo,
   useCallback,
-  useState,
 } from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { arrayRange } from "~/utils/index";
@@ -17,7 +16,6 @@ import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 import { searchedTimezonesAtom } from "~/atoms/searched-timezones";
 import { colorsMap, DialColors } from "~/constants/colorsMap";
 import { addDays, format } from "date-fns";
-import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
