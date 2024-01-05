@@ -16,6 +16,8 @@ import Fuse from "fuse.js";
 import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 import { searchedTimezonesAtom } from "~/atoms/searched-timezones";
 import { colorsMap, DialColors } from "~/constants/colorsMap";
+import { addDays, format } from "date-fns";
+import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
@@ -37,7 +39,10 @@ function getDailyCircleColor(hour: number, dialColor: DialColors) {
 }
 
 export type TimeDial = {
-  hour: number;
+  hour12: number;
+  hour24: number;
+  day: string;
+  isNewDay: boolean;
   dailyCircleBgColor: string;
 };
 
@@ -50,50 +55,45 @@ function getHours24(timezoneName: string): number[] {
   );
 }
 
-export function useTimeDials(
+export function getNextDay(timezoneName: string, numberOfDays: number): string {
+  const date = new Date(
+    new Date().toLocaleString("en", { timeZone: timezoneName })
+  );
+
+  const nextDay = format(addDays(date, numberOfDays), "eee, MMM d");
+  return nextDay;
+}
+
+export function getTimeDials(
   timezone: Timezone,
-  hoursFormat: HoursFormat = "24",
-  dialColor: DialColors = "teal"
+  dialColor: DialColors
 ): TimeDial[] {
   const { name, clock, offset } = timezone;
   const hours24 = getHours24(name);
-  const [timeDials, setTimeDials] = useState<TimeDial[]>([]);
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
   const hours = arrayRange(startHours, startHours + 23);
 
-  useEffect(() => {
-    const td = hours.map((h, index) => {
-      let hour = h;
-      if (isDecimal(offset)) {
-        hour += 0.5;
-      }
-      // handling 24/12 hours and edge cases coz some countries like Myanmar is off by -30mins
-      hour =
-        hoursFormat === "24"
-          ? hour % 24 === 0.5
-            ? 24.5
-            : hour % 24 || 24
-          : hour % 12 === 0.5
-          ? 12.5
-          : hour % 12 || 12;
+  const timeDials = hours.map((h, index) => {
+    let hour = h;
+    if (isDecimal(offset)) {
+      hour += 0.5;
+    }
+    // handling 24/12 hours and edge cases coz some countries like Myanmar is off by -30mins
+    const hour12 = hour % 12 === 0.5 ? 12.5 : hour % 12 || 12;
 
-      return {
-        hour,
-        dailyCircleBgColor: getDailyCircleColor(hours24[index], dialColor),
-      };
-    });
+    const hour24 = hour % 24 === 0.5 ? 24.5 : hour % 24 || 24;
 
-    setTimeDials(td);
-  }, [timezone]);
+    const day = `${timezone.dayOfWeek}, ${timezone.monthAndDay}`;
+    const isNewDay = hours[index] === 24;
 
-  useEffect(() => {
-    setTimeDials((preTimeDials) =>
-      preTimeDials.map((td, index) => ({
-        hour: td.hour,
-        dailyCircleBgColor: getDailyCircleColor(hours24[index], dialColor),
-      }))
-    );
-  }, [dialColor]);
+    return {
+      hour12,
+      hour24,
+      day: isNewDay ? getNextDay(timezone.name, 1) : day,
+      isNewDay,
+      dailyCircleBgColor: getDailyCircleColor(hours24[index], dialColor),
+    };
+  });
 
   return timeDials;
 }
@@ -163,22 +163,8 @@ function populateTimezones(hoursFormat: HoursFormat = "24"): Timezone[] {
 }
 
 export function getTimezonesMap() {
-  const defaultTimezone: Timezone = {
-    name: "America/Los_Angeles",
-    abbr: "HW",
-    clock: "00:00 AM",
-    dayOfWeek: "lol",
-    diffHoursFromHome: "0",
-    monthAndDay: "lol",
-    offset: 0,
-    timeDials: [],
-    value: "lol",
-    year: "1992",
-  };
   const map = new Map<string | "defaultTimezone", Timezone>();
   const timezones = populateTimezones();
-
-  map.set("defaultTimezone", defaultTimezone);
   timezones.forEach((timezone) => map.set(timezone.name, timezone));
 
   return map;
