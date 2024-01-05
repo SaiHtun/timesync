@@ -21,7 +21,7 @@ export default function DialColor({ dialColor }: Props) {
         primaryColor,
         "rounded-full w-5 h-5 hover:scale-110 hover:saturate-200 transition-all ease-linear",
         {
-          "border-2 border-yellow-400": dialColorName === name,
+          "outline-dashed outline-2 outline-yellow-500": dialColorName === name,
         }
       )}
       type="button"

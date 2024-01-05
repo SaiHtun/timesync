@@ -1,5 +1,5 @@
 import { memo } from "react";
-import TimezoneRow from "./SelectedTimezoneRow";
+import SelectedTimezoneRow from "./SelectedTimezoneRow";
 import { Timezone, useSelectedTimezones } from "~/utils/hooks/use-timezones";
 import {
   DragDropContext,
@@ -9,6 +9,7 @@ import {
 } from "react-beautiful-dnd";
 import { cn } from "~/utils/cn";
 import { useSearchParams } from "react-router-dom";
+import TimeSelectionOverlay from "./TimeSelectionOverlay";
 
 export default memo(function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
@@ -52,7 +53,7 @@ export default memo(function SelectedTimezones() {
           <main
             {...provided.droppableProps}
             className={cn(
-              "flex flex-col max-h-[880px] w-full odd_childs even_childs relative -z-1",
+              " flex flex-col max-h-[880px] w-full odd_childs even_childs relative -z-1",
               {
                 "pointer-events-none": snapshot.isDraggingOver,
               }
@@ -66,7 +67,7 @@ export default memo(function SelectedTimezones() {
                 index={index}
               >
                 {(provided, snapshot) => (
-                  <TimezoneRow
+                  <SelectedTimezoneRow
                     provided={provided}
                     snapshot={snapshot}
                     timezone={timezone}
@@ -78,6 +79,7 @@ export default memo(function SelectedTimezones() {
               </Draggable>
             ))}
             {provided.placeholder}
+            <TimeSelectionOverlay />
           </main>
         )}
       </Droppable>

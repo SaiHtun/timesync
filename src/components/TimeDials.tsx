@@ -63,13 +63,13 @@ export default memo(function TimeDials({ timezone }: Props) {
 
   return (
     <main>
-      <div className="h-[40px] w-[760px] flex items-center  text-center text-sm rounded-l-md">
+      <div className="h-[40px] w-[768px] flex items-center  text-center text-sm rounded-l-md">
         {timezone.timeDials.map(({ hour, dailyCircleBgColor }, index) => {
           return (
             <div
               key={index}
               className={cn(
-                "w-[31.67px] h-full py-1 first:rounded-l-md relative flex items-center justify-center text-dial-newday dark:text-white",
+                "w-[32px] h-full  py-1 first:rounded-l-md relative flex items-center justify-center text-dial-newday dark:text-white",
                 dailyCircleBgColor,
                 {
                   "!rounded-l-md !bg-dial-newday  !text-white": isNewDay(index),

@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { type Timezone } from "~/utils/hooks/use-timezones";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
@@ -12,7 +12,6 @@ import {
 } from "~/atoms/selected-timezones";
 import { Home, Trash2 } from "lucide-react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
-import { GripHorizontal } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { popTimezoneNameFromUrl } from "~/utils/hooks/use-params";
 
@@ -73,15 +72,17 @@ export default memo(function SelectedTimezoneRow({
   timezone,
   isHome,
   provided,
+  snapshot,
 }: Props) {
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
   const [searchParams, setSearchParams] = useSearchParams();
   const [, popSelectedTimezones] = useAtom(popSelectedTimezonesAtom);
 
-  timezone.diffHoursFromHome = getDifferenceHoursFromHome(
-    timezone.name,
-    homeSelectedTimezone.name
-  );
+  const diffHours = useMemo(() => {
+    return getDifferenceHoursFromHome(timezone.name, homeSelectedTimezone.name);
+  }, [homeSelectedTimezone]);
+
+  timezone.diffHoursFromHome = diffHours;
 
   function handlePopTimezone() {
     popSelectedTimezones(timezone.name);
@@ -91,21 +92,14 @@ export default memo(function SelectedTimezoneRow({
   return (
     <div
       className={cn(
-        "group relative grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md"
+        "group relative grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md",
+        {
+          "shadow-md": snapshot.isDragging,
+        }
       )}
       ref={provided.innerRef}
       {...provided.draggableProps}
     >
-      <div
-        className={cn(
-          "absolute top-[50%] translate-y-[-50%] right-1 w-fit h-fit p-1 invisible group-hover:visible z-10"
-        )}
-        {...provided.dragHandleProps}
-      >
-        <GripHorizontal strokeWidth={1} size={20} />
-      </div>
-      {/* can't delete HOME :D */}
-      {/* {timezone.name !== getCurrentUserTimezoneName() && ( */}
       <button
         type="button"
         className={cn(
@@ -115,9 +109,11 @@ export default memo(function SelectedTimezoneRow({
       >
         <Trash2 strokeWidth={1} size={20} className="hover:text-red-500" />
       </button>
-      {/* )} */}
       <div>
-        <div className="flex items-center justify-between px-2">
+        <div
+          className="flex items-center justify-between px-2"
+          {...provided.dragHandleProps}
+        >
           <div className="flex items-center gap-2">
             {isHome ? (
               <Home size={20} className="w-8" />

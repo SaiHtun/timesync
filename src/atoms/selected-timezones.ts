@@ -20,7 +20,7 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
   ];
   const isExist = selectedTimezones.find((tz) => tz.name === newTimezone.name);
 
-  if (selectedTimezones.length <= TIMEZONES_LIMIT && !isExist) {
+  if (selectedTimezones.length < TIMEZONES_LIMIT && !isExist) {
     set(selectedTimezonesAtom, (preTzs) => preTzs.concat(newTimezone));
   }
   set(searchTimezoneNameAtom, "");
