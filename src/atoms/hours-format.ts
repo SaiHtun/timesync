@@ -1,9 +1,9 @@
 import { atom } from "jotai";
 
-export type HoursFormat = "24" | "12";
+export type HoursFormat = "hour24" | "hour12";
 
-export const hoursFormatAtom = atom<HoursFormat>("24");
+export const hoursFormatAtom = atom<HoursFormat>("hour24");
 
 export const toggleHoursFormatAtom = atom(null, (_, set) => {
-  set(hoursFormatAtom, (pre) => (pre === "24" ? "12" : "24"));
+  set(hoursFormatAtom, (pre) => (pre === "hour24" ? "hour12" : "hour24"));
 });

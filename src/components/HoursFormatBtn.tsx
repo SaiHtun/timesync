@@ -15,16 +15,16 @@ function Hour({ hoursFormat, expectedHoursFormat }: HourProps) {
   return (
     <p
       className={cn(
-        " text-zinc-400 dark:text-zinc-500 transition-colors shadow-inner w-full h-full flex items-center justify-center",
+        " text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50  transition-colors shadow-inner w-full h-full flex items-center justify-center",
         {
           "primary_bg text-zinc-800 dark:text-white shadow dark:shadow-zinc-900":
             hoursFormat === expectedHoursFormat,
-          "rounded-l-md": expectedHoursFormat === "24",
-          "rounded-r-md": expectedHoursFormat === "12",
+          "rounded-l-md": expectedHoursFormat === "hour24",
+          "rounded-r-md": expectedHoursFormat === "hour12",
         }
       )}
     >
-      {expectedHoursFormat}
+      {expectedHoursFormat === "hour24" ? 24 : 12}
     </p>
   );
 }
@@ -40,8 +40,8 @@ export default function HoursFormatBtn() {
       className="flex items-center text-xs w-20 h-full primary_border transition-all"
       onClick={toggleHoursFormat}
     >
-      <Hour hoursFormat={hoursFormat} expectedHoursFormat="24" />
-      <Hour hoursFormat={hoursFormat} expectedHoursFormat="12" />
+      <Hour hoursFormat={hoursFormat} expectedHoursFormat="hour24" />
+      <Hour hoursFormat={hoursFormat} expectedHoursFormat="hour12" />
     </button>
   );
 }

@@ -37,7 +37,7 @@ function Date({ date }: { date: string }) {
   return (
     <button
       className={cn(
-        "flex flex-col items-center p-[2px] w-9 rounded-md primary_border hover:text-zinc-900",
+        "flex flex-col items-center transition-colors p-[2px] w-9 rounded-md primary_border hover:text-zinc-900 dark:hover:text-zinc-50",
         {
           "shadow-inner  text-zinc-400": currentDate !== date,
         }

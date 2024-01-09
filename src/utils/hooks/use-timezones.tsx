@@ -41,6 +41,7 @@ export type TimeDial = {
   hour24: number;
   day: string;
   isNewDay: boolean;
+  isLastHour: boolean;
   dailyCircleBgColor: string;
 };
 
@@ -67,7 +68,7 @@ export function getTimeDials(
   dialColor: DialColors
 ): TimeDial[] {
   const { name, clock, offset } = timezone;
-  const hours24 = getHours24(name);
+  const hours24Array = getHours24(name);
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
   const hours = arrayRange(startHours, startHours + 23);
 
@@ -83,13 +84,15 @@ export function getTimeDials(
 
     const day = `${timezone.dayOfWeek}, ${timezone.monthAndDay}`;
     const isNewDay = hours[index] === 24;
+    const isLastHour = hours[index] === 23;
 
     return {
+      isNewDay,
       hour12,
       hour24,
       day: isNewDay ? getNextDay(timezone.name, 1) : day,
-      isNewDay,
-      dailyCircleBgColor: getDailyCircleColor(hours24[index], dialColor),
+      isLastHour,
+      dailyCircleBgColor: getDailyCircleColor(hours24Array[index], dialColor),
     };
   });
 
@@ -136,8 +139,8 @@ function getSupportedTimezonesName(): string[] {
   return Intl.supportedValuesOf("timeZone");
 }
 
-function populateTimezones(hoursFormat: HoursFormat = "24"): Timezone[] {
-  const hour = hoursFormat === "24" ? "k" : "h";
+function populateTimezones(hoursFormat: HoursFormat = "hour24"): Timezone[] {
+  const hour = hoursFormat === "hour24" ? "k" : "h";
   const strFormat = `eee, MMM d, y, ${hour}:mm a, zzz, zzzz`;
   const date = new Date();
 
@@ -172,7 +175,7 @@ const MILISECONDS_PER_MIN = 60_000;
 
 function currentTime(timezoneName: string, hoursFormat: HoursFormat) {
   const date = new Date();
-  const hour = hoursFormat === "24" ? "k" : "h";
+  const hour = hoursFormat === "hour24" ? "k" : "h";
   const strFormat = `${hour}:mm a`;
 
   return formatInTimeZone(date, timezoneName, strFormat);
