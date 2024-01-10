@@ -3,32 +3,36 @@ import {
   type Timezone,
   isDecimal,
   getTimeDials,
-  getNextDay,
 } from "~/utils/hooks/use-timezones";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
+import { currentDateAtom } from "~/atoms/date";
 
 interface Props {
   timezone: Timezone;
 }
 
 function NewDay({ day }: { day: string }) {
-  const monthAndDay = day.split(", ")[1];
+  const [dayOfWeek, monthAndDay] = day.split(", ");
   const [month, numOfDay] = monthAndDay.split(" ");
   return (
-    <div className={cn("text-xs")}>
-      <p className="flex flex-col ">
-        <span>{month}</span>
-        <span>{numOfDay}</span>
-      </p>
-    </div>
+    <>
+      <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
+        {dayOfWeek}
+      </span>
+      <div className={cn("text-xs")}>
+        <p className="flex flex-col ">
+          <span>{month}</span>
+          <span>{numOfDay}</span>
+        </p>
+      </div>
+    </>
   );
 }
 
 export default memo(function TimeDials({ timezone }: Props) {
-  const [dayOfWeek] = getNextDay(timezone.name, 1).split(", ");
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
 
@@ -59,9 +63,6 @@ export default memo(function TimeDials({ timezone }: Props) {
                 }
               )}
             >
-              <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
-                {isNewDay ? dayOfWeek : ""}
-              </span>
               {isNewDay ? (
                 <NewDay day={day} />
               ) : isDecimal(hour) && hour > 1 ? (

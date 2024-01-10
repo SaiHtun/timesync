@@ -5,6 +5,7 @@ import {
   useDeferredValue,
   useMemo,
   useCallback,
+  useRef,
 } from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { arrayRange } from "~/utils/index";
@@ -16,6 +17,7 @@ import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 import { searchedTimezonesAtom } from "~/atoms/searched-timezones";
 import { colorsMap, DialColors } from "~/constants/colorsMap";
 import { addDays, format } from "date-fns";
+import { CurrentDate, currentDateAtom } from "~/atoms/date";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
@@ -54,12 +56,11 @@ function getHours24(timezoneName: string): number[] {
   );
 }
 
-export function getNextDay(timezoneName: string, numberOfDays: number): string {
-  const date = new Date(
-    new Date().toLocaleString("en", { timeZone: timezoneName })
-  );
+export function getNextDay(currentTime: string, numberOfDays = 1): string {
+  const date = new Date(currentTime);
 
   const nextDay = format(addDays(date, numberOfDays), "eee, MMM d");
+
   return nextDay;
 }
 
@@ -67,11 +68,12 @@ export function getTimeDials(
   timezone: Timezone,
   dialColor: DialColors
 ): TimeDial[] {
-  const { name, clock, offset } = timezone;
+  const { name, clock, offset, dayOfWeek, monthAndDay } = timezone;
   const hours24Array = getHours24(name);
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
   const hours = arrayRange(startHours, startHours + 23);
 
+  const currentTime = dayOfWeek + ", " + monthAndDay;
   const timeDials = hours.map((h, index) => {
     let hour = h;
     if (isDecimal(offset)) {
@@ -90,7 +92,7 @@ export function getTimeDials(
       isNewDay,
       hour12,
       hour24,
-      day: isNewDay ? getNextDay(timezone.name, 1) : day,
+      day: isNewDay ? getNextDay(currentTime) : day,
       isLastHour,
       dailyCircleBgColor: getDailyCircleColor(hours24Array[index], dialColor),
     };
@@ -101,6 +103,10 @@ export function getTimeDials(
 
 export function getCurrentUserTimezoneName() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+function diffHourFormat(diffHours: number) {
+  return isDecimal(diffHours) ? diffHours.toFixed(1) : diffHours;
 }
 
 export function getDifferenceHoursFromHome(
@@ -119,7 +125,9 @@ export function getDifferenceHoursFromHome(
 
   const diffHours = (parsedOther - parsedHome) / (60 * 60 * 1000);
 
-  return diffHours >= 0 ? `+${diffHours}` : `${diffHours}`;
+  return diffHours >= 0
+    ? `+${diffHourFormat(diffHours)}`
+    : `${diffHourFormat(diffHours)}`;
 }
 
 export interface Timezone {
@@ -173,7 +181,10 @@ export function getTimezonesMap() {
 
 const MILISECONDS_PER_MIN = 60_000;
 
-function currentTime(timezoneName: string, hoursFormat: HoursFormat) {
+export function currentTime(
+  timezoneName: string,
+  hoursFormat: HoursFormat = "hour24"
+) {
   const date = new Date();
   const hour = hoursFormat === "hour24" ? "k" : "h";
   const strFormat = `${hour}:mm a`;
@@ -183,6 +194,7 @@ function currentTime(timezoneName: string, hoursFormat: HoursFormat) {
 
 type UpdateTimezoneDependencies = {
   hoursFormat: HoursFormat;
+  currentDate?: CurrentDate;
 };
 
 function useUpdateTimezonesClock(
@@ -190,9 +202,29 @@ function useUpdateTimezonesClock(
   dependencies: UpdateTimezoneDependencies
 ): void {
   const { hoursFormat } = dependencies;
-  const setTimezonesClockCb = useCallback(setTimezonesClock, [
-    setTimezonesClock,
-  ]);
+  const setTimezonesClockCb = useCallback(setTimezonesClock, []);
+  const [currentDate] = useAtom(currentDateAtom);
+  let prevDateIndex = useRef(0);
+
+  useEffect(() => {
+    setTimezonesClockCb((preTimezones) => {
+      return preTimezones.map((preTz) => {
+        const time = preTz.dayOfWeek + ", " + preTz.monthAndDay;
+        const numberOfDays = currentDate.index - prevDateIndex.current;
+        // getNextDay -> return pre/next days depends on (+/-) of numberOfDays
+        const [dayOfWeek, monthAndDay] = getNextDay(time, numberOfDays).split(
+          ", "
+        );
+
+        return {
+          ...preTz,
+          dayOfWeek,
+          monthAndDay,
+        };
+      });
+    });
+    prevDateIndex.current = currentDate.index;
+  }, [currentDate.date]);
 
   useEffect(() => {
     setTimezonesClockCb((preTimezones) => {
