@@ -68,6 +68,5 @@ export const dialColors = (Object.keys(colorsMap) as Array<DialColors>).map(
   (c) => ({
     name: c,
     primaryColor: colorsMap[c].primary,
-    hoverColor: colorsMap[c].newday,
   })
 );

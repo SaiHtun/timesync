@@ -1,16 +1,12 @@
 import { memo, useMemo } from "react";
-import {
-  type Timezone,
-  isDecimal,
-  getTimeDials,
-} from "~/utils/hooks/use-timezones";
+import { isDecimal, getTimeDials } from "~/utils/timezones";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 
-interface Props {
-  timezone: Timezone;
+interface IProps {
+  timezone: ITimezone;
 }
 
 function NewDay({ day }: { day: string }) {
@@ -31,7 +27,7 @@ function NewDay({ day }: { day: string }) {
   );
 }
 
-export default memo(function TimeDials({ timezone }: Props) {
+export default memo(function TimeDials({ timezone }: IProps) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
 
@@ -44,15 +40,15 @@ export default memo(function TimeDials({ timezone }: Props) {
 
   return (
     <main>
-      <div className="h-[40px] w-[768px] flex items-center  text-center text-sm rounded-l-md">
-        {timezone.timeDials.map((timezone, index) => {
-          const { dailyCircleBgColor, isNewDay, day, isLastHour } = timezone;
-          const hour = timezone[hoursFormat];
+      <div className="h-[40px] w-[816px] flex items-center  text-center text-sm rounded-l-md">
+        {timezone.timeDials.map((timeDial, index) => {
+          const { dailyCircleBgColor, isNewDay, day, isLastHour } = timeDial;
+          const hour = timeDial[hoursFormat];
           return (
             <div
               key={index}
               className={cn(
-                "w-[32px] h-full  py-1 first:rounded-l-md relative flex items-center justify-center text-dial-newday dark:text-white",
+                "w-[34px] h-full  py-1 first:rounded-l-md relative flex items-center justify-center text-dial-newday dark:text-white",
                 dailyCircleBgColor,
                 {
                   "!rounded-l-md !bg-dial-newday  !text-white": isNewDay,

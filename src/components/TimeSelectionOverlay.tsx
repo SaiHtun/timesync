@@ -4,7 +4,7 @@ export default function TimeSelectionOverlay() {
   const parentRef = useRef<HTMLDivElement>(null);
   const [parentsPosition, setParentsPosition] = useState({ x: 0, y: 0 });
   const [mouseXposition, setMouseXposition] = useState(0);
-  const frameWidth = 32;
+  const frameWidth = 34;
   const MIN_JUMPS = 0;
   const MAX_JUMPS = 23;
 
@@ -28,7 +28,7 @@ export default function TimeSelectionOverlay() {
   return (
     <div
       ref={parentRef}
-      className="absolute right-0 top-0  !bg-transparent rounded-md w-[795px] h-full "
+      className="absolute right-0 top-0  !bg-transparent  rounded-md w-[827px] h-full "
       onMouseMove={handleMouseMove}
     >
       <div

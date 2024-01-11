@@ -1,4 +1,4 @@
-import { useSearchedTimezones } from "~/utils/hooks/use-timezones";
+import { useSearchedTimezones } from "~/utils/hooks/use-searched-timezones";
 import SearchedTimezoneRow from "./SearchedTimezoneRow";
 
 export default function SearchedTimezones() {

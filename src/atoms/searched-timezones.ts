@@ -1,11 +1,11 @@
 import { atom } from "jotai";
-import { Timezone } from "~/utils/hooks/use-timezones";
+import { Timezone } from "~/utils/hooks/use-selected-timezones";
 import {
   keydownAddTimezoneIndexAtom,
   searchedTimezoneIndexAtom,
 } from "./searched-timezone-index";
 import { SetURLSearchParams } from "react-router-dom";
-import { appendTimezoneNameToUrl } from "~/utils/hooks/use-params";
+import { appendTimezoneNameToUrl } from "~/utils/hooks/use-timezones-params";
 import { searchTimezoneNameAtom } from "./search-timezone-name";
 import { appendSelectedTimezonesAtom } from "./selected-timezones";
 

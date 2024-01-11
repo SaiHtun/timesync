@@ -1,6 +1,6 @@
 import { memo } from "react";
 import SelectedTimezoneRow from "./SelectedTimezoneRow";
-import { Timezone, useSelectedTimezones } from "~/utils/hooks/use-timezones";
+import { useSelectedTimezones } from "~/utils/hooks/use-selected-timezones";
 import {
   DragDropContext,
   Draggable,
@@ -16,7 +16,7 @@ export default memo(function SelectedTimezones() {
   const [, setSearchParams] = useSearchParams();
 
   function reorderTimezones(
-    timezones: Timezone[],
+    timezones: ITimezone[],
     sourceIndex: number,
     destinationIndex: number
   ) {

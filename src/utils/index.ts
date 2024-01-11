@@ -29,3 +29,14 @@ export function jsonParser<T>(value: string): JsonParserReturnType<T> {
     return { err: errorMessage, data: null };
   }
 }
+
+type IdOrClassSelectors = string[];
+
+export function detectAnyDOMsOnMouseEvent(
+  e: MouseEvent,
+  selectors: IdOrClassSelectors
+): boolean {
+  return selectors.some((selector) =>
+    (e.target as HTMLElement).closest(selector)
+  );
+}

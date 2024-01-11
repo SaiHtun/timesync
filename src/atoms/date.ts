@@ -1,30 +1,24 @@
 import { atom } from "jotai";
-import {
-  Timezone,
-  getCurrentUserTimezoneName,
-  getNextDay,
-} from "~/utils/hooks/use-timezones";
-import { arrayRange } from "../utils";
-import { getTimezone } from "./selected-timezones";
+import { arrayRange } from "~/utils/index";
+import { getCurrentUserTimezoneName, getNextDay } from "~/utils/timezones";
+import { formatInTimeZone } from "date-fns-tz";
 
 export type CurrentDate = {
   name: string;
   dateIndex: number;
 };
 
-type TimeSlices = Array<"dayOfWeek" | "monthAndDay" | "year">;
-
-export function formatTimeString(timezone: Timezone, timeSlices: TimeSlices) {
-  let timeString = "";
-  for (const slice of timeSlices) {
-    timeString += timeString ? `, ${timezone[slice]}` : `${timezone[slice]}`;
-  }
-  return timeString;
+function getLocalTime() {
+  const res = formatInTimeZone(
+    new Date(),
+    getCurrentUserTimezoneName(),
+    "eee, MMM d, y"
+  );
+  return res;
 }
 
 export const datesAtom = atom(() => {
-  const localTz = getTimezone(getCurrentUserTimezoneName());
-  const t = formatTimeString(localTz!, ["dayOfWeek", "monthAndDay", "year"]);
+  const t = getLocalTime();
   return arrayRange(0, 3).map((val, index) => ({
     name: getNextDay(t, val),
     dateIndex: index,
@@ -32,10 +26,7 @@ export const datesAtom = atom(() => {
 });
 
 export const currentDateAtom = atom<CurrentDate>({
-  name: formatTimeString(getTimezone(getCurrentUserTimezoneName())!, [
-    "dayOfWeek",
-    "monthAndDay",
-  ]),
+  name: getLocalTime(),
   dateIndex: 0,
 });
 

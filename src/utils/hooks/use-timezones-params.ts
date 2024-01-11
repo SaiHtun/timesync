@@ -1,6 +1,6 @@
 import { SetURLSearchParams, useSearchParams } from "react-router-dom";
 import { jsonParser } from "../index";
-import { getCurrentUserTimezoneName } from "./use-timezones";
+import { getCurrentUserTimezoneName } from "~/utils/timezones";
 import { useEffect, useState } from "react";
 
 function arrangeHomeFirstParams(timezonesName: string[]) {

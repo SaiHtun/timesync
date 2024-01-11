@@ -1,9 +1,8 @@
 import { memo, useMemo } from "react";
-import { type Timezone } from "~/utils/hooks/use-timezones";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
-import { getDifferenceHoursFromHome } from "~/utils/hooks/use-timezones";
+import { getDifferenceHoursFromHome } from "~/utils/timezones";
 import { useAtom } from "jotai";
 import AbbrBadge from "./AbbrBadge";
 import {
@@ -13,10 +12,11 @@ import {
 import { Home, Trash2 } from "lucide-react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { useSearchParams } from "react-router-dom";
-import { popTimezoneNameFromUrl } from "~/utils/hooks/use-params";
+import { popTimezoneNameFromUrl } from "~/utils/hooks/use-timezones-params";
+import { hoursFormatAtom } from "~/atoms/hours-format";
 
-interface Props {
-  timezone: Timezone;
+interface IProps {
+  timezone: ITimezone;
   isHome: boolean;
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
@@ -39,7 +39,7 @@ function DiffHoursFromHome({
   );
 }
 
-function Region({ timezone }: { timezone: Timezone }) {
+function Region({ timezone }: { timezone: ITimezone }) {
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
 
   return (
@@ -55,12 +55,15 @@ function Region({ timezone }: { timezone: Timezone }) {
   );
 }
 
-function CurrentTime({ timezone }: { timezone: Timezone }) {
-  const { dayOfWeek, clock, monthAndDay } = timezone;
+function CurrentTime({ timezone }: { timezone: ITimezone }) {
+  const [hoursFormat] = useAtom(hoursFormatAtom);
+  const { dayOfWeek, monthAndDay } = timezone;
+
+  const clockFormat = hoursFormat === "hour12" ? "hour12Clock" : "hour24Clock";
 
   return (
     <div className="text-right">
-      <Clock clock={clock} />
+      <Clock clock={timezone[clockFormat]} />
       <span className="text-xs primary_text_gray">
         {dayOfWeek + ", " + monthAndDay}
       </span>
@@ -73,7 +76,7 @@ export default memo(function SelectedTimezoneRow({
   isHome,
   provided,
   snapshot,
-}: Props) {
+}: IProps) {
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
   const [searchParams, setSearchParams] = useSearchParams();
   const [, popSelectedTimezones] = useAtom(popSelectedTimezonesAtom);

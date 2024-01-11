@@ -1,30 +1,46 @@
 import { atom } from "jotai";
-import { Timezone, getTimezonesMap } from "~/utils/hooks/use-timezones";
+import {
+  formatCurrentTime,
+  getNextDay,
+  getTimezonesMap,
+} from "~/utils/timezones";
 import { searchTimezoneNameAtom } from "./search-timezone-name";
 import { searchedTimezoneIndexAtom } from "./searched-timezone-index";
 import { searchedTimezonesAtom } from "./searched-timezones";
+import { TIMEZONES_LIMIT } from "~/constants/index";
+import { CurrentDate, currentDateAtom } from "./date";
 
-let timezonesMap = new Map<string, Timezone>();
+let timezonesMap = new Map<string, ITimezone>();
 if (timezonesMap.size === 0) {
   timezonesMap = getTimezonesMap();
 }
+export const selectedTimezonesAtom = atom<ITimezone[]>([]);
 
-export const getTimezone = (timezoneName: string) =>
-  timezonesMap.get(timezoneName);
+function massageTimezone(
+  timezone: ITimezone,
+  currentDate: CurrentDate
+): ITimezone {
+  // newly added "Timezone" has to sync the "currentDate".
+  const [dayOfWeek, monthAndDay] = getNextDay(
+    formatCurrentTime(timezone, ["dayOfWeek", "monthAndDay", "year"]),
+    currentDate.dateIndex
+  ).split(", ");
 
-export const selectedTimezonesAtom = atom<Timezone[]>([]);
-
-const TIMEZONES_LIMIT = 10;
+  return { ...timezone, dayOfWeek, monthAndDay };
+}
 
 export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
   const selectedTimezones = get(selectedTimezonesAtom);
+  const currentDate = get(currentDateAtom);
   const newTimezone = get(searchedTimezonesAtom)[
     get(searchedTimezoneIndexAtom)
   ];
   const isExist = selectedTimezones.find((tz) => tz.name === newTimezone.name);
 
   if (selectedTimezones.length < TIMEZONES_LIMIT && !isExist) {
-    set(selectedTimezonesAtom, (preTzs) => preTzs.concat(newTimezone));
+    set(selectedTimezonesAtom, (preTzs) =>
+      preTzs.concat(massageTimezone(newTimezone, currentDate))
+    );
   }
   set(searchTimezoneNameAtom, "");
 });
@@ -45,7 +61,7 @@ export const syncUrlToSelectedTimezonesAtom = atom(
   null,
   (_, set, timezonesName: string[] = []) => {
     const timezones = timezonesName.map(
-      (name) => timezonesMap.get(name) as Timezone
+      (name) => timezonesMap.get(name) as ITimezone
     );
     set(selectedTimezonesAtom, timezones);
     set(searchTimezoneNameAtom, "");
