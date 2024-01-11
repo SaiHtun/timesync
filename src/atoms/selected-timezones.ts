@@ -1,13 +1,8 @@
 import { atom } from "jotai";
-import {
-  Timezone,
-  getNextDay,
-  getTimezonesMap,
-} from "~/utils/hooks/use-timezones";
+import { Timezone, getTimezonesMap } from "~/utils/hooks/use-timezones";
 import { searchTimezoneNameAtom } from "./search-timezone-name";
 import { searchedTimezoneIndexAtom } from "./searched-timezone-index";
 import { searchedTimezonesAtom } from "./searched-timezones";
-import { currentDateAtom } from "./date";
 
 let timezonesMap = new Map<string, Timezone>();
 if (timezonesMap.size === 0) {
@@ -26,16 +21,10 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
   const newTimezone = get(searchedTimezonesAtom)[
     get(searchedTimezoneIndexAtom)
   ];
-  const currentDate = get(currentDateAtom);
   const isExist = selectedTimezones.find((tz) => tz.name === newTimezone.name);
 
   if (selectedTimezones.length < TIMEZONES_LIMIT && !isExist) {
-    const ct = newTimezone.dayOfWeek + ", " + newTimezone.monthAndDay;
-    const [dayOfWeek, monthAndDay] = getNextDay(ct, currentDate.index).split(
-      ", "
-    );
-    const nt = { ...newTimezone, dayOfWeek, monthAndDay };
-    set(selectedTimezonesAtom, (preTzs) => preTzs.concat(nt));
+    set(selectedTimezonesAtom, (preTzs) => preTzs.concat(newTimezone));
   }
   set(searchTimezoneNameAtom, "");
 });
@@ -67,10 +56,3 @@ export const syncUrlToSelectedTimezonesAtom = atom(
 export const homeSelectedTimezonesAtom = atom(
   (get) => get(selectedTimezonesAtom)[0]
 );
-
-export const getHomeTimeAtom = atom((get) => {
-  const tz = get(selectedTimezonesAtom)[0];
-  if (tz) {
-    return tz.dayOfWeek + ", " + tz.monthAndDay;
-  }
-});

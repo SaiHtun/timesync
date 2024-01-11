@@ -8,7 +8,6 @@ import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
-import { currentDateAtom } from "~/atoms/date";
 
 interface Props {
   timezone: Timezone;
@@ -38,7 +37,7 @@ export default memo(function TimeDials({ timezone }: Props) {
 
   const timeDials = useMemo(
     () => getTimeDials(timezone, dialColor),
-    [dialColor]
+    [dialColor, timezone]
   );
 
   timezone.timeDials = timeDials;

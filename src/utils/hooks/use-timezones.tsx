@@ -9,7 +9,7 @@ import {
 } from "react";
 import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { arrayRange } from "~/utils/index";
-import { hoursFormatAtom, type HoursFormat } from "~/atoms/hours-format";
+import type { HoursFormat } from "~/atoms/hours-format";
 import { useAtom } from "jotai";
 import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import Fuse from "fuse.js";
@@ -17,7 +17,7 @@ import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 import { searchedTimezonesAtom } from "~/atoms/searched-timezones";
 import { colorsMap, DialColors } from "~/constants/colorsMap";
 import { addDays, format } from "date-fns";
-import { CurrentDate, currentDateAtom } from "~/atoms/date";
+import { currentDateAtom, formatTimeString } from "~/atoms/date";
 
 export function isDecimal(hour: number) {
   return hour % 1 !== 0;
@@ -55,12 +55,11 @@ function getHours24(timezoneName: string): number[] {
     (num) => num % 24 || 24
   );
 }
-
+// getNextDay could return pre/next day base on if "numberOfDays"(+/-)
 export function getNextDay(currentTime: string, numberOfDays = 1): string {
+  // currentTime = "dayOfWeek, monthAndDay, year" ( without year would Error :D )
   const date = new Date(currentTime);
-
   const nextDay = format(addDays(date, numberOfDays), "eee, MMM d");
-
   return nextDay;
 }
 
@@ -68,12 +67,19 @@ export function getTimeDials(
   timezone: Timezone,
   dialColor: DialColors
 ): TimeDial[] {
-  const { name, clock, offset, dayOfWeek, monthAndDay } = timezone;
+  const { name, clock, offset } = timezone;
   const hours24Array = getHours24(name);
   const startHours = parseInt(clock.split(" ")[0].split(":")[0]);
   const hours = arrayRange(startHours, startHours + 23);
 
-  const currentTime = dayOfWeek + ", " + monthAndDay;
+  const currentTime = formatTimeString(timezone, [
+    "dayOfWeek",
+    "monthAndDay",
+    "year",
+  ]);
+
+  let startNewDay = false;
+
   const timeDials = hours.map((h, index) => {
     let hour = h;
     if (isDecimal(offset)) {
@@ -81,18 +87,21 @@ export function getTimeDials(
     }
     // handling 24/12 hours and edge cases coz some countries like Myanmar is off by -30mins
     const hour12 = hour % 12 === 0.5 ? 12.5 : hour % 12 || 12;
-
     const hour24 = hour % 24 === 0.5 ? 24.5 : hour % 24 || 24;
 
-    const day = `${timezone.dayOfWeek}, ${timezone.monthAndDay}`;
+    // const day = formatTimeString(timezone, ["dayOfWeek", "monthAndDay"]);
+
     const isNewDay = hours[index] === 24;
+    if (isNewDay) {
+      startNewDay = true;
+    }
     const isLastHour = hours[index] === 23;
 
     return {
       isNewDay,
       hour12,
       hour24,
-      day: isNewDay ? getNextDay(currentTime) : day,
+      day: startNewDay ? getNextDay(currentTime) : currentTime,
       isLastHour,
       dailyCircleBgColor: getDailyCircleColor(hours24Array[index], dialColor),
     };
@@ -192,50 +201,41 @@ export function currentTime(
   return formatInTimeZone(date, timezoneName, strFormat);
 }
 
-type UpdateTimezoneDependencies = {
-  hoursFormat: HoursFormat;
-  currentDate?: CurrentDate;
-};
-
 function useUpdateTimezonesClock(
-  setTimezonesClock: Dispatch<SetStateAction<Timezone[]>>,
-  dependencies: UpdateTimezoneDependencies
+  setTimezonesClock: Dispatch<SetStateAction<Timezone[]>>
 ): void {
-  const { hoursFormat } = dependencies;
   const setTimezonesClockCb = useCallback(setTimezonesClock, []);
   const [currentDate] = useAtom(currentDateAtom);
-  let prevDateIndex = useRef(0);
+  const prevDateIndexRef = useRef(0);
+
+  useEffect(() => {
+    setTimezonesClockCb((prevTimezones) => {
+      const newTimezones = prevTimezones.map((prevTimezone) => {
+        const t = formatTimeString(prevTimezone, [
+          "dayOfWeek",
+          "monthAndDay",
+          "year",
+        ]);
+        const dateCounts = currentDate.dateIndex - prevDateIndexRef.current;
+        const [dayOfWeek, monthAndDay] = getNextDay(t, dateCounts).split(", ");
+
+        return { ...prevTimezone, dayOfWeek, monthAndDay };
+      });
+      prevDateIndexRef.current = currentDate.dateIndex;
+      return newTimezones;
+    });
+  }, [currentDate]);
 
   useEffect(() => {
     setTimezonesClockCb((preTimezones) => {
       return preTimezones.map((preTz) => {
-        const time = preTz.dayOfWeek + ", " + preTz.monthAndDay;
-        const numberOfDays = currentDate.index - prevDateIndex.current;
-        // getNextDay -> return pre/next days depends on (+/-) of numberOfDays
-        const [dayOfWeek, monthAndDay] = getNextDay(time, numberOfDays).split(
-          ", "
-        );
-
         return {
           ...preTz,
-          dayOfWeek,
-          monthAndDay,
+          clock: currentTime(preTz.name),
         };
       });
     });
-    prevDateIndex.current = currentDate.index;
-  }, [currentDate.date]);
-
-  useEffect(() => {
-    setTimezonesClockCb((preTimezones) => {
-      return preTimezones.map((preTz) => {
-        return {
-          ...preTz,
-          clock: currentTime(preTz.name, hoursFormat),
-        };
-      });
-    });
-  }, [hoursFormat, setTimezonesClockCb]);
+  }, [setTimezonesClockCb]);
 
   useEffect(() => {
     const requiredIntervalToBeAMinute =
@@ -244,7 +244,7 @@ function useUpdateTimezonesClock(
       setTimezonesClockCb((tzs) =>
         tzs.map((tz) => ({
           ...tz,
-          clock: currentTime(tz.name, hoursFormat),
+          clock: currentTime(tz.name),
         }))
       );
     }, requiredIntervalToBeAMinute);
@@ -259,20 +259,16 @@ export function useSelectedTimezones(): [
   Timezone[],
   SetAtom<[SetStateAction<Timezone[]>], void>
 ] {
-  const [hoursFormat] = useAtom(hoursFormatAtom);
   const [selectedTimezones, setSelectedTimezones] = useAtom(
     selectedTimezonesAtom
   );
 
-  useUpdateTimezonesClock(setSelectedTimezones, {
-    hoursFormat,
-  });
+  useUpdateTimezonesClock(setSelectedTimezones);
 
   return [selectedTimezones, setSelectedTimezones];
 }
 
 export function useSearchedTimezones(): Timezone[] {
-  const [hoursFormat] = useAtom(hoursFormatAtom);
   const timezones = useMemo(() => populateTimezones(), []);
   const [searchTimezoneName] = useAtom(searchTimezoneNameAtom);
 
@@ -292,9 +288,7 @@ export function useSearchedTimezones(): Timezone[] {
     setFilteredTimezones(fusedTimezones);
   }, [deferredSearch, timezones]);
 
-  useUpdateTimezonesClock(setFilteredTimezones, {
-    hoursFormat,
-  });
+  useUpdateTimezonesClock(setFilteredTimezones);
 
   return filteredTimezones;
 }
