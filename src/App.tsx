@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div className="h-screen w-screen dark:bg-zinc-900 dark:text-gray-100 py-20 overflow-scroll">
-      <main className="max-md:ml-10 max-md:mr-4 w-[1142px] h-full mx-auto">
+      <main className="max-md:ml-10 max-md:mr-4 w-[1148px] h-full mx-auto">
         <TimezonesBoard />
       </main>
     </div>

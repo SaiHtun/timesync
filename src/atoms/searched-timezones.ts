@@ -1,5 +1,4 @@
 import { atom } from "jotai";
-import { Timezone } from "~/utils/hooks/use-selected-timezones";
 import {
   keydownAddTimezoneIndexAtom,
   searchedTimezoneIndexAtom,
@@ -9,7 +8,7 @@ import { appendTimezoneNameToUrl } from "~/utils/hooks/use-timezones-params";
 import { searchTimezoneNameAtom } from "./search-timezone-name";
 import { appendSelectedTimezonesAtom } from "./selected-timezones";
 
-export const searchedTimezonesAtom = atom<Timezone[]>([]);
+export const searchedTimezonesAtom = atom<ITimezone[]>([]);
 
 export const searchedTimezonesLengthAtom = atom(
   (get) => get(searchedTimezonesAtom).length

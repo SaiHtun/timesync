@@ -28,7 +28,7 @@ export default function TimeSelectionOverlay() {
   return (
     <div
       ref={parentRef}
-      className="absolute right-0 top-0  !bg-transparent  rounded-md w-[827px] h-full "
+      className="absolute right-0 top-0 !bg-transparent rounded-md w-[833px] h-full "
       onMouseMove={handleMouseMove}
     >
       <div

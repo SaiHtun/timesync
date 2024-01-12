@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "t": "node --loader ts-node/esm test.ts"
+    "t": "node --loader ts-node/esm examples/test.ts"
   },
   "dependencies": {
     "clsx": "^2.0.0",
