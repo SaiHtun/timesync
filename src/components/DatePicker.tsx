@@ -1,4 +1,4 @@
-import Date from "./Date";
+import Date from "./Date.1";
 import { useAtom } from "jotai";
 import { datesAtom } from "~/atoms/date";
 
@@ -8,7 +8,7 @@ export default function DatePicker() {
   return (
     <div className="text-xs flex gap-2">
       {dates?.map((date, index) => {
-        return <Date key={index} date={date} />;
+        return <Date key={index} currentDate={date} />;
       })}
     </div>
   );

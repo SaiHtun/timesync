@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import {
-  formatCurrentTime,
+  formatCurrentDate,
+  getLocalTime,
   getNextDay,
   getTimezonesMap,
 } from "~/utils/timezones";
@@ -8,7 +9,8 @@ import { searchTimezoneNameAtom } from "./search-timezone-name";
 import { searchedTimezoneIndexAtom } from "./searched-timezone-index";
 import { searchedTimezonesAtom } from "./searched-timezones";
 import { TIMEZONES_LIMIT } from "~/constants/index";
-import { CurrentDate, currentDateAtom } from "./date";
+import { differenceInDays } from "date-fns";
+import { selectedDateAtom } from "./date";
 
 let timezonesMap = new Map<string, ITimezone>();
 if (timezonesMap.size === 0) {
@@ -16,14 +18,20 @@ if (timezonesMap.size === 0) {
 }
 export const selectedTimezonesAtom = atom<ITimezone[]>([]);
 
-function massageTimezone(
-  timezone: ITimezone,
-  currentDate: CurrentDate
-): ITimezone {
+function massageTimezone(timezone: ITimezone, selectedDate: string): ITimezone {
   // newly added "Timezone" has to sync the "currentDate".
+  const formattedCurrentDate = formatCurrentDate(timezone, [
+    "dayOfWeek",
+    "monthAndDay",
+    "year",
+  ]);
+  const diffDatesFromLocalTime = differenceInDays(
+    new Date(selectedDate),
+    new Date(getLocalTime())
+  );
   const [dayOfWeek, monthAndDay] = getNextDay(
-    formatCurrentTime(timezone, ["dayOfWeek", "monthAndDay", "year"]),
-    currentDate.dateIndex
+    formattedCurrentDate,
+    diffDatesFromLocalTime
   ).split(", ");
 
   return { ...timezone, dayOfWeek, monthAndDay };
@@ -31,7 +39,7 @@ function massageTimezone(
 
 export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
   const selectedTimezones = get(selectedTimezonesAtom);
-  const currentDate = get(currentDateAtom);
+  const selectedDate = get(selectedDateAtom);
   const newTimezone = get(searchedTimezonesAtom)[
     get(searchedTimezoneIndexAtom)
   ];
@@ -39,7 +47,7 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
 
   if (selectedTimezones.length < TIMEZONES_LIMIT && !isExist) {
     set(selectedTimezonesAtom, (preTzs) =>
-      preTzs.concat(massageTimezone(newTimezone, currentDate))
+      preTzs.concat(massageTimezone(newTimezone, selectedDate))
     );
   }
   set(searchTimezoneNameAtom, "");

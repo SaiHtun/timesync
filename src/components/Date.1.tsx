@@ -1,17 +1,17 @@
 import { useAtom } from "jotai";
-import { CurrentDate, currentDateAtom } from "~/atoms/date";
+import { selectedDateAtom } from "~/atoms/date";
 import { cn } from "~/utils/cn";
 
-interface Props {
-  date: CurrentDate;
+interface IProps {
+  currentDate: string;
 }
 
-export default function Date({ date }: Props) {
-  const [dayOfWeek, monthAndDay] = date.name.split(", ");
-  const [currentDate, setCurrentDate] = useAtom(currentDateAtom);
+export default function Date({ currentDate }: IProps) {
+  const [dayOfWeek, monthAndDay] = currentDate.split(", ");
+  const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
   const [, numOfDay] = monthAndDay.split(" ");
 
-  const isSelectedDate = date.name === currentDate.name;
+  const isSelectedDate = selectedDate === currentDate;
 
   return (
     <button
@@ -21,7 +21,7 @@ export default function Date({ date }: Props) {
           "shadow-inner  text-zinc-400": !isSelectedDate,
         }
       )}
-      onClick={() => setCurrentDate(date)}
+      onClick={() => setSelectedDate(currentDate)}
     >
       <span>{numOfDay}</span>
       <span>{dayOfWeek}</span>

@@ -8,36 +8,52 @@ import {
 import { useAtom } from "jotai";
 import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 
-import { currentDateAtom } from "~/atoms/date";
-import { getNextDay, formatCurrentTime, currentTime } from "~/utils/timezones";
+import { selectedDateAtom } from "~/atoms/date";
+import {
+  getNextDay,
+  formatCurrentDate,
+  currentTime,
+  getLocalTime,
+} from "~/utils/timezones";
 import { MILISECONDS_PER_MIN } from "~/constants/index";
 import { hoursFormatAtom } from "~/atoms/hours-format";
+import { differenceInDays } from "date-fns";
 
 export function useUpdateTimezonesClock(
   setTimezonesClock: Dispatch<SetStateAction<ITimezone[]>>
 ): void {
   const setTimezonesClockCb = useCallback(setTimezonesClock, []);
-  const [currentDate] = useAtom(currentDateAtom);
+  const [selectedDate] = useAtom(selectedDateAtom);
   const [hoursFormat] = useAtom(hoursFormatAtom);
-  const prevDateIndexRef = useRef(0);
+  const prevdiffDatesFromLocalTimeRef = useRef(0);
+
+  const diffDatesFromLocalTime = differenceInDays(
+    new Date(selectedDate),
+    new Date(getLocalTime())
+  );
 
   useEffect(() => {
     setTimezonesClockCb((prevTimezones) => {
       const newTimezones = prevTimezones.map((prevTimezone) => {
-        const t = formatCurrentTime(prevTimezone, [
+        const currentDate = formatCurrentDate(prevTimezone, [
           "dayOfWeek",
           "monthAndDay",
           "year",
         ]);
-        const dateCounts = currentDate.dateIndex - prevDateIndexRef.current;
-        const [dayOfWeek, monthAndDay] = getNextDay(t, dateCounts).split(", ");
+
+        const [dayOfWeek, monthAndDay] = getNextDay(
+          currentDate,
+          diffDatesFromLocalTime - prevdiffDatesFromLocalTimeRef.current
+        ).split(", ");
 
         return { ...prevTimezone, dayOfWeek, monthAndDay };
       });
-      prevDateIndexRef.current = currentDate.dateIndex;
+
+      prevdiffDatesFromLocalTimeRef.current = diffDatesFromLocalTime;
+
       return newTimezones;
     });
-  }, [currentDate]);
+  }, [selectedDate]);
 
   useEffect(() => {
     setTimezonesClockCb((preTimezones) => {
