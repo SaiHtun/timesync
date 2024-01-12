@@ -7,8 +7,6 @@ import "react-day-picker/dist/style.css";
 export default function Example() {
   const [selected, setSelected] = useState<Date>();
 
-  console.log("S::", selected);
-
   let footer = <p>Please pick a day.</p>;
   if (selected) {
     footer = <p>You picked {format(selected, "PP")}.</p>;
@@ -18,7 +16,7 @@ export default function Example() {
       mode="single"
       selected={selected}
       onSelect={setSelected}
-      // footer={footer}
+      footer={footer}
       modifiersClassNames={{
         today: "text-red-400",
         selected: "bg-zinc-200 text-zinc-900 rounded-md",
