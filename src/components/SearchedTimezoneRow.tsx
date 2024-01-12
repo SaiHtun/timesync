@@ -6,6 +6,7 @@ import { appendTimezoneNameToUrl } from "~/utils/hooks/use-timezones-params";
 import { searchedTimezoneIndexAtom } from "~/atoms/searched-timezone-index";
 import { appendSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { hoursFormatAtom } from "~/atoms/hours-format";
+import { motion } from "framer-motion";
 
 interface IProps {
   timezone: ITimezone;
@@ -33,20 +34,22 @@ export default function SearchedTimezoneRow({
   const clockFormat = hoursFormat === "hour12" ? "hour12Clock" : "hour24Clock";
 
   return (
-    <button
-      type="button"
-      className={cn(
-        "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md",
-        { "!bg-zinc-100 dark:!bg-zinc-700": isSelected }
-      )}
-      onClick={() => handleAddTimezones(timezone)}
-      onMouseMove={() => setSearchedTimezoneIndex(currentTimezoneIndex)}
-    >
-      <p className="flex items-center gap-1">
-        <span>{timezone.name}</span>
-        <span className="text-xs primary_text_gray">{timezone.abbr}</span>
-      </p>
-      <Clock clock={timezone[clockFormat]} />
-    </button>
+    <motion.div>
+      <button
+        type="button"
+        className={cn(
+          "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md",
+          { "!bg-zinc-100 dark:!bg-zinc-700 !rounded-none": isSelected }
+        )}
+        onClick={() => handleAddTimezones(timezone)}
+        onMouseMove={() => setSearchedTimezoneIndex(currentTimezoneIndex)}
+      >
+        <p className="flex items-center gap-1">
+          <span>{timezone.name}</span>
+          <span className="text-xs primary_text_gray">{timezone.abbr}</span>
+        </p>
+        <Clock clock={timezone[clockFormat]} />
+      </button>
+    </motion.div>
   );
 }

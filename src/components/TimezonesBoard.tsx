@@ -20,7 +20,7 @@ export default function TimezonesBoard() {
     >
       <Navbar />
       <MenuBar />
-      <main className="relative w-full mt-4">
+      <main className="relative w-full mt-6">
         <SelectedTimezones />
         <SearchdTimezonesModel />
       </main>

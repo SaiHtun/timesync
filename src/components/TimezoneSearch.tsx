@@ -7,7 +7,7 @@ export default function TimezoneSearch() {
     searchTimezoneNameAtom
   );
   return (
-    <div className="relative top-0 right-0">
+    <div className="relative h-full top-0 right-0">
       <input
         type="text"
         value={searchTimezoneName}
