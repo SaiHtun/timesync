@@ -5,6 +5,12 @@ import { getLocalTime, getNextDay } from "~/utils/timezones";
 
 export const startedDateAtom = atom(new Date(getLocalTime()));
 
+export const startedMonthAtom = atom((get) => {
+  const startedDate = get(startedDateAtom);
+  const selectedDate = new Date(get(selectedDateAtom));
+  return format(selectedDate || startedDate, "MMM");
+});
+
 export const datesAtom = atom((get) => {
   const startedDate = format(get(startedDateAtom), "eee, MMM d, y");
   return arrayRange(0, 3).map((val) => getNextDay(startedDate, val));

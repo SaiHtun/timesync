@@ -1,24 +1,35 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useAtom } from "jotai";
-import { CalendarDays } from "lucide-react";
-import { isDatePickerModelOpenAtom } from "~/atoms/date";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { isDatePickerModelOpenAtom, startedMonthAtom } from "~/atoms/date";
 import Calendar from "./Calendar";
 import { cn } from "~/utils/cn";
 
 export function CalendarButton() {
   const [isModelOpen, setIsModelOpen] = useAtom(isDatePickerModelOpenAtom);
+  const [startedMonth] = useAtom(startedMonthAtom);
 
   return (
     <div className="relative">
       <button
         className={cn(
-          "primary_border h-full w-9 flex justify-center items-center primary_bg dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors ",
+          "group relative primary_border h-full w-9 flex justify-center items-center primary_bg dark:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors ",
           { "bg-white text-zinc-900 dark:text-zinc-50": isModelOpen }
         )}
         onClick={() => setIsModelOpen(!isModelOpen)}
         id="calendar-btn"
       >
-        <CalendarDays strokeWidth={1} size={26} />
+        <span
+          className={cn(
+            "absolute left-[7.5px] top-[15px] text-[10px] text-red-400 dark:text-red-600 dark:group-hover:text-red-400 group-hover:text-red-600 font-semibold",
+            {
+              "text-red-600 dark:text-red-400": isModelOpen,
+            }
+          )}
+        >
+          {startedMonth}
+        </span>
+        <CalendarIcon strokeWidth={1} size={32} />
       </button>
       <AnimatePresence>
         {isModelOpen && (
