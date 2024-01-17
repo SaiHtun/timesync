@@ -16,15 +16,16 @@ import {
   getLocalTime,
 } from "~/utils/timezones";
 import { MILISECONDS_PER_MIN } from "~/constants/index";
-import { hoursFormatAtom } from "~/atoms/hours-format";
 import { differenceInDays } from "date-fns";
 
 export function useUpdateTimezonesClock(
   setTimezonesClock: Dispatch<SetStateAction<ITimezone[]>>
 ): void {
-  const setTimezonesClockCb = useCallback(setTimezonesClock, []);
+  const setTimezonesClockCb = useCallback(setTimezonesClock, [
+    setTimezonesClock,
+  ]);
   const [selectedDate] = useAtom(selectedDateAtom);
-  const [hoursFormat] = useAtom(hoursFormatAtom);
+  // const [hoursFormat] = useAtom(hoursFormatAtom);
   const prevdiffDatesFromLocalTimeRef = useRef(0);
 
   const diffDatesFromLocalTime = differenceInDays(
@@ -56,30 +57,21 @@ export function useUpdateTimezonesClock(
   }, [selectedDate]);
 
   useEffect(() => {
-    setTimezonesClockCb((preTimezones) => {
-      return preTimezones.map((preTz) => {
-        return {
-          ...preTz,
-          clock: currentTime(preTz.name, hoursFormat),
-        };
-      });
-    });
-  }, [hoursFormat, setTimezonesClockCb]);
-
-  useEffect(() => {
     const requiredIntervalToBeAMinute =
       MILISECONDS_PER_MIN - new Date().getSeconds() * 1_000;
+
     const intervalId = setInterval(() => {
       setTimezonesClockCb((tzs) =>
         tzs.map((tz) => ({
           ...tz,
-          clock: currentTime(tz.name),
+          hour12Clock: currentTime(tz.name, "hour12"),
+          hour24Clock: currentTime(tz.name, "hour24"),
         }))
       );
     }, requiredIntervalToBeAMinute);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [setTimezonesClockCb]);
 }
 
 type SetAtom<Args extends any[], Result> = (...args: Args) => Result;

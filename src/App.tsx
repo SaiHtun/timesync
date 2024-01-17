@@ -20,7 +20,7 @@ function App() {
     syncUrlToSelectedTimezones(timezonesName);
   }, [timezonesName]);
 
-  function dismissModelOnOuterClick(e: MouseEvent) {
+  function resetStatesOnOuterClick(e: MouseEvent) {
     if (
       !detectAnyDOMsOnMouseEvent(e, [
         "#hoursFormat-btn",
@@ -35,7 +35,7 @@ function App() {
     }
   }
 
-  useEventListener("click", dismissModelOnOuterClick);
+  useEventListener("click", resetStatesOnOuterClick);
 
   return (
     <div className="h-screen w-screen dark:bg-zinc-900 dark:text-gray-100 py-20 overflow-scroll">

@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { searchTimezoneNameAtom } from "~/atoms/search-timezone-name";
 import Fuse from "fuse.js";
 import { searchedTimezonesAtom } from "~/atoms/searched-timezones";
-import { populateTimezones } from "~/utils/timezones";
+import { currentTime, populateTimezones } from "~/utils/timezones";
 
 export function useSearchedTimezones(): ITimezone[] {
   const timezones = useMemo(() => populateTimezones(), []);
@@ -20,7 +20,11 @@ export function useSearchedTimezones(): ITimezone[] {
       keys: ["name", "abbr"],
     })
       .search(deferredSearch)
-      .map((tz) => tz.item)
+      .map(({ item }) => ({
+        ...item,
+        hour12Clock: currentTime(item.name, "hour12"),
+        hour24Clock: currentTime(item.name, "hour24"),
+      }))
       .slice(0, 10);
 
     setFilteredTimezones(fusedTimezones);
