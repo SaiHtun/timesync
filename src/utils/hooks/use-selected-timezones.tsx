@@ -11,7 +11,7 @@ import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { selectedDateAtom } from "~/atoms/date";
 import {
   getNextDay,
-  formatCurrentDate,
+  formatTimezoneToDateString,
   currentTime,
   getLocalTime,
 } from "~/utils/timezones";
@@ -35,7 +35,7 @@ export function useUpdateTimezonesClock(
   useEffect(() => {
     setTimezonesClockCb((prevTimezones) => {
       const newTimezones = prevTimezones.map((prevTimezone) => {
-        const currentDate = formatCurrentDate(prevTimezone, [
+        const currentDate = formatTimezoneToDateString(prevTimezone, [
           "dayOfWeek",
           "monthAndDay",
           "year",

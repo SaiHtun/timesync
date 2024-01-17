@@ -6,10 +6,12 @@ import { useTimezonesParams } from "~/utils/hooks/use-timezones-params";
 import { useEventListener } from "./utils/hooks/use-event-listener";
 import { setSearchTimezoneNameAtom } from "./atoms/search-timezone-name";
 import { detectAnyDOMsOnMouseEvent } from "./utils";
+import { setIsDatePickerModelOpenAtom } from "./atoms/date";
 
 function App() {
   const timezonesName = useTimezonesParams();
   const [, setSearchTimezoneName] = useAtom(setSearchTimezoneNameAtom);
+  const [, setIsDatePickerModelOpen] = useAtom(setIsDatePickerModelOpenAtom);
   const [, syncUrlToSelectedTimezones] = useAtom(
     syncUrlToSelectedTimezonesAtom
   );
@@ -18,15 +20,21 @@ function App() {
     syncUrlToSelectedTimezones(timezonesName);
   }, [timezonesName]);
 
-  function dismissSearchedTimezonesOnOuterClick(e: MouseEvent) {
+  function dismissModelOnOuterClick(e: MouseEvent) {
     if (
-      !detectAnyDOMsOnMouseEvent(e, ["#hoursFormat-btn", "#searched-timezones"])
+      !detectAnyDOMsOnMouseEvent(e, [
+        "#hoursFormat-btn",
+        "#searched-timezones",
+        "#calendar-btn",
+        "#calendar",
+      ])
     ) {
       setSearchTimezoneName("");
+      setIsDatePickerModelOpen();
     }
   }
 
-  useEventListener("click", dismissSearchedTimezonesOnOuterClick);
+  useEventListener("click", dismissModelOnOuterClick);
 
   return (
     <div className="h-screen w-screen dark:bg-zinc-900 dark:text-gray-100 py-20 overflow-scroll">

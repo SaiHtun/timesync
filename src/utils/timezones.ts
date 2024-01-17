@@ -41,7 +41,10 @@ export function getNextDay(currentTime: string, numberOfDays = 1): string {
 
 type TimeSlices = Array<"dayOfWeek" | "monthAndDay" | "year">;
 
-export function formatCurrentDate(timezone: ITimezone, timeSlices: TimeSlices) {
+export function formatTimezoneToDateString(
+  timezone: ITimezone,
+  timeSlices: TimeSlices
+) {
   let timeString = "";
   for (const slice of timeSlices) {
     timeString += timeString ? `, ${timezone[slice]}` : `${timezone[slice]}`;
@@ -58,7 +61,7 @@ export function getTimeDials(
   const startHours = parseInt(hour24Clock.split(" ")[0].split(":")[0]);
   const hours = arrayRange(startHours, startHours + 23);
 
-  const currentTime = formatCurrentDate(timezone, [
+  const currentTime = formatTimezoneToDateString(timezone, [
     "dayOfWeek",
     "monthAndDay",
     "year",
@@ -75,7 +78,7 @@ export function getTimeDials(
     const hour12 = hour % 12 === 0.5 ? 12.5 : hour % 12 || 12;
     const hour24 = hour % 24 === 0.5 ? 24.5 : hour % 24 || 24;
 
-    // const day = formatCurrentDate(timezone, ["dayOfWeek", "monthAndDay"]);
+    // const day = formatTimezoneToDateString(timezone, ["dayOfWeek", "monthAndDay"]);
 
     const isNewDay = hours[index] === 24;
     if (isNewDay) {

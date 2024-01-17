@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useAtom } from "jotai";
 import { selectedDateAtom } from "~/atoms/date";
 import { cn } from "~/utils/cn";
@@ -6,7 +7,7 @@ interface IProps {
   currentDate: string;
 }
 
-export default function Date({ currentDate }: IProps) {
+export default memo(function IDate({ currentDate }: IProps) {
   const [dayOfWeek, monthAndDay] = currentDate.split(", ");
   const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
   const [, numOfDay] = monthAndDay.split(" ");
@@ -27,4 +28,4 @@ export default function Date({ currentDate }: IProps) {
       <span>{dayOfWeek}</span>
     </button>
   );
-}
+});

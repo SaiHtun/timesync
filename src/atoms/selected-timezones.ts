@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import {
-  formatCurrentDate,
+  formatTimezoneToDateString,
   getLocalTime,
   getNextDay,
   getTimezonesMap,
@@ -20,7 +20,7 @@ export const selectedTimezonesAtom = atom<ITimezone[]>([]);
 
 function massageTimezone(timezone: ITimezone, selectedDate: string): ITimezone {
   // newly added "Timezone" has to sync the "currentDate".
-  const formattedCurrentDate = formatCurrentDate(timezone, [
+  const formattedCurrentDate = formatTimezoneToDateString(timezone, [
     "dayOfWeek",
     "monthAndDay",
     "year",
