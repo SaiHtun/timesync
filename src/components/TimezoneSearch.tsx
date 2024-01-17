@@ -13,7 +13,7 @@ export default function TimezoneSearch() {
         value={searchTimezoneName}
         name="search"
         onChange={(e) => setSearchTimezone(e.target.value)}
-        placeholder="Place or Timezone"
+        placeholder="City or Timezone"
         className="p-2 h-full w-full rounded-md text-sm pl-4 focus:outline-none primary_bg primary_border placeholder:text-xs"
       />
       {!searchTimezoneName && (

@@ -52,13 +52,6 @@ export function formatTimezoneToDateString(
   return timeString;
 }
 
-function getTimeMeridian(hour: number): "am" | "pm" {
-  if (hour >= 1 && hour <= 11) {
-    return "am";
-  }
-  return "pm";
-}
-
 export function getTimeDials(
   timezone: ITimezone,
   dialColor: DialColors
@@ -85,22 +78,27 @@ export function getTimeDials(
     const hour12 = hour % 12 === 0.5 ? 12.5 : hour % 12 || 12;
     const hour24 = hour % 24 === 0.5 ? 24.5 : hour % 24 || 24;
 
-    // const day = formatTimezoneToDateString(timezone, ["dayOfWeek", "monthAndDay"]);
-
     const isNewDay = hours[index] === 24;
     if (isNewDay) {
       startNewDay = true;
     }
+
     const isLastHour = hours[index] === 23;
+    const timeMeridian: "am" | "pm" = hour24 >= 12 ? "pm" : "am";
+    const day = startNewDay ? getNextDay(currentTime) : currentTime;
+    const dailyCircleBgColor = getDailyCircleColor(
+      hours24Array[index],
+      dialColor
+    );
 
     return {
       isNewDay,
       hour12,
       hour24,
-      timeMeridian: getTimeMeridian(hour24),
-      day: startNewDay ? getNextDay(currentTime) : currentTime,
+      timeMeridian,
+      day,
       isLastHour,
-      dailyCircleBgColor: getDailyCircleColor(hours24Array[index], dialColor),
+      dailyCircleBgColor,
     };
   });
 

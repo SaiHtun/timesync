@@ -3,7 +3,10 @@ import { jsonParser } from "../index";
 import { getCurrentUserTimezoneName } from "~/utils/timezones";
 import { useEffect, useState } from "react";
 
-function arrangeHomeFirstParams(timezonesName: string[]) {
+function arrangeHomeFirstParams(
+  timezonesName: string[],
+  setSearchParams: SetURLSearchParams
+) {
   const currentTimezoneName = getCurrentUserTimezoneName();
   const firstTimezoneName = timezonesName[0];
   if (
@@ -17,6 +20,8 @@ function arrangeHomeFirstParams(timezonesName: string[]) {
     timezonesName[homeIndex],
     firstTimezoneName,
   ];
+
+  setSearchParams({ timezones: JSON.stringify(timezonesName) });
 
   return timezonesName;
 }
@@ -41,7 +46,7 @@ export function useTimezonesParams(): string[] {
       } else {
         const d =
           parsedTimezones.length > 1
-            ? arrangeHomeFirstParams(parsedTimezones)
+            ? arrangeHomeFirstParams(parsedTimezones, setSearchParams)
             : parsedTimezones;
 
         setData(d);
