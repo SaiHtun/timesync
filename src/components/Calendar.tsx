@@ -46,7 +46,7 @@ export default function Calendar({ twClassNames }: IProps) {
         head_cell: "primary_text_gray rounded-md w-8 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",
         cell: "relative p-0 text-center text-sm cursor-pointer",
-        day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:!bg-zinc-100 rounded-md transition-colors flex justify-center items-center",
+        day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:!bg-zinc-100 hover:!bg-zinc-400 rounded-md transition-colors flex justify-center items-center",
         day_today: "bg-zinc-200 dark:bg-zinc-600 rounded-md",
         day_selected: "bg-zinc-900 text-zinc-50 pointer-events-none",
         day_hidden: "invisible",

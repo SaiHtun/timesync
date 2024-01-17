@@ -15,6 +15,7 @@ interface ITimezone {
 interface ITimeDial {
   hour12: number;
   hour24: number;
+  timeMeridian: "am" | "pm";
   day: string;
   isNewDay: boolean;
   isLastHour: boolean;

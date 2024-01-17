@@ -40,15 +40,21 @@ export default memo(function TimeDials({ timezone }: IProps) {
 
   return (
     <main>
-      <div className="h-[40px] w-[816px] flex items-center  text-center text-sm rounded-l-md">
+      <div className="h-[40px] w-[816px] flex items-center text-center text-sm rounded-l-md">
         {timezone.timeDials.map((timeDial, index) => {
-          const { dailyCircleBgColor, isNewDay, day, isLastHour } = timeDial;
+          const {
+            dailyCircleBgColor,
+            isNewDay,
+            day,
+            isLastHour,
+            timeMeridian,
+          } = timeDial;
           const hour = timeDial[hoursFormat];
           return (
             <div
               key={index}
               className={cn(
-                "w-[34px] h-full  py-1 first:rounded-l-md relative flex items-center justify-center text-dial-newday dark:text-white",
+                "leading-none w-[34px] h-full  p-1 first:rounded-l-md relative flex flex-col items-center justify-center text-dial-newday dark:text-white",
                 dailyCircleBgColor,
                 {
                   "!rounded-l-md !bg-dial-newday  !text-white": isNewDay,
@@ -60,28 +66,40 @@ export default memo(function TimeDials({ timezone }: IProps) {
             >
               {isNewDay ? (
                 <NewDay day={day} />
-              ) : isDecimal(hour) && hour > 1 ? (
-                <p className="flex flex-col leading-3">
-                  {hour
-                    .toString()
-                    .split(".")
-                    .map((strNum, index) => {
-                      return (
-                        <span
-                          className={cn("text-zinc-800 dark:text-white", {
-                            "text-[11px] text-zinc-400": index === 1,
-                            "!text-zinc-100":
-                              dailyCircleBgColor.includes("midnight"),
-                          })}
-                          key={index}
-                        >
-                          {index === 1 ? 30 : strNum}
-                        </span>
-                      );
-                    })}
-                </p>
               ) : (
-                <span>{isNewDay ? <NewDay day={day} /> : hour}</span>
+                <>
+                  {" "}
+                  {isDecimal(hour) && hour > 1 ? (
+                    <p
+                      className={cn("flex leading-3", {
+                        "flex-col": hoursFormat === "hour24",
+                      })}
+                    >
+                      {hour
+                        .toString()
+                        .split(".")
+                        .map((strNum, index) => {
+                          return (
+                            <span
+                              className={cn("text-zinc-800 dark:text-white", {
+                                "text-[9px]": index === 1,
+                                "!text-zinc-100":
+                                  dailyCircleBgColor.includes("midnight"),
+                              })}
+                              key={index}
+                            >
+                              {index === 1 ? 30 : strNum}
+                            </span>
+                          );
+                        })}
+                    </p>
+                  ) : (
+                    <span>{isNewDay ? <NewDay day={day} /> : hour}</span>
+                  )}
+                  {hoursFormat === "hour12" && (
+                    <span className="text-[10px]">{timeMeridian}</span>
+                  )}
+                </>
               )}
             </div>
           );

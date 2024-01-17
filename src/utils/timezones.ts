@@ -52,6 +52,13 @@ export function formatTimezoneToDateString(
   return timeString;
 }
 
+function getTimeMeridian(hour: number): "am" | "pm" {
+  if (hour >= 1 && hour <= 11) {
+    return "am";
+  }
+  return "pm";
+}
+
 export function getTimeDials(
   timezone: ITimezone,
   dialColor: DialColors
@@ -90,6 +97,7 @@ export function getTimeDials(
       isNewDay,
       hour12,
       hour24,
+      timeMeridian: getTimeMeridian(hour24),
       day: startNewDay ? getNextDay(currentTime) : currentTime,
       isLastHour,
       dailyCircleBgColor: getDailyCircleColor(hours24Array[index], dialColor),
