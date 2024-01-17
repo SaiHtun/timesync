@@ -8,12 +8,12 @@ import { setSelectedDateAtom, startedDateAtom } from "~/atoms/date";
 import { format } from "date-fns";
 
 interface IProps {
-  classNames?: ClassValue;
+  twClassNames?: ClassValue;
 }
 
-export default function Calendar({ classNames }: IProps) {
+export default function Calendar({ twClassNames }: IProps) {
   const [startedDate, setStartedDate] = useAtom(startedDateAtom);
-  const [, setSelectedDate] = useAtom(setSelectedDateAtom);
+  const [selectedDate, setSelectedDate] = useAtom(setSelectedDateAtom);
 
   function handleDayClick(date: Date) {
     setStartedDate(date);
@@ -23,13 +23,13 @@ export default function Calendar({ classNames }: IProps) {
 
   return (
     <DayPicker
-      selected={startedDate}
+      selected={new Date(selectedDate!) || startedDate}
       onDayClick={handleDayClick}
       id="calendar"
       showOutsideDays
       className={cn(
         "p-3 rounded-md primary_border shadow-sm w-fit bg-white dark:bg-zinc-800",
-        classNames
+        twClassNames
       )}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
@@ -47,7 +47,7 @@ export default function Calendar({ classNames }: IProps) {
         row: "flex w-full mt-2",
         cell: "relative p-0 text-center text-sm cursor-pointer",
         day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:!bg-zinc-100 rounded-md transition-colors flex justify-center items-center",
-        day_today: "bg-zinc-200 rounded-md",
+        day_today: "bg-zinc-200 dark:bg-zinc-600 rounded-md",
         day_selected: "bg-zinc-900 text-zinc-50 pointer-events-none",
         day_hidden: "invisible",
       }}

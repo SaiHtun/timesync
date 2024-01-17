@@ -6,12 +6,12 @@ import { useTimezonesParams } from "~/utils/hooks/use-timezones-params";
 import { useEventListener } from "./utils/hooks/use-event-listener";
 import { setSearchTimezoneNameAtom } from "./atoms/search-timezone-name";
 import { detectAnyDOMsOnMouseEvent } from "./utils";
-import { setIsDatePickerModelOpenAtom } from "./atoms/date";
+import { dismissDatePickerModelAtom } from "./atoms/date";
 
 function App() {
   const timezonesName = useTimezonesParams();
   const [, setSearchTimezoneName] = useAtom(setSearchTimezoneNameAtom);
-  const [, setIsDatePickerModelOpen] = useAtom(setIsDatePickerModelOpenAtom);
+  const [, dismissDatePickerModel] = useAtom(dismissDatePickerModelAtom);
   const [, syncUrlToSelectedTimezones] = useAtom(
     syncUrlToSelectedTimezonesAtom
   );
@@ -27,10 +27,11 @@ function App() {
         "#searched-timezones",
         "#calendar-btn",
         "#calendar",
+        "#theme-btn",
       ])
     ) {
       setSearchTimezoneName("");
-      setIsDatePickerModelOpen();
+      dismissDatePickerModel();
     }
   }
 

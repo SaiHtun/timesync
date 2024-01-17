@@ -12,8 +12,8 @@ export function CalendarButton() {
     <div className="relative">
       <button
         className={cn(
-          "primary_border h-full w-9 flex justify-center items-center primary_bg dark:bg-zinc-800 transition-colors",
-          { "bg-white": isModelOpen }
+          "primary_border h-full w-9 flex justify-center items-center primary_bg dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors ",
+          { "bg-white text-zinc-900 dark:text-zinc-50": isModelOpen }
         )}
         onClick={() => setIsModelOpen(!isModelOpen)}
         id="calendar-btn"

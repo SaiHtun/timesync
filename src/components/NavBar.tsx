@@ -42,8 +42,12 @@ export default function Navbar() {
         <Button>
           <Github size={20} />
         </Button>
-        <Button onClick={handleSwitchTheme}>
-          {value ? <Sun size={20} /> : <MoonStar size={20} />}
+        <Button onClick={handleSwitchTheme} id="theme-btn">
+          {value ? (
+            <Sun size={20} className="pointer-events-none" />
+          ) : (
+            <MoonStar size={20} className="pointer-events-none" />
+          )}
         </Button>
       </div>
     </div>
