@@ -97,7 +97,7 @@ export default memo(function TimeDials({ timezone }: IProps) {
                     <span>{isNewDay ? <NewDay day={day} /> : hour}</span>
                   )}
                   {hoursFormat === "hour12" && (
-                    <span className="text-[10px]">{timeMeridian}</span>
+                    <span className="text-[10px] ">{timeMeridian}</span>
                   )}
                 </>
               )}

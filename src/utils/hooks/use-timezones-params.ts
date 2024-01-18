@@ -73,7 +73,10 @@ export function appendTimezoneNameToUrl(
     ) {
       parsedTimezones.push(timezoneName);
     }
-    setSearchParams({ timezones: JSON.stringify(parsedTimezones) });
+    setSearchParams((prevParams) => {
+      prevParams.set("timezones", JSON.stringify(parsedTimezones));
+      return prevParams;
+    });
   }
 }
 
@@ -91,7 +94,10 @@ export function popTimezoneNameFromUrl(
       (tz) => tz !== timezoneName
     );
 
-    setSearchParams({ timezones: JSON.stringify(filteredTimezones) });
+    setSearchParams((prevParams) => {
+      prevParams.set("timezones", JSON.stringify(filteredTimezones));
+      return prevParams;
+    });
   }
 }
 // check if "arrangeHomePramsFirst" and "diffHoursFromHome" works!

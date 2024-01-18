@@ -67,10 +67,24 @@ export const selectedTimezonesLengthAtom = atom(
 
 export const syncUrlToSelectedTimezonesAtom = atom(
   null,
-  (_, set, timezonesName: string[] = []) => {
-    const timezones = timezonesName.map(
-      (name) => timezonesMap.get(name) as ITimezone
+  (get, set, timezonesName: string[] = []) => {
+    const dayCounts = differenceInDays(
+      new Date(get(selectedDateAtom)),
+      new Date(getLocalTime())
     );
+    const timezones = timezonesName.map((name) => {
+      const timezone = timezonesMap.get(name) as ITimezone;
+      const currentTime = formatTimezoneToDateString(timezone, [
+        "dayOfWeek",
+        "monthAndDay",
+        "year",
+      ]);
+      const [dayOfWeek, monthAndDay] = getNextDay(currentTime, dayCounts).split(
+        ", "
+      );
+      return { ...timezone, dayOfWeek, monthAndDay };
+    });
+
     set(selectedTimezonesAtom, timezones);
     set(searchTimezoneNameAtom, "");
   }

@@ -1,4 +1,5 @@
 import { useAtom } from "jotai";
+import { useSearchParams } from "react-router-dom";
 import { selectedDateAtom } from "~/atoms/date";
 import { cn } from "~/utils/cn";
 
@@ -10,11 +11,20 @@ export default function DateDial({ currentDate }: IProps) {
   const [dayOfWeek, monthAndDay] = currentDate.split(", ");
   const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
   const [, numOfDay] = monthAndDay.split(" ");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const isSelectedDate = selectedDate === currentDate;
 
   function handleClick() {
     setSelectedDate(currentDate);
+    setSearchParams((prevParams) => {
+      if (searchParams.get("selectedDate")) {
+        prevParams.set("selectedDate", currentDate);
+      } else {
+        prevParams.append("selectedDate", currentDate);
+      }
+      return prevParams;
+    });
   }
 
   return (

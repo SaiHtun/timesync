@@ -25,7 +25,6 @@ export function useUpdateTimezonesClock(
     setTimezonesClock,
   ]);
   const [selectedDate] = useAtom(selectedDateAtom);
-  // const [hoursFormat] = useAtom(hoursFormatAtom);
   const prevdiffDatesFromLocalTimeRef = useRef(0);
 
   const diffDatesFromLocalTime = differenceInDays(

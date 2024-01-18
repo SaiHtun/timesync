@@ -6,6 +6,7 @@ import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { setSelectedDateAtom, startedDateAtom } from "~/atoms/date";
 import { format } from "date-fns";
+import { useSearchParams } from "react-router-dom";
 
 interface IProps {
   twClassNames?: ClassValue;
@@ -14,17 +15,23 @@ interface IProps {
 export default function Calendar({ twClassNames }: IProps) {
   const [startedDate, setStartedDate] = useAtom(startedDateAtom);
   const [selectedDate, setSelectedDate] = useAtom(setSelectedDateAtom);
+  const [, setSearchParams] = useSearchParams();
 
   function handleDayClick(date: Date) {
     setStartedDate(date);
     const newDate = format(date, "eee, MMM d, y");
     setSelectedDate(newDate);
+    setSearchParams((prevParams) => {
+      prevParams.set("selectedDate", newDate);
+      return prevParams;
+    });
   }
 
   return (
     <DayPicker
       selected={new Date(selectedDate!) || startedDate}
       onDayClick={handleDayClick}
+      today={new Date(selectedDate)}
       id="calendar"
       showOutsideDays
       className={cn(
