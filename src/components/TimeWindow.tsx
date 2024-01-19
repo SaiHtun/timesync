@@ -11,12 +11,24 @@ import { useAtom } from "jotai";
 import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { isDecimal } from "~/utils/timezones";
 import { HoursFormat, hoursFormatAtom } from "~/atoms/hours-format";
+import { selectedDateAtom } from "~/atoms/date";
 
+// TODO::
+// 1. Edge hours -> not working properly
+// 2. On Edge hours -> should change the date as well "getNextDay" would do it.
 function formatMeetingHours(
   timezone: ITimezone,
   hoursFormat: HoursFormat,
   timeDialIndex: number
 ) {
+  const timeDialsLength = timezone.timeDials.length;
+  timeDialIndex =
+    timeDialIndex >= timeDialsLength
+      ? timeDialIndex - timeDialsLength
+      : timeDialIndex;
+
+  console.log("TI::", timeDialIndex);
+  console.log("L::", timeDialsLength);
   const timeDial = timezone.timeDials[Math.floor(timeDialIndex)];
   let hours = timeDial[hoursFormat];
   let minutes = 0;
@@ -68,11 +80,12 @@ export default function TimeWindow({
   const timeWindowDivRef = useRef<HTMLDivElement>(null);
   const [, setSelectedTimezones] = useAtom(selectedTimezonesAtom);
   const [hoursFormat] = useAtom(hoursFormatAtom);
+  const [selectedDate] = useAtom(selectedDateAtom);
 
   useEffect(() => {
     const { start, end } = timeWindowIndex;
     setTimeWindow(start, end);
-  }, [isStopTimeWindow, isBlockClicked, hoursFormat]);
+  }, [isStopTimeWindow, isBlockClicked, hoursFormat, selectedDate]);
 
   function stopTimeWindow() {
     setIsStopTimeWindow(!isStopTimeWindow);
@@ -85,16 +98,18 @@ export default function TimeWindow({
   const setTimeWindow = useCallback(
     (startIndex: number, endIndex: number) => {
       setSelectedTimezones((selectedTimezones) => {
-        return selectedTimezones.map((timezone) => {
+        const z = selectedTimezones.map((timezone) => {
           const meetingHours = {
             start: formatMeetingHours(timezone, hoursFormat, startIndex),
             end: formatMeetingHours(timezone, hoursFormat, endIndex),
           };
           return { ...timezone, meetingHours };
         });
+        console.log("z::", z);
+        return z;
       });
     },
-    [hoursFormat]
+    [hoursFormat, selectedDate]
   );
 
   function handleMouseDown(event: React.MouseEvent) {

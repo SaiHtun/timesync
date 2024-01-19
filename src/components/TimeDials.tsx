@@ -4,6 +4,7 @@ import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
+import { selectedDateAtom } from "~/atoms/date";
 
 interface IProps {
   timezone: ITimezone;
@@ -30,10 +31,11 @@ function NewDay({ day }: { day: string }) {
 export default memo(function TimeDials({ timezone }: IProps) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
+  const [selectedDate] = useAtom(selectedDateAtom);
 
   const timeDials = useMemo(
     () => getTimeDials(timezone, dialColor),
-    [dialColor, timezone]
+    [dialColor, timezone, selectedDate]
   );
 
   timezone.timeDials = timeDials;
