@@ -1,3 +1,8 @@
+interface IMeetingHours {
+  start: string[];
+  end: string[];
+}
+
 interface ITimezone {
   name: string;
   value: string;
@@ -7,6 +12,7 @@ interface ITimezone {
   year: string;
   hour12Clock: string;
   hour24Clock: string;
+  meetingHours?: IMeetingHours;
   offset: number;
   diffHoursFromHome: string;
   timeDials: ITimeDial[];

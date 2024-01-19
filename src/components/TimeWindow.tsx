@@ -1,6 +1,40 @@
-import { SetStateAction, useRef, useState } from "react";
+import {
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { END_INDEX, DEFAULT_WINDOW_WIDTH } from "./TimeSelectionOverlay";
 import { cn } from "~/utils/cn";
+import { useAtom } from "jotai";
+import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
+import { isDecimal } from "~/utils/timezones";
+import { HoursFormat, hoursFormatAtom } from "~/atoms/hours-format";
+
+function formatMeetingHours(
+  timezone: ITimezone,
+  hoursFormat: HoursFormat,
+  timeDialIndex: number
+) {
+  const timeDial = timezone.timeDials[Math.floor(timeDialIndex)];
+  let hours = timeDial[hoursFormat];
+  let minutes = 0;
+
+  if (isDecimal(hours) && isDecimal(timeDialIndex)) {
+    hours = Math.floor(hours) + 1;
+  } else if (isDecimal(timeDialIndex)) {
+    minutes = 30;
+  } else if (isDecimal(hours)) {
+    hours = Math.floor(hours);
+    minutes = 30;
+  }
+
+  const time =
+    hours + ":" + (minutes ? minutes : "00") + " " + timeDial.timeMeridian;
+
+  return [time, timeDial.day];
+}
 
 export interface ITimeWindowProps {
   isStopTimeWindow: boolean;
@@ -27,9 +61,18 @@ export default function TimeWindow({
   setMouseXposition,
   setFrameWidth,
 }: ITimeWindowProps) {
-  const [leftRight, setLeftRight] = useState<"left" | "right" | "">("");
-  const [timeWindow, setTimeWindow] = useState({ start: 0, end: 0 });
+  const [sidesOfTimeWindow, setSidesOfTimeWindow] = useState<
+    "left" | "right" | ""
+  >("");
+  const [timeWindowIndex, setTimeWindowIndex] = useState({ start: 0, end: 0 });
   const timeWindowDivRef = useRef<HTMLDivElement>(null);
+  const [, setSelectedTimezones] = useAtom(selectedTimezonesAtom);
+  const [hoursFormat] = useAtom(hoursFormatAtom);
+
+  useEffect(() => {
+    const { start, end } = timeWindowIndex;
+    setTimeWindow(start, end);
+  }, [isStopTimeWindow, isBlockClicked, hoursFormat]);
 
   function stopTimeWindow() {
     setIsStopTimeWindow(!isStopTimeWindow);
@@ -39,28 +82,42 @@ export default function TimeWindow({
     setIsBlockClicked(false);
   }
 
+  const setTimeWindow = useCallback(
+    (startIndex: number, endIndex: number) => {
+      setSelectedTimezones((selectedTimezones) => {
+        return selectedTimezones.map((timezone) => {
+          const meetingHours = {
+            start: formatMeetingHours(timezone, hoursFormat, startIndex),
+            end: formatMeetingHours(timezone, hoursFormat, endIndex),
+          };
+          return { ...timezone, meetingHours };
+        });
+      });
+    },
+    [hoursFormat]
+  );
+
   function handleMouseDown(event: React.MouseEvent) {
     stopTimeWindow();
     moveTimeWindow(event);
     if (isStopTimeWindow) return;
     const initialX = event.clientX;
-
-    if (leftRight === "right") setMouseXposition((p) => p + HALF_WINDOW_WIDTH);
+    // if clicked the right panel of timeWindow, it should move +HALF_WINDOW_WIDTH
+    if (sidesOfTimeWindow === "right")
+      setMouseXposition((p) => p + HALF_WINDOW_WIDTH);
 
     function handleMouseMove(event: MouseEvent) {
       const dX = event.clientX - initialX;
       const indexOfHalfTimeDial = Math.floor(dX / HALF_WINDOW_WIDTH) || 1;
-      const extraValue = leftRight === "right" ? 0.5 : 0;
+      const extraValue = sidesOfTimeWindow === "right" ? 0.5 : 0;
       const indexOfLeftTimeDial =
         mouseXposition / DEFAULT_WINDOW_WIDTH + extraValue;
       const newWindowWidth = indexOfHalfTimeDial * HALF_WINDOW_WIDTH;
 
-      // WTFFFFFF!!!!!
       const start = indexOfLeftTimeDial;
-      const end =
-        indexOfLeftTimeDial + newWindowWidth / DEFAULT_WINDOW_WIDTH - 1;
+      const end = indexOfLeftTimeDial + newWindowWidth / DEFAULT_WINDOW_WIDTH;
 
-      setTimeWindow({ start, end });
+      setTimeWindowIndex({ start, end });
 
       const isWithinTimeDials =
         newWindowWidth > HALF_WINDOW_WIDTH &&
@@ -81,7 +138,7 @@ export default function TimeWindow({
   function handleMouseMoveOnTimeWindow(e: React.MouseEvent) {
     const timeWindowX = timeWindowDivRef.current?.getBoundingClientRect().x!;
     const dX = e.clientX - timeWindowX;
-    dX <= 17 ? setLeftRight("left") : setLeftRight("right");
+    dX <= 17 ? setSidesOfTimeWindow("left") : setSidesOfTimeWindow("right");
   }
 
   return (
@@ -101,13 +158,13 @@ export default function TimeWindow({
       ref={timeWindowDivRef}
       onClick={handleMouseDown}
       onMouseMove={handleMouseMoveOnTimeWindow}
-      onMouseLeave={() => setLeftRight("")}
+      onMouseLeave={() => setSidesOfTimeWindow("")}
     >
       <div
         className={cn(
           "w-[17px] h-full absolute left-0 top-0 rounded-tl-md rounded-bl-md transition-colors",
           {
-            "bg-red-600/10": leftRight === "left" && !isBlockClicked,
+            "bg-red-600/10": sidesOfTimeWindow === "left" && !isBlockClicked,
           }
         )}
       ></div>
@@ -115,7 +172,7 @@ export default function TimeWindow({
         className={cn(
           "w-[17px] h-full absolute right-0 top-0 rounded-tr-md rounded-br-md transition-colors",
           {
-            "bg-red-600/10": leftRight === "right" && !isBlockClicked,
+            "bg-red-600/10": sidesOfTimeWindow === "right" && !isBlockClicked,
           }
         )}
       ></div>

@@ -170,6 +170,7 @@ export function populateTimezones(): ITimezone[] {
       hour24Clock,
       offset,
       diffHoursFromHome: "",
+      meetingHours: { start: [], end: [] },
       timeDials: [],
     };
   });
