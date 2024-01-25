@@ -13,22 +13,12 @@ import { isDecimal } from "~/utils/timezones";
 import { HoursFormat, hoursFormatAtom } from "~/atoms/hours-format";
 import { selectedDateAtom } from "~/atoms/date";
 
-// TODO::
-// 1. Edge hours -> not working properly
-// 2. On Edge hours -> should change the date as well "getNextDay" would do it.
 function formatMeetingHours(
   timezone: ITimezone,
   hoursFormat: HoursFormat,
   timeDialIndex: number
 ) {
-  const timeDialsLength = timezone.timeDials.length;
-  timeDialIndex =
-    timeDialIndex >= timeDialsLength
-      ? timeDialIndex - timeDialsLength
-      : timeDialIndex;
-
-  console.log("TI::", timeDialIndex);
-  console.log("L::", timeDialsLength);
+  timeDialIndex = timeDialIndex % timezone.timeDials.length;
   const timeDial = timezone.timeDials[Math.floor(timeDialIndex)];
   let hours = timeDial[hoursFormat];
   let minutes = 0;
@@ -87,26 +77,31 @@ export default function TimeWindow({
     setTimeWindow(start, end);
   }, [isStopTimeWindow, isBlockClicked, hoursFormat, selectedDate]);
 
+  function getIndexOfLeftTimeDial() {
+    const halfHour = sidesOfTimeWindow === "right" ? 0.5 : 0;
+    return mouseXposition / DEFAULT_WINDOW_WIDTH + halfHour;
+  }
+
   function stopTimeWindow() {
     setIsStopTimeWindow(!isStopTimeWindow);
     frameWidth === DEFAULT_WINDOW_WIDTH
       ? setFrameWidth(frameWidth / 2)
       : setFrameWidth(DEFAULT_WINDOW_WIDTH);
     setIsBlockClicked(false);
+
+    setTimeWindowIndex((p) => ({ ...p, start: getIndexOfLeftTimeDial() }));
   }
 
   const setTimeWindow = useCallback(
     (startIndex: number, endIndex: number) => {
       setSelectedTimezones((selectedTimezones) => {
-        const z = selectedTimezones.map((timezone) => {
+        return selectedTimezones.map((timezone) => {
           const meetingHours = {
             start: formatMeetingHours(timezone, hoursFormat, startIndex),
             end: formatMeetingHours(timezone, hoursFormat, endIndex),
           };
           return { ...timezone, meetingHours };
         });
-        console.log("z::", z);
-        return z;
       });
     },
     [hoursFormat, selectedDate]
@@ -124,11 +119,8 @@ export default function TimeWindow({
     function handleMouseMove(event: MouseEvent) {
       const dX = event.clientX - initialX;
       const indexOfHalfTimeDial = Math.floor(dX / HALF_WINDOW_WIDTH) || 1;
-      const extraValue = sidesOfTimeWindow === "right" ? 0.5 : 0;
-      const indexOfLeftTimeDial =
-        mouseXposition / DEFAULT_WINDOW_WIDTH + extraValue;
       const newWindowWidth = indexOfHalfTimeDial * HALF_WINDOW_WIDTH;
-
+      const indexOfLeftTimeDial = getIndexOfLeftTimeDial();
       const start = indexOfLeftTimeDial;
       const end = indexOfLeftTimeDial + newWindowWidth / DEFAULT_WINDOW_WIDTH;
 

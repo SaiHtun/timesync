@@ -39,33 +39,14 @@ export function getNextDay(currentTime: string, numberOfDays = 1): string {
   return nextDay;
 }
 
-type TimeSlices = Array<"dayOfWeek" | "monthAndDay" | "year">;
-
-export function formatTimezoneToDateString(
-  timezone: ITimezone,
-  timeSlices: TimeSlices
-) {
-  let timeString = "";
-  for (const slice of timeSlices) {
-    timeString += timeString ? `, ${timezone[slice]}` : `${timezone[slice]}`;
-  }
-  return timeString;
-}
-
 export function getTimeDials(
   timezone: ITimezone,
   dialColor: DialColors
 ): ITimeDial[] {
-  const { name, hour24Clock, offset } = timezone;
+  const { name, hour24Clock, offset, currentDate } = timezone;
   const hours24Array = getHours24(name);
   const startHours = parseInt(hour24Clock.split(" ")[0].split(":")[0]);
   const hours = arrayRange(startHours, startHours + 23);
-
-  const currentTime = formatTimezoneToDateString(timezone, [
-    "dayOfWeek",
-    "monthAndDay",
-    "year",
-  ]);
 
   let startNewDay = false;
 
@@ -85,7 +66,7 @@ export function getTimeDials(
 
     const isLastHour = hours[index] === 23;
     const timeMeridian: "am" | "pm" = hour24 >= 12 ? "pm" : "am";
-    const day = startNewDay ? getNextDay(currentTime) : currentTime;
+    const day = startNewDay ? getNextDay(currentDate) : currentDate;
     const dailyCircleBgColor = getDailyCircleColor(
       hours24Array[index],
       dialColor
@@ -148,24 +129,23 @@ export function currentTime(
 function getSupportedTimezonesName(): string[] {
   return Intl.supportedValuesOf("timeZone");
 }
-
+// eee, MMM d, y
 export function populateTimezones(): ITimezone[] {
-  const strFormat = `eee, MMM d, y, zzz, zzzz`;
+  const strFormat = `zzz, zzzz, eee, MMM d, y`;
   const date = new Date();
 
   return getSupportedTimezonesName().map((name) => {
     const now = formatInTimeZone(date, name, strFormat);
     const hour12Clock = currentTime(name, "hour12");
     const hour24Clock = currentTime(name, "hour24");
-    const [dayOfWeek, monthAndDay, year, abbr, value] = now.split(", ");
+    const [abbr, value, ...currentDateArray] = now.split(", ");
+    const currentDate = currentDateArray.join(", ");
     const offset = getTimezoneOffset(name, date) / (60 * 60 * 1_000);
     return {
       name,
       value,
       abbr,
-      dayOfWeek,
-      monthAndDay,
-      year,
+      currentDate,
       hour12Clock,
       hour24Clock,
       offset,

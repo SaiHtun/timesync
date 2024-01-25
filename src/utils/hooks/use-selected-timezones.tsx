@@ -9,12 +9,7 @@ import { useAtom } from "jotai";
 import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 
 import { selectedDateAtom } from "~/atoms/date";
-import {
-  getNextDay,
-  formatTimezoneToDateString,
-  currentTime,
-  getLocalTime,
-} from "~/utils/timezones";
+import { getNextDay, currentTime, getLocalTime } from "~/utils/timezones";
 import { MILISECONDS_PER_MIN } from "~/constants/index";
 import { differenceInDays } from "date-fns";
 
@@ -35,18 +30,12 @@ export function useUpdateTimezonesClock(
   useEffect(() => {
     setTimezonesClockCb((prevTimezones) => {
       const newTimezones = prevTimezones.map((prevTimezone) => {
-        const currentDate = formatTimezoneToDateString(prevTimezone, [
-          "dayOfWeek",
-          "monthAndDay",
-          "year",
-        ]);
-
-        const [dayOfWeek, monthAndDay] = getNextDay(
-          currentDate,
+        const currentDate = getNextDay(
+          prevTimezone.currentDate,
           diffDatesFromLocalTime - prevdiffDatesFromLocalTimeRef.current
-        ).split(", ");
+        );
 
-        return { ...prevTimezone, dayOfWeek, monthAndDay };
+        return { ...prevTimezone, currentDate };
       });
 
       prevdiffDatesFromLocalTimeRef.current = diffDatesFromLocalTime;

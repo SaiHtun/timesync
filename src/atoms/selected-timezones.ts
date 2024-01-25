@@ -1,10 +1,5 @@
 import { atom } from "jotai";
-import {
-  formatTimezoneToDateString,
-  getLocalTime,
-  getNextDay,
-  getTimezonesMap,
-} from "~/utils/timezones";
+import { getLocalTime, getNextDay, getTimezonesMap } from "~/utils/timezones";
 import { searchTimezoneNameAtom } from "./search-timezone-name";
 import { searchedTimezoneIndexAtom } from "./searched-timezone-index";
 import { searchedTimezonesAtom } from "./searched-timezones";
@@ -19,22 +14,13 @@ if (timezonesMap.size === 0) {
 export const selectedTimezonesAtom = atom<ITimezone[]>([]);
 
 function massageTimezone(timezone: ITimezone, selectedDate: string): ITimezone {
-  // newly added "Timezone" has to sync the "currentDate".
-  const formattedCurrentDate = formatTimezoneToDateString(timezone, [
-    "dayOfWeek",
-    "monthAndDay",
-    "year",
-  ]);
   const diffDatesFromLocalTime = differenceInDays(
     new Date(selectedDate),
     new Date(getLocalTime())
   );
-  const [dayOfWeek, monthAndDay] = getNextDay(
-    formattedCurrentDate,
-    diffDatesFromLocalTime
-  ).split(", ");
+  const currentDate = getNextDay(timezone.currentDate, diffDatesFromLocalTime);
 
-  return { ...timezone, dayOfWeek, monthAndDay };
+  return { ...timezone, currentDate };
 }
 
 export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
@@ -74,15 +60,8 @@ export const syncUrlToSelectedTimezonesAtom = atom(
     );
     const timezones = timezonesName.map((name) => {
       const timezone = timezonesMap.get(name) as ITimezone;
-      const currentTime = formatTimezoneToDateString(timezone, [
-        "dayOfWeek",
-        "monthAndDay",
-        "year",
-      ]);
-      const [dayOfWeek, monthAndDay] = getNextDay(currentTime, dayCounts).split(
-        ", "
-      );
-      return { ...timezone, dayOfWeek, monthAndDay };
+      const currentDate = getNextDay(timezone.currentDate, dayCounts);
+      return { ...timezone, currentDate };
     });
 
     set(selectedTimezonesAtom, timezones);

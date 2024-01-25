@@ -7,9 +7,7 @@ interface ITimezone {
   name: string;
   value: string;
   abbr: string;
-  dayOfWeek: string;
-  monthAndDay: string;
-  year: string;
+  currentDate: string;
   hour12Clock: string;
   hour24Clock: string;
   meetingHours?: IMeetingHours;

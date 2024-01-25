@@ -57,7 +57,7 @@ function Region({ timezone }: { timezone: ITimezone }) {
 
 function CurrentTime({ timezone }: { timezone: ITimezone }) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
-  const { dayOfWeek, monthAndDay } = timezone;
+  const [dayOfWeek, monthAndDay] = timezone.currentDate.split(", ");
 
   const clockFormat = hoursFormat === "hour12" ? "hour12Clock" : "hour24Clock";
 
