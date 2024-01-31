@@ -52,8 +52,8 @@ export function useUpdateTimezonesClock(
       setTimezonesClockCb((tzs) =>
         tzs.map((tz) => ({
           ...tz,
-          hour12Clock: currentTime(tz.name, "hour12"),
-          hour24Clock: currentTime(tz.name, "hour24"),
+          hour12: currentTime(tz.name, "hour12"),
+          hour24: currentTime(tz.name, "hour24"),
         }))
       );
     }, requiredIntervalToBeAMinute);

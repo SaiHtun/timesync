@@ -31,8 +31,6 @@ export default function SearchedTimezoneRow({
     appendTimezoneNameToUrl(timezone.name, [searchParams, setSearchParams]);
   }
 
-  const clockFormat = hoursFormat === "hour12" ? "hour12Clock" : "hour24Clock";
-
   return (
     <motion.div>
       <button
@@ -48,7 +46,7 @@ export default function SearchedTimezoneRow({
           <span>{timezone.name}</span>
           <span className="text-xs primary_text_gray">{timezone.abbr}</span>
         </p>
-        <Clock clock={timezone[clockFormat]} />
+        <Clock clock={timezone[hoursFormat]} />
       </button>
     </motion.div>
   );

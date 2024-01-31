@@ -1,10 +1,8 @@
-import { memo, useMemo } from "react";
-import { isDecimal, getTimeDials } from "~/utils/timezones";
+import { memo } from "react";
+import { isDecimal } from "~/utils/timezones";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
-import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
-import { selectedDateAtom } from "~/atoms/date";
 
 interface IProps {
   timezone: ITimezone;
@@ -30,19 +28,10 @@ function NewDay({ day }: { day: string }) {
 
 export default memo(function TimeDials({ timezone }: IProps) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
-  const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
-  const [selectedDate] = useAtom(selectedDateAtom);
-
-  const timeDials = useMemo(
-    () => getTimeDials(timezone, dialColor),
-    [dialColor, timezone, selectedDate]
-  );
-
-  timezone.timeDials = timeDials;
 
   return (
     <main>
-      <div className="h-[40px] w-[816px] flex items-center text-center text-sm rounded-l-md">
+      <div className="h-[40px] w-[816px] flex items-center text-center text-sm">
         {timezone.timeDials.map((timeDial, index) => {
           const {
             dailyCircleBgColor,
@@ -56,7 +45,7 @@ export default memo(function TimeDials({ timezone }: IProps) {
             <div
               key={index}
               className={cn(
-                "leading-none w-[34px] h-full  p-1 first:rounded-l-md relative flex flex-col items-center justify-center text-dial-newday dark:text-white",
+                "leading-none w-[34px] h-full  p-1 relative flex flex-col items-center justify-center text-dial-newday dark:text-white",
                 dailyCircleBgColor,
                 {
                   "!rounded-l-md !bg-dial-newday  !text-white": isNewDay,

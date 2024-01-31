@@ -59,11 +59,9 @@ function CurrentTime({ timezone }: { timezone: ITimezone }) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [dayOfWeek, monthAndDay] = timezone.currentDate.split(", ");
 
-  const clockFormat = hoursFormat === "hour12" ? "hour12Clock" : "hour24Clock";
-
   return (
     <div className="text-right">
-      <Clock clock={timezone[clockFormat]} />
+      <Clock clock={timezone[hoursFormat]} />
       <span className="text-xs primary_text_gray">
         {dayOfWeek + ", " + monthAndDay}
       </span>

@@ -8,9 +8,15 @@ export function isDecimal(hour: number) {
   return hour % 1 !== 0;
 }
 
-export function getDailyCircleColor(hour: number, dialColor: DialColors) {
+export function getDailyCircleColor(
+  hour: number,
+  dialColor: DialColors,
+  isNewDay: boolean
+) {
   const dailyCircleColor = colorsMap[dialColor];
-  if (hour >= 6 && hour <= 7.5) {
+  if (isNewDay) {
+    return dailyCircleColor["newday"];
+  } else if (hour >= 6 && hour <= 7.5) {
     return dailyCircleColor["dawn"];
   } else if (hour >= 8 && hour <= 17.5) {
     return dailyCircleColor["midday"];
@@ -19,7 +25,7 @@ export function getDailyCircleColor(hour: number, dialColor: DialColors) {
   } else if ((hour >= 22 && hour <= 23.5) || (hour >= 1 && hour <= 5.5)) {
     return dailyCircleColor["midnight"];
   } else {
-    return dailyCircleColor["newday"];
+    return dailyCircleColor["dawn"];
   }
 }
 
@@ -39,51 +45,113 @@ export function getNextDay(currentTime: string, numberOfDays = 1): string {
   return nextDay;
 }
 
-export function getTimeDials(
-  timezone: ITimezone,
-  dialColor: DialColors
+function createHomeTimeDials(
+  hours: number[],
+  dialColor: DialColors,
+  currentTimezone: ITimezone,
+  homeSelectedTimezone: ITimezone
 ): ITimeDial[] {
-  const { name, hour24Clock, offset, currentDate } = timezone;
-  const hours24Array = getHours24(name);
-  const startHours = parseInt(hour24Clock.split(" ")[0].split(":")[0]);
-  const hours = arrayRange(startHours, startHours + 23);
+  const { offset, diffHoursFromHome } = currentTimezone;
+  return hours.map((hour, index) => {
+    let h = hour;
 
-  let startNewDay = false;
-
-  const timeDials = hours.map((h, index) => {
-    let hour = h;
-    if (isDecimal(offset)) {
-      hour += 0.5;
-    }
-    // handling 24/12 hours and edge cases coz some countries like Myanmar is off by -30mins
-    const hour12 = hour % 12 === 0.5 ? 12.5 : hour % 12 || 12;
-    const hour24 = hour % 24 === 0.5 ? 24.5 : hour % 24 || 24;
-
-    const isNewDay = hours[index] === 24;
-    if (isNewDay) {
-      startNewDay = true;
+    if (isDecimal(offset) || isDecimal(Number(diffHoursFromHome))) {
+      h += 0.5;
     }
 
-    const isLastHour = hours[index] === 23;
-    const timeMeridian: "am" | "pm" = hour24 >= 12 ? "pm" : "am";
-    const day = startNewDay ? getNextDay(currentDate) : currentDate;
-    const dailyCircleBgColor = getDailyCircleColor(
-      hours24Array[index],
-      dialColor
-    );
+    const timeMeridian: TimeMeriDian = h >= 12 ? "pm" : "am";
+
+    const hour12 = h % 12 === 0.5 ? 12.5 : h % 12 || 12;
+    const hour24 = h % 24 === 0.5 ? 24.5 : h % 24 || 24;
+
+    return {
+      hour12,
+      hour24,
+      timeMeridian,
+      dailyCircleBgColor: getDailyCircleColor(h, dialColor, index === 0),
+      day: homeSelectedTimezone.currentDate,
+      isLastHour: false,
+      isNewDay: index === 0,
+    };
+  });
+}
+
+function createChildsTimeDials(
+  hours: number[],
+  dialColor: DialColors,
+  currentTimezone: ITimezone,
+  homeSelectedTimezone: ITimezone
+) {
+  let prevDay = "";
+  return hours.map((_, index) => {
+    const { currentDate, timeDials } = homeSelectedTimezone;
+    const { name } = currentTimezone;
+    const dial = timeDials[index];
+    const d = `${currentDate}, ${dial.hour12}:00 ${dial.timeMeridian}`;
+
+    const [h12, newDay] = formatInTimeZone(
+      new Date(d),
+      name,
+      "h:aaa-eee, MMM d, y"
+    ).split("-");
+
+    const h24 = formatInTimeZone(new Date(d), name, "k-eee, MMM d, y").split(
+      "-"
+    )[0];
+
+    function parsedHour(strHour: string) {
+      const parsedHour = Number(strHour);
+      return isDecimal(parsedHour) ? parsedHour + 0.5 : parsedHour;
+    }
+
+    const [h, timeMeridian] = h12.split(":");
+    const hour12 = parsedHour(h);
+    const hour24 = parsedHour(h24);
+
+    let isNewDay = false;
+    let isLastHour = (timeMeridian === "pm" && hour12 === 11) || hour24 === 23;
+
+    if (!prevDay) prevDay = newDay;
+
+    if (prevDay !== newDay) {
+      isNewDay = true;
+    }
+
+    prevDay = newDay;
 
     return {
       isNewDay,
       hour12,
       hour24,
-      timeMeridian,
-      day,
+      day: newDay,
+      timeMeridian: timeMeridian as TimeMeriDian,
+      dailyCircleBgColor: getDailyCircleColor(hour24, dialColor, isNewDay),
       isLastHour,
-      dailyCircleBgColor,
     };
   });
+}
 
-  return timeDials;
+export function getTimeDials(
+  timezone: ITimezone,
+  dialColor: DialColors,
+  homeSelectedTimezone: ITimezone
+): ITimeDial[] {
+  const hours = arrayRange(0, 23);
+  let td = [] as ITimeDial[];
+  if (!homeSelectedTimezone?.timeDials.length) {
+    // home
+    td = createHomeTimeDials(hours, dialColor, timezone, homeSelectedTimezone);
+  } else {
+    // children
+    td = createChildsTimeDials(
+      hours,
+      dialColor,
+      timezone,
+      homeSelectedTimezone
+    );
+  }
+
+  return td;
 }
 
 export function getCurrentUserTimezoneName() {
@@ -136,8 +204,8 @@ export function populateTimezones(): ITimezone[] {
 
   return getSupportedTimezonesName().map((name) => {
     const now = formatInTimeZone(date, name, strFormat);
-    const hour12Clock = currentTime(name, "hour12");
-    const hour24Clock = currentTime(name, "hour24");
+    const hour12 = currentTime(name, "hour12");
+    const hour24 = currentTime(name, "hour24");
     const [abbr, value, ...currentDateArray] = now.split(", ");
     const currentDate = currentDateArray.join(", ");
     const offset = getTimezoneOffset(name, date) / (60 * 60 * 1_000);
@@ -146,8 +214,8 @@ export function populateTimezones(): ITimezone[] {
       value,
       abbr,
       currentDate,
-      hour12Clock,
-      hour24Clock,
+      hour12,
+      hour24,
       offset,
       diffHoursFromHome: "",
       meetingHours: { start: [], end: [] },

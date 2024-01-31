@@ -8,13 +8,15 @@ interface ITimezone {
   value: string;
   abbr: string;
   currentDate: string;
-  hour12Clock: string;
-  hour24Clock: string;
+  hour12: string;
+  hour24: string;
   meetingHours?: IMeetingHours;
   offset: number;
   diffHoursFromHome: string;
   timeDials: ITimeDial[];
 }
+
+type TimeMeriDian = "am" | "pm";
 
 interface ITimeDial {
   hour12: number;

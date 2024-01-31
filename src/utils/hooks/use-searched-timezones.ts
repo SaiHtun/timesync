@@ -22,8 +22,8 @@ export function useSearchedTimezones(): ITimezone[] {
       .search(deferredSearch)
       .map(({ item }) => ({
         ...item,
-        hour12Clock: currentTime(item.name, "hour12"),
-        hour24Clock: currentTime(item.name, "hour24"),
+        hour12: currentTime(item.name, "hour12"),
+        hour24: currentTime(item.name, "hour24"),
       }))
       .slice(0, 10);
 
