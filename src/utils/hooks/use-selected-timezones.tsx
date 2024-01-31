@@ -6,12 +6,23 @@ import {
   useRef,
 } from "react";
 import { useAtom } from "jotai";
-import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
+import {
+  homeSelectedTimezonesAtom,
+  selectedTimezonesAtom,
+} from "~/atoms/selected-timezones";
 
 import { selectedDateAtom } from "~/atoms/date";
-import { getNextDay, currentTime, getLocalTime } from "~/utils/timezones";
+import {
+  getNextDay,
+  currentTime,
+  getLocalTime,
+  getDailyCircleColor,
+  getDifferenceHoursFromHome,
+  getTimeDials,
+} from "~/utils/timezones";
 import { MILISECONDS_PER_MIN } from "~/constants/index";
 import { differenceInDays } from "date-fns";
+import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 
 export function useUpdateTimezonesClock(
   setTimezonesClock: Dispatch<SetStateAction<ITimezone[]>>
@@ -19,30 +30,30 @@ export function useUpdateTimezonesClock(
   const setTimezonesClockCb = useCallback(setTimezonesClock, [
     setTimezonesClock,
   ]);
-  const [selectedDate] = useAtom(selectedDateAtom);
-  const prevdiffDatesFromLocalTimeRef = useRef(0);
+  // const [selectedDate] = useAtom(selectedDateAtom);
+  // const prevdiffDatesFromLocalTimeRef = useRef(0);
 
-  const diffDatesFromLocalTime = differenceInDays(
-    new Date(selectedDate),
-    new Date(getLocalTime())
-  );
+  // const diffDatesFromLocalTime = differenceInDays(
+  //   new Date(selectedDate),
+  //   new Date(getLocalTime())
+  // );
 
-  useEffect(() => {
-    setTimezonesClockCb((prevTimezones) => {
-      const newTimezones = prevTimezones.map((prevTimezone) => {
-        const currentDate = getNextDay(
-          prevTimezone.currentDate,
-          diffDatesFromLocalTime - prevdiffDatesFromLocalTimeRef.current
-        );
+  // useEffect(() => {
+  //   setTimezonesClockCb((prevTimezones) => {
+  //     const newTimezones = prevTimezones.map((prevTimezone) => {
+  //       const currentDate = getNextDay(
+  //         prevTimezone.currentDate,
+  //         diffDatesFromLocalTime - prevdiffDatesFromLocalTimeRef.current
+  //       );
 
-        return { ...prevTimezone, currentDate };
-      });
+  //       return { ...prevTimezone, currentDate };
+  //     });
 
-      prevdiffDatesFromLocalTimeRef.current = diffDatesFromLocalTime;
+  //     prevdiffDatesFromLocalTimeRef.current = diffDatesFromLocalTime;
 
-      return newTimezones;
-    });
-  }, [selectedDate]);
+  //     return newTimezones;
+  //   });
+  // }, [selectedDate]);
 
   useEffect(() => {
     const requiredIntervalToBeAMinute =
@@ -71,8 +82,33 @@ export function useSelectedTimezones(): [
   const [selectedTimezones, setSelectedTimezones] = useAtom(
     selectedTimezonesAtom
   );
+  const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
 
   useUpdateTimezonesClock(setSelectedTimezones);
+
+  useEffect(() => {
+    setSelectedTimezones((prevTimezones) => {
+      return prevTimezones.map((tz) => {
+        const timeDials = tz.timeDials.map((td) => {
+          const { timeMeridian, hour12, hour24 } = td;
+          let isNewDay =
+            (timeMeridian === "am" && (hour12 === 12 || hour12 === 12.5)) ||
+            hour24 === 24 ||
+            hour24 === 24.5;
+          return {
+            ...td,
+            dailyCircleBgColor: getDailyCircleColor(
+              td.hour24,
+              dialColor,
+              isNewDay
+            ),
+          };
+        });
+
+        return { ...tz, timeDials };
+      });
+    });
+  }, [dialColor]);
 
   return [selectedTimezones, setSelectedTimezones];
 }

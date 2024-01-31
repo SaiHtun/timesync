@@ -36,14 +36,15 @@ export default memo(function SelectedTimezones() {
     if (!destination) {
       return;
     }
-    const items = reorderTimezones(
+    const tzs = reorderTimezones(
       selectedTimezones,
       source.index,
       destination.index
     );
-    const timezoneName = items.map((i) => i.name);
+    const timezoneName = tzs.map((i) => i.name);
     reorderUrl(timezoneName);
-    setSelectedTimezones(items);
+
+    setSelectedTimezones(tzs);
   };
 
   return (

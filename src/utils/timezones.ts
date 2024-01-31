@@ -82,12 +82,14 @@ function createChildsTimeDials(
   currentTimezone: ITimezone,
   homeSelectedTimezone: ITimezone
 ) {
-  let prevDay = "";
   return hours.map((_, index) => {
-    const { currentDate, timeDials } = homeSelectedTimezone;
+    const { currentDate, timeDials, diffHoursFromHome } = homeSelectedTimezone;
     const { name } = currentTimezone;
     const dial = timeDials[index];
-    const d = `${currentDate}, ${dial.hour12}:00 ${dial.timeMeridian}`;
+    const hour = isDecimal(dial.hour12)
+      ? `${Math.round(dial.hour12)}:30`
+      : `${dial.hour12}:00`;
+    const d = `${currentDate}, ${hour} ${dial.timeMeridian}`;
 
     const [h12, newDay] = formatInTimeZone(
       new Date(d),
@@ -100,24 +102,25 @@ function createChildsTimeDials(
     )[0];
 
     function parsedHour(strHour: string) {
+      const decimal =
+        isDecimal(Number(diffHoursFromHome)) ||
+        isDecimal(Number(currentTimezone.diffHoursFromHome));
       const parsedHour = Number(strHour);
-      return isDecimal(parsedHour) ? parsedHour + 0.5 : parsedHour;
+      return decimal ? parsedHour + 0.5 : parsedHour;
     }
 
     const [h, timeMeridian] = h12.split(":");
     const hour12 = parsedHour(h);
     const hour24 = parsedHour(h24);
 
-    let isNewDay = false;
-    let isLastHour = (timeMeridian === "pm" && hour12 === 11) || hour24 === 23;
-
-    if (!prevDay) prevDay = newDay;
-
-    if (prevDay !== newDay) {
-      isNewDay = true;
-    }
-
-    prevDay = newDay;
+    let isNewDay =
+      (timeMeridian === "am" && (hour12 === 12 || hour12 === 12.5)) ||
+      hour24 === 24 ||
+      hour24 === 24.5;
+    let isLastHour =
+      (timeMeridian === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
+      hour24 === 23 ||
+      hour24 === 23.5;
 
     return {
       isNewDay,
@@ -134,11 +137,12 @@ function createChildsTimeDials(
 export function getTimeDials(
   timezone: ITimezone,
   dialColor: DialColors,
-  homeSelectedTimezone: ITimezone
+  homeSelectedTimezone: ITimezone,
+  isHome = false
 ): ITimeDial[] {
   const hours = arrayRange(0, 23);
   let td = [] as ITimeDial[];
-  if (!homeSelectedTimezone?.timeDials.length) {
+  if (isHome) {
     // home
     td = createHomeTimeDials(hours, dialColor, timezone, homeSelectedTimezone);
   } else {

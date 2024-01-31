@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import {
   getCurrentUserTimezoneName,
+  getDifferenceHoursFromHome,
   getTimeDials,
   getTimezonesMap,
 } from "~/utils/timezones";
@@ -27,12 +28,16 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
   const isExist = selectedTimezones.find((tz) => tz.name === newTimezone.name);
 
   if (selectedTimezones.length < TIMEZONES_LIMIT && !isExist) {
-    set(selectedTimezonesAtom, (preTzs) =>
-      preTzs.concat({
+    set(selectedTimezonesAtom, (preTzs) => {
+      newTimezone.diffHoursFromHome = getDifferenceHoursFromHome(
+        newTimezone.name,
+        homeSelectedTimezone.name
+      );
+      return preTzs.concat({
         ...newTimezone,
         timeDials: getTimeDials(newTimezone, dialColor, homeSelectedTimezone),
-      })
-    );
+      });
+    });
   }
   set(searchTimezoneNameAtom, "");
 });
@@ -56,9 +61,20 @@ export const syncUrlToSelectedTimezonesAtom = atom(
     let homeSelectedTimezone = get(homeSelectedTimezonesAtom);
     const timezones = timezonesName.map((name, index) => {
       const timezone = timezonesMap.get(name) as ITimezone;
-      const timeDials = getTimeDials(timezone, dialColor, homeSelectedTimezone);
 
+      timezone.diffHoursFromHome = getDifferenceHoursFromHome(
+        timezone.name,
+        homeSelectedTimezone.name
+      );
+
+      const timeDials = getTimeDials(
+        timezone,
+        dialColor,
+        homeSelectedTimezone,
+        index === 0
+      );
       const newTimezone = { ...timezone, timeDials };
+
       if (index === 0) {
         homeSelectedTimezone = newTimezone;
       }

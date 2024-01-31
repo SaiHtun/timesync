@@ -1,14 +1,10 @@
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
-import { getDifferenceHoursFromHome } from "~/utils/timezones";
 import { useAtom } from "jotai";
 import AbbrBadge from "./AbbrBadge";
-import {
-  homeSelectedTimezonesAtom,
-  popSelectedTimezonesAtom,
-} from "~/atoms/selected-timezones";
+import { popSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { Home, Trash2 } from "lucide-react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { useSearchParams } from "react-router-dom";
@@ -75,15 +71,8 @@ export default memo(function SelectedTimezoneRow({
   provided,
   snapshot,
 }: IProps) {
-  const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
   const [searchParams, setSearchParams] = useSearchParams();
   const [, popSelectedTimezones] = useAtom(popSelectedTimezonesAtom);
-
-  const diffHours = useMemo(() => {
-    return getDifferenceHoursFromHome(timezone.name, homeSelectedTimezone.name);
-  }, [homeSelectedTimezone]);
-
-  timezone.diffHoursFromHome = diffHours;
 
   function handlePopTimezone() {
     popSelectedTimezones(timezone.name);
