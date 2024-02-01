@@ -48,30 +48,22 @@ export function getNextDay(currentTime: string, numberOfDays = 1): string {
 function createHomeTimeDials(
   hours: number[],
   dialColor: DialColors,
-  currentTimezone: ITimezone,
   homeSelectedTimezone: ITimezone
 ): ITimeDial[] {
-  const { offset, diffHoursFromHome } = currentTimezone;
   return hours.map((hour, index) => {
-    let h = hour;
+    const timeMeridian: TimeMeriDian = hour >= 12 ? "pm" : "am";
 
-    if (isDecimal(offset) || isDecimal(Number(diffHoursFromHome))) {
-      h += 0.5;
-    }
-
-    const timeMeridian: TimeMeriDian = h >= 12 ? "pm" : "am";
-
-    const hour12 = h % 12 === 0.5 ? 12.5 : h % 12 || 12;
-    const hour24 = h % 24 === 0.5 ? 24.5 : h % 24 || 24;
+    const hour12 = hour % 12 || 12;
+    const hour24 = hour % 24 || 24;
 
     return {
+      isNewDay: index === 0,
       hour12,
       hour24,
-      timeMeridian,
-      dailyCircleBgColor: getDailyCircleColor(h, dialColor, index === 0),
       day: homeSelectedTimezone.currentDate,
+      timeMeridian,
+      dailyCircleBgColor: getDailyCircleColor(hour, dialColor, index === 0),
       isLastHour: false,
-      isNewDay: index === 0,
     };
   });
 }
@@ -83,13 +75,15 @@ function createChildsTimeDials(
   homeSelectedTimezone: ITimezone
 ) {
   return hours.map((_, index) => {
-    const { currentDate, timeDials, diffHoursFromHome } = homeSelectedTimezone;
+    const { currentDate, timeDials, diffHoursFromHome, abbr } =
+      homeSelectedTimezone;
     const { name } = currentTimezone;
     const dial = timeDials[index];
     const hour = isDecimal(dial.hour12)
       ? `${Math.round(dial.hour12)}:30`
       : `${dial.hour12}:00`;
-    const d = `${currentDate}, ${hour} ${dial.timeMeridian}`;
+
+    const d = `${currentDate}, ${hour} ${dial.timeMeridian}, ${abbr}`;
 
     const [h12, newDay] = formatInTimeZone(
       new Date(d),
@@ -144,7 +138,7 @@ export function getTimeDials(
   let td = [] as ITimeDial[];
   if (isHome) {
     // home
-    td = createHomeTimeDials(hours, dialColor, timezone, homeSelectedTimezone);
+    td = createHomeTimeDials(hours, dialColor, timezone);
   } else {
     // children
     td = createChildsTimeDials(

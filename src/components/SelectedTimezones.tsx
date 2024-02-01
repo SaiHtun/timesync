@@ -10,9 +10,13 @@ import {
 import { cn } from "~/utils/cn";
 import { useSearchParams } from "react-router-dom";
 import TimeSelectionOverlay from "./TimeSelectionOverlay";
+import { getDifferenceHoursFromHome, getTimeDials } from "~/utils/timezones";
+import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
+import { useAtom } from "jotai";
 
 export default memo(function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
+  const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
   const [, setSearchParams] = useSearchParams();
 
   function reorderTimezones(
@@ -44,7 +48,22 @@ export default memo(function SelectedTimezones() {
     const timezoneName = tzs.map((i) => i.name);
     reorderUrl(timezoneName);
 
-    setSelectedTimezones(tzs);
+    let h = tzs[0];
+
+    const newTimezones = tzs.map((tz, index) => {
+      if (index === 0) {
+        tz.diffHoursFromHome = getDifferenceHoursFromHome(h.name, h.name);
+        tz.timeDials = getTimeDials(h, dialColor, h, true);
+        h = tz;
+      } else {
+        tz.diffHoursFromHome = getDifferenceHoursFromHome(tz.name, h.name);
+        tz.timeDials = getTimeDials(tz, dialColor, h);
+      }
+
+      return tz;
+    });
+
+    setSelectedTimezones(newTimezones);
   };
 
   return (

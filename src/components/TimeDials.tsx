@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { isDecimal } from "~/utils/timezones";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
@@ -26,7 +25,7 @@ function NewDay({ day }: { day: string }) {
   );
 }
 
-export default memo(function TimeDials({ timezone }: IProps) {
+export default function TimeDials({ timezone }: IProps) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
 
   return (
@@ -98,4 +97,4 @@ export default memo(function TimeDials({ timezone }: IProps) {
       </div>
     </main>
   );
-});
+}

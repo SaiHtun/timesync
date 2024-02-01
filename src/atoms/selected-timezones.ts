@@ -59,6 +59,7 @@ export const syncUrlToSelectedTimezonesAtom = atom(
   (get, set, timezonesName: string[] = []) => {
     const dialColor = get(dialColorWithLocalStorageAtom);
     let homeSelectedTimezone = get(homeSelectedTimezonesAtom);
+
     const timezones = timezonesName.map((name, index) => {
       const timezone = timezonesMap.get(name) as ITimezone;
 
