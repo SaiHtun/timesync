@@ -7,7 +7,7 @@ interface ITimezone {
   name: string;
   value: string;
   abbr: string;
-  currentDate: string;
+  date: string;
   hour12: string;
   hour24: string;
   meetingHours?: IMeetingHours;
@@ -22,7 +22,7 @@ interface ITimeDial {
   hour12: number;
   hour24: number;
   timeMeridian: "am" | "pm";
-  day: string;
+  date: string;
   isNewDay: boolean;
   isLastHour: boolean;
   dailyCircleBgColor: string;

@@ -6,11 +6,7 @@ import { useTimezonesParams } from "~/utils/hooks/use-timezones-params";
 import { useEventListener } from "./utils/hooks/use-event-listener";
 import { setSearchTimezoneNameAtom } from "./atoms/search-timezone-name";
 import { detectAnyDOMsOnMouseEvent } from "./utils";
-import {
-  dismissDatePickerModelAtom,
-  setSelectedDateAtom,
-  startedDateAtom,
-} from "./atoms/date";
+import { dismissDatePickerModelAtom, startedDateAtom } from "./atoms/date";
 import { useSearchParams } from "react-router-dom";
 import { getLocalTime } from "./utils/timezones";
 
@@ -22,12 +18,10 @@ function App() {
     syncUrlToSelectedTimezonesAtom
   );
   const [searchParams] = useSearchParams();
-  const [, setSelectedDate] = useAtom(setSelectedDateAtom);
   const [, setStartedDate] = useAtom(startedDateAtom);
 
   function setStartedAndSelectedDate() {
     const startedDate = searchParams.get("selectedDate") || getLocalTime();
-    setSelectedDate(startedDate);
     setStartedDate(new Date(startedDate));
   }
 

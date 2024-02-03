@@ -1,4 +1,3 @@
-import { memo } from "react";
 import Clock from "~/components/Clock";
 import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
@@ -53,7 +52,7 @@ function Region({ timezone }: { timezone: ITimezone }) {
 
 function CurrentTime({ timezone }: { timezone: ITimezone }) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
-  const [dayOfWeek, monthAndDay] = timezone.currentDate.split(", ");
+  const [dayOfWeek, monthAndDay] = timezone.date.split(", ");
 
   return (
     <div className="text-right">
@@ -65,7 +64,7 @@ function CurrentTime({ timezone }: { timezone: ITimezone }) {
   );
 }
 
-export default memo(function SelectedTimezoneRow({
+export default function SelectedTimezoneRow({
   timezone,
   isHome,
   provided,
@@ -123,4 +122,4 @@ export default memo(function SelectedTimezoneRow({
       </div>
     </div>
   );
-});
+}

@@ -38,10 +38,14 @@ export function getHours24(timezoneName: string): number[] {
   );
 }
 // getNextDay could return pre/next day base on if "numberOfDays"(+/-)
-export function getNextDay(currentTime: string, numberOfDays = 1): string {
+export function getNextDay(
+  currentTime: string,
+  numberOfDays = 1,
+  formatStr = "eee, MMM d, y"
+): string {
   // currentTime = "dayOfWeek, monthAndDay, year" ( without year would Error :D )
   const date = new Date(currentTime);
-  const nextDay = format(addDays(date, numberOfDays), "eee, MMM d, y");
+  const nextDay = format(addDays(date, numberOfDays), formatStr);
   return nextDay;
 }
 
@@ -60,7 +64,7 @@ function createHomeTimeDials(
       isNewDay: index === 0,
       hour12,
       hour24,
-      day: homeSelectedTimezone.currentDate,
+      date: homeSelectedTimezone.date,
       timeMeridian,
       dailyCircleBgColor: getDailyCircleColor(hour, dialColor, index === 0),
       isLastHour: false,
@@ -75,15 +79,14 @@ function createChildsTimeDials(
   homeSelectedTimezone: ITimezone
 ) {
   return hours.map((_, index) => {
-    const { currentDate, timeDials, diffHoursFromHome, abbr } =
-      homeSelectedTimezone;
+    const { date, timeDials, diffHoursFromHome, abbr } = homeSelectedTimezone;
     const { name } = currentTimezone;
     const dial = timeDials[index];
     const hour = isDecimal(dial.hour12)
-      ? `${Math.round(dial.hour12)}:30`
+      ? `${Math.floor(dial.hour12)}:30`
       : `${dial.hour12}:00`;
 
-    const d = `${currentDate}, ${hour} ${dial.timeMeridian}, ${abbr}`;
+    const d = `${date}, ${hour} ${dial.timeMeridian}, ${abbr}`;
 
     const [h12, newDay] = formatInTimeZone(
       new Date(d),
@@ -120,7 +123,7 @@ function createChildsTimeDials(
       isNewDay,
       hour12,
       hour24,
-      day: newDay,
+      date: newDay,
       timeMeridian: timeMeridian as TimeMeriDian,
       dailyCircleBgColor: getDailyCircleColor(hour24, dialColor, isNewDay),
       isLastHour,
@@ -198,20 +201,20 @@ function getSupportedTimezonesName(): string[] {
 // eee, MMM d, y
 export function populateTimezones(): ITimezone[] {
   const strFormat = `zzz, zzzz, eee, MMM d, y`;
-  const date = new Date();
+  const d = new Date();
 
   return getSupportedTimezonesName().map((name) => {
-    const now = formatInTimeZone(date, name, strFormat);
+    const now = formatInTimeZone(d, name, strFormat);
     const hour12 = currentTime(name, "hour12");
     const hour24 = currentTime(name, "hour24");
     const [abbr, value, ...currentDateArray] = now.split(", ");
-    const currentDate = currentDateArray.join(", ");
-    const offset = getTimezoneOffset(name, date) / (60 * 60 * 1_000);
+    const date = currentDateArray.join(", ");
+    const offset = getTimezoneOffset(name, d) / (60 * 60 * 1_000);
     return {
       name,
       value,
       abbr,
-      currentDate,
+      date,
       hour12,
       hour24,
       offset,
@@ -234,7 +237,7 @@ export function getLocalTime() {
   const res = formatInTimeZone(
     new Date(),
     getCurrentUserTimezoneName(),
-    "eee, MMM d, y"
+    "eee, MMM d, y, h:mm aaa, zzz"
   );
   return res;
 }

@@ -7,8 +7,8 @@ interface IProps {
   timezone: ITimezone;
 }
 
-function NewDay({ day }: { day: string }) {
-  const [dayOfWeek, monthAndDay] = day.split(", ");
+function NewDay({ date }: { date: string }) {
+  const [dayOfWeek, monthAndDay] = date.split(", ");
   const [month, numOfDay] = monthAndDay.split(" ");
   return (
     <>
@@ -35,7 +35,7 @@ export default function TimeDials({ timezone }: IProps) {
           const {
             dailyCircleBgColor,
             isNewDay,
-            day,
+            date,
             isLastHour,
             timeMeridian,
           } = timeDial;
@@ -55,7 +55,7 @@ export default function TimeDials({ timezone }: IProps) {
               )}
             >
               {isNewDay ? (
-                <NewDay day={day} />
+                <NewDay date={date} />
               ) : (
                 <>
                   {" "}
@@ -84,7 +84,7 @@ export default function TimeDials({ timezone }: IProps) {
                         })}
                     </p>
                   ) : (
-                    <span>{isNewDay ? <NewDay day={day} /> : hour}</span>
+                    <span>{isNewDay ? <NewDay date={date} /> : hour}</span>
                   )}
                   {hoursFormat === "hour12" && (
                     <span className="text-[10px] ">{timeMeridian}</span>

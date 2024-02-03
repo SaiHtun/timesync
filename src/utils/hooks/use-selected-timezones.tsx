@@ -30,7 +30,32 @@ export function useUpdateTimezonesClock(
   const setTimezonesClockCb = useCallback(setTimezonesClock, [
     setTimezonesClock,
   ]);
+  const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
+  const [selectedDate] = useAtom(selectedDateAtom);
+
+  useEffect(() => {
+    setTimezonesClockCb((prevTimezones) => {
+      let h = prevTimezones[0];
+
+      const newTimezones = prevTimezones.map((tz, index) => {
+        if (index === 0) {
+          tz.diffHoursFromHome = getDifferenceHoursFromHome(h.name, h.name);
+          tz.timeDials = getTimeDials(h, dialColor, h, true);
+          h = tz;
+        } else {
+          tz.diffHoursFromHome = getDifferenceHoursFromHome(tz.name, h.name);
+          tz.timeDials = getTimeDials(tz, dialColor, h);
+        }
+
+        return tz;
+      });
+
+      return newTimezones;
+    });
+  }, [selectedDate]);
+
   // const [selectedDate] = useAtom(selectedDateAtom);
+
   // const prevdiffDatesFromLocalTimeRef = useRef(0);
 
   // const diffDatesFromLocalTime = differenceInDays(
@@ -39,14 +64,15 @@ export function useUpdateTimezonesClock(
   // );
 
   // useEffect(() => {
+  //   console.log("SD::", selectedDate);
   //   setTimezonesClockCb((prevTimezones) => {
   //     const newTimezones = prevTimezones.map((prevTimezone) => {
-  //       const currentDate = getNextDay(
-  //         prevTimezone.currentDate,
+  //       const date = getNextDay(
+  //         prevTimezone.date,
   //         diffDatesFromLocalTime - prevdiffDatesFromLocalTimeRef.current
   //       );
 
-  //       return { ...prevTimezone, currentDate };
+  //       return { ...prevTimezone, date };
   //     });
 
   //     prevdiffDatesFromLocalTimeRef.current = diffDatesFromLocalTime;

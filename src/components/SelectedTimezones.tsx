@@ -1,4 +1,3 @@
-import { memo } from "react";
 import SelectedTimezoneRow from "./SelectedTimezoneRow";
 import { useSelectedTimezones } from "~/utils/hooks/use-selected-timezones";
 import {
@@ -13,10 +12,11 @@ import TimeSelectionOverlay from "./TimeSelectionOverlay";
 import { getDifferenceHoursFromHome, getTimeDials } from "~/utils/timezones";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 import { useAtom } from "jotai";
+import { selectedDateAtom } from "~/atoms/date";
 
-export default memo(function SelectedTimezones() {
+export default function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
-  const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
+  const [, setSelectedDate] = useAtom(selectedDateAtom);
   const [, setSearchParams] = useSearchParams();
 
   function reorderTimezones(
@@ -47,23 +47,10 @@ export default memo(function SelectedTimezones() {
     );
     const timezoneName = tzs.map((i) => i.name);
     reorderUrl(timezoneName);
-
-    let h = tzs[0];
-
-    const newTimezones = tzs.map((tz, index) => {
-      if (index === 0) {
-        tz.diffHoursFromHome = getDifferenceHoursFromHome(h.name, h.name);
-        tz.timeDials = getTimeDials(h, dialColor, h, true);
-        h = tz;
-      } else {
-        tz.diffHoursFromHome = getDifferenceHoursFromHome(tz.name, h.name);
-        tz.timeDials = getTimeDials(tz, dialColor, h);
-      }
-
-      return tz;
-    });
-
-    setSelectedTimezones(newTimezones);
+    const h = tzs[0];
+    const d = `${h.date}, ${h.hour12}, ${h.abbr}`;
+    setSelectedTimezones(tzs);
+    setSelectedDate({ name: h.name, date: d });
   };
 
   return (
@@ -105,4 +92,4 @@ export default memo(function SelectedTimezones() {
       </Droppable>
     </DragDropContext>
   );
-});
+}

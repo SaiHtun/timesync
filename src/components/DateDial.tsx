@@ -1,31 +1,71 @@
 import { useAtom } from "jotai";
-import { useSearchParams } from "react-router-dom";
 import { selectedDateAtom } from "~/atoms/date";
 import { cn } from "~/utils/cn";
-
 interface IProps {
-  currentDate: string;
+  dial: {
+    name: string;
+    date: string;
+  };
 }
 
-export default function DateDial({ currentDate }: IProps) {
-  const [dayOfWeek, monthAndDay] = currentDate.split(", ");
+export default function DateDial({ dial }: IProps) {
+  const [dayOfWeek, monthAndDay] = dial.date.split(", ");
   const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
   const [, numOfDay] = monthAndDay.split(" ");
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const [searchParams, setSearchParams] = useSearchParams();
 
-  const isSelectedDate = selectedDate === currentDate;
+  function dateSlicer(dateStr: string) {
+    return dateStr.split(", ").slice(0, 3).join(", ");
+  }
+
+  const isSelectedDate =
+    dateSlicer(dial.date) === dateSlicer(selectedDate.date);
 
   function handleClick() {
-    setSelectedDate(currentDate);
-    setSearchParams((prevParams) => {
-      if (searchParams.get("selectedDate")) {
-        prevParams.set("selectedDate", currentDate);
-      } else {
-        prevParams.append("selectedDate", currentDate);
-      }
-      return prevParams;
-    });
+    setSelectedDate(dial);
+    // reCaculateTimeDials(date);
+    // setSearchParams((prevParams) => {
+    //   if (searchParams.get("selectedDate")) {
+    //     prevParams.set("selectedDate", date);
+    //   } else {
+    //     prevParams.append("selectedDate", date);
+    //   }
+    //   return prevParams;
+    // });
   }
+
+  // function reCaculateTimeDials(date: string) {
+  //   setSelectedTimezones((prevTimezones) => {
+  //     const homeTimezone = prevTimezones[0];
+  //     return prevTimezones.map((tz, index) => {
+  //       if (index === 0) {
+  //         const newDate = date.split(", ").slice(0, 3).join(", ");
+  //         console.log("ND::", newDate);
+  //         tz.date = newDate;
+  //         tz.timeDials.map((td) => (td.date = newDate));
+  //         return tz;
+  //       }
+
+  //       const formatStr = "eee, MMM d, y";
+  //       const newDate = formatInTimeZone(new Date(date), tz.name, formatStr);
+  //       tz.date = newDate;
+
+  //       tz.timeDials.map((td, index) => {
+  //         const { date, timeDials, abbr } = homeTimezone;
+  //         const dial = timeDials[index];
+
+  //         const hour = isDecimal(dial.hour12)
+  //           ? `${Math.floor(dial.hour12)}:30`
+  //           : `${dial.hour12}:00`;
+
+  //         const d = `${date}, ${hour} ${dial.timeMeridian}, ${abbr}`;
+  //         td.date = formatInTimeZone(new Date(d), tz.name, formatStr);
+  //       });
+
+  //       return tz;
+  //     });
+  //   });
+  // }
 
   return (
     <button

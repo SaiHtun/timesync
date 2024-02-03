@@ -8,9 +8,9 @@ export default function DatePicker() {
 
   return (
     <div className="text-xs flex gap-2">
-      <CalendarButton />
+      {/* <CalendarButton /> */}
       {dates?.map((date, index) => {
-        return <DateDial key={index} currentDate={date} />;
+        return <DateDial key={index} dial={date} />;
       })}
     </div>
   );
