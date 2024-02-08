@@ -13,6 +13,7 @@ import { TIMEZONES_LIMIT } from "~/constants/index";
 import { dialColorWithLocalStorageAtom } from "./dial-colors-model";
 import { selectedDateAtom } from "./date";
 import { formatInTimeZone } from "date-fns-tz";
+import { popUrlTimezonesNameAtom } from "./url-timezones-name";
 
 let timezonesMap = new Map<string, ITimezone>();
 if (timezonesMap.size === 0) {
@@ -56,10 +57,13 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
 
 export const popSelectedTimezonesAtom = atom(
   null,
-  (_, set, timezoneName: string) =>
+  (_, set, timezoneName: string) => {
     set(selectedTimezonesAtom, (preTzs) =>
       preTzs.filter(({ name }) => name !== timezoneName)
-    )
+    );
+
+    set(popUrlTimezonesNameAtom, timezoneName);
+  }
 );
 
 export const selectedTimezonesLengthAtom = atom(

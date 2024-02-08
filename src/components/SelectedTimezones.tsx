@@ -7,15 +7,15 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 import { cn } from "~/utils/cn";
-import { useSearchParams } from "react-router-dom";
 import TimeSelectionOverlay from "./TimeSelectionOverlay";
 import { useAtom } from "jotai";
 import { selectedDateAtom } from "~/atoms/date";
+import { urlTimezonesNameAtom } from "~/atoms/url-timezones-name";
 
 export default function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
+  const [, setUrlTimezonesName] = useAtom(urlTimezonesNameAtom);
   const [, setSelectedDate] = useAtom(selectedDateAtom);
-  const [, setSearchParams] = useSearchParams();
 
   function reorderTimezones(
     timezones: ITimezone[],
@@ -29,10 +29,6 @@ export default function SelectedTimezones() {
     return result;
   }
 
-  function reorderUrl(timezonesName: string[]) {
-    setSearchParams({ timezones: JSON.stringify(timezonesName) });
-  }
-
   const onDragEnd: OnDragEndResponder = (result) => {
     const { source, destination } = result;
     if (!destination) {
@@ -43,8 +39,8 @@ export default function SelectedTimezones() {
       source.index,
       destination.index
     );
-    const timezoneName = tzs.map((i) => i.name);
-    reorderUrl(timezoneName);
+    const timezonesName = tzs.map((i) => i.name);
+    setUrlTimezonesName(timezonesName);
 
     const home = tzs[0];
     const d = `${home.date}, ${home.hour12}, ${home.abbr}`;

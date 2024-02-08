@@ -246,3 +246,21 @@ export function getLocalTime() {
   );
   return res;
 }
+
+export function arrangeHomeFirstTimezonesName(timezonesName: string[]) {
+  const currentTimezoneName = getCurrentUserTimezoneName();
+  const firstTimezoneName = timezonesName[0];
+  if (
+    !timezonesName.includes(currentTimezoneName) ||
+    currentTimezoneName === firstTimezoneName
+  )
+    return timezonesName;
+
+  const homeIndex = timezonesName.indexOf(currentTimezoneName);
+  [timezonesName[0], timezonesName[homeIndex]] = [
+    timezonesName[homeIndex],
+    firstTimezoneName,
+  ];
+
+  return timezonesName;
+}

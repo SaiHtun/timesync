@@ -2,23 +2,24 @@ import TimezonesBoard from "./components/TimezonesBoard";
 import { useAtom } from "jotai";
 import { syncUrlToSelectedTimezonesAtom } from "./atoms/selected-timezones";
 import { useEffect } from "react";
-import { useTimezonesParams } from "~/utils/hooks/use-timezones-params";
 import { useEventListener } from "./utils/hooks/use-event-listener";
 import { setSearchTimezoneNameAtom } from "./atoms/search-timezone-name";
 import { detectAnyDOMsOnMouseEvent } from "./utils";
 import { dismissDatePickerModelAtom } from "./atoms/date";
+import { readUrlTimezonesNameAtom } from "./atoms/url-timezones-name";
 
 function App() {
-  const timezonesName = useTimezonesParams();
   const [, setSearchTimezoneName] = useAtom(setSearchTimezoneNameAtom);
   const [, dismissDatePickerModel] = useAtom(dismissDatePickerModelAtom);
   const [, syncUrlToSelectedTimezones] = useAtom(
     syncUrlToSelectedTimezonesAtom
   );
 
+  const [urlTimezonesName] = useAtom(readUrlTimezonesNameAtom);
+
   useEffect(() => {
-    syncUrlToSelectedTimezones(timezonesName);
-  }, [timezonesName]);
+    syncUrlToSelectedTimezones(urlTimezonesName);
+  }, [urlTimezonesName]);
 
   function resetStatesOnOuterClick(e: MouseEvent) {
     if (

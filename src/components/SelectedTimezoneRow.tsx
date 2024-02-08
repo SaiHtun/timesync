@@ -6,8 +6,6 @@ import AbbrBadge from "./AbbrBadge";
 import { popSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { Home, Trash2 } from "lucide-react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
-import { useSearchParams } from "react-router-dom";
-import { popTimezoneNameFromUrl } from "~/utils/hooks/use-timezones-params";
 import { hoursFormatAtom } from "~/atoms/hours-format";
 
 interface IProps {
@@ -70,12 +68,11 @@ export default function SelectedTimezoneRow({
   provided,
   snapshot,
 }: IProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [, popSelectedTimezones] = useAtom(popSelectedTimezonesAtom);
 
   function handlePopTimezone() {
-    popSelectedTimezones(timezone.name);
-    popTimezoneNameFromUrl(timezone.name, [searchParams, setSearchParams]);
+    const { name } = timezone;
+    popSelectedTimezones(name);
   }
 
   return (

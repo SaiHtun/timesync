@@ -15,10 +15,12 @@ function getDates(startDate: { name: string; date: string }) {
   const formatStr = "eee, MMM d, y, h:mm aaa, zzz";
 
   return arrayRange(0, 3).map((val) => {
-    let nextDay = getNextDay(startDate.date, val, formatStr);
-
     const startDateArray = startDate.date.split(", ");
-    nextDay = getNextDay(startDateArray.slice(0, 3).join(", "), val, formatStr);
+    const nextDay = getNextDay(
+      startDateArray.slice(0, 3).join(", "),
+      val,
+      formatStr
+    );
     const newDay = nextDay.split(", ").slice(0, -1);
     newDay.push(startDateArray[startDateArray.length - 1]);
 
