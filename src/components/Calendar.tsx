@@ -1,37 +1,32 @@
+import { memo } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ClassValue } from "clsx";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
-import { setSelectedDateAtom, startedDateAtom } from "~/atoms/date";
+import { selectedDateAtom } from "~/atoms/date";
 import { format } from "date-fns";
-import { useSearchParams } from "react-router-dom";
 
 interface IProps {
   twClassNames?: ClassValue;
 }
 
-export default function Calendar({ twClassNames }: IProps) {
-  const [startedDate, setStartedDate] = useAtom(startedDateAtom);
-  const [selectedDate, setSelectedDate] = useAtom(setSelectedDateAtom);
-  const [, setSearchParams] = useSearchParams();
+export default memo(function Calendar({ twClassNames }: IProps) {
+  const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
+
+  const sd = selectedDate.date.split(", ").slice(0, 3).join(", ");
 
   function handleDayClick(date: Date) {
-    setStartedDate(date);
     const newDate = format(date, "eee, MMM d, y");
-    setSelectedDate(newDate);
-    setSearchParams((prevParams) => {
-      prevParams.set("selectedDate", newDate);
-      return prevParams;
-    });
+    setSelectedDate({ ...selectedDate, date: newDate });
   }
 
   return (
     <DayPicker
-      selected={new Date(selectedDate!) || startedDate}
+      selected={new Date(sd)}
       onDayClick={handleDayClick}
-      today={new Date(selectedDate)}
+      today={new Date(sd)}
       id="calendar"
       showOutsideDays
       className={cn(
@@ -68,4 +63,4 @@ export default function Calendar({ twClassNames }: IProps) {
       }}
     />
   );
-}
+});

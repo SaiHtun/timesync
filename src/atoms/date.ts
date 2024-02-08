@@ -1,4 +1,4 @@
-import { differenceInDays, format } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { atom } from "jotai";
 import { arrayRange } from "~/utils/index";
 import {
@@ -7,32 +7,65 @@ import {
   getNextDay,
 } from "~/utils/timezones";
 
-export const startedDateAtom = atom(new Date(getLocalTime()));
-
 export const startedMonthAtom = atom((get) => {
-  const startedDate = get(startedDateAtom);
-  const selectedDate = new Date(get(selectedDateAtom).date);
-  return format(selectedDate || startedDate, "MMM");
+  return get(selectedDateAtom).date.split(", ")[1].split(" ")[0];
 });
 
-// TODO:: add more properties on calendar's object.
-export const datesAtom = atom((get) => {
-  const selectedDate = get(selectedDateAtom);
-  let date = selectedDate.date.split(", ");
-  const abbr = date.splice(-1);
-
+function getDates(startDate: { name: string; date: string }) {
   const formatStr = "eee, MMM d, y, h:mm aaa, zzz";
 
   return arrayRange(0, 3).map((val) => {
-    let d = getNextDay(date.join(", "), val, formatStr).split(", ");
-    d.splice(-1);
-    const dd = d.join(", ") + ", " + abbr;
+    let nextDay = getNextDay(startDate.date, val, formatStr);
+
+    const startDateArray = startDate.date.split(", ");
+    nextDay = getNextDay(startDateArray.slice(0, 3).join(", "), val, formatStr);
+    const newDay = nextDay.split(", ").slice(0, -1);
+    newDay.push(startDateArray[startDateArray.length - 1]);
+
     return {
-      name: selectedDate.name,
-      date: dd,
+      name: startDate?.name || getCurrentUserTimezoneName(),
+      date: newDay.join(", "),
     };
   });
-});
+}
+
+export const datesAtom = atom(
+  getDates({ name: getCurrentUserTimezoneName(), date: getLocalTime() })
+);
+
+export const readWriteDatesAtom = atom(
+  (get) => {
+    const dates = get(datesAtom);
+    const selectedDate = get(selectedDateAtom);
+
+    const foundDate = dates.find(
+      (d) =>
+        d.date.split(", ").slice(0, 3).join(", ") ===
+        selectedDate.date.split(", ").slice(0, 3).join(", ")
+    );
+
+    if (foundDate && selectedDate.name !== foundDate.name) {
+      const firstDate = dates[0];
+      const [dayOfWeek, day, year] = firstDate.date.split(", ");
+      const timezone = selectedDate.date.split(", ").pop();
+
+      const d = `${dayOfWeek}, ${day}, ${year}, ${timezone}`;
+
+      const newDates = getDates({ name: selectedDate.name, date: d });
+
+      return newDates;
+    }
+
+    if (!foundDate) {
+      return getDates(selectedDate);
+    }
+
+    return dates;
+  },
+  (get, set) => {
+    set(datesAtom, getDates(get(selectedDateAtom)));
+  }
+);
 
 export const selectedDateAtom = atom({
   name: getCurrentUserTimezoneName(),

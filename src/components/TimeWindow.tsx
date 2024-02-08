@@ -35,7 +35,7 @@ function formatMeetingHours(
   const time =
     hours + ":" + (minutes ? minutes : "00") + " " + timeDial.timeMeridian;
 
-  return [time, timeDial.day];
+  return [time, timeDial.date];
 }
 
 export interface ITimeWindowProps {

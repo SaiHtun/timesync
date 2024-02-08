@@ -60,6 +60,11 @@ function createHomeTimeDials(
     const hour12 = hour % 12 || 12;
     const hour24 = hour % 24 || 24;
 
+    const isLastHour =
+      (timeMeridian === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
+      hour24 === 23 ||
+      hour24 === 23.5;
+
     return {
       isNewDay: index === 0,
       hour12,
@@ -67,7 +72,7 @@ function createHomeTimeDials(
       date: homeSelectedTimezone.date,
       timeMeridian,
       dailyCircleBgColor: getDailyCircleColor(hour, dialColor, index === 0),
-      isLastHour: false,
+      isLastHour,
     };
   });
 }
@@ -110,11 +115,11 @@ function createChildsTimeDials(
     const hour12 = parsedHour(h);
     const hour24 = parsedHour(h24);
 
-    let isNewDay =
+    const isNewDay =
       (timeMeridian === "am" && (hour12 === 12 || hour12 === 12.5)) ||
       hour24 === 24 ||
       hour24 === 24.5;
-    let isLastHour =
+    const isLastHour =
       (timeMeridian === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
       hour24 === 23 ||
       hour24 === 23.5;

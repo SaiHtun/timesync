@@ -1,10 +1,4 @@
-import {
-  SetStateAction,
-  Dispatch,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
+import { SetStateAction, Dispatch, useEffect, useCallback } from "react";
 import { useAtom } from "jotai";
 import {
   homeSelectedTimezonesAtom,
@@ -13,16 +7,14 @@ import {
 
 import { selectedDateAtom } from "~/atoms/date";
 import {
-  getNextDay,
   currentTime,
-  getLocalTime,
   getDailyCircleColor,
   getDifferenceHoursFromHome,
   getTimeDials,
 } from "~/utils/timezones";
 import { MILISECONDS_PER_MIN } from "~/constants/index";
-import { differenceInDays } from "date-fns";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
+import { formatInTimeZone } from "date-fns-tz";
 
 export function useUpdateTimezonesClock(
   setTimezonesClock: Dispatch<SetStateAction<ITimezone[]>>
@@ -32,17 +24,22 @@ export function useUpdateTimezonesClock(
   ]);
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
   const [selectedDate] = useAtom(selectedDateAtom);
+  const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
 
   useEffect(() => {
-    setTimezonesClockCb((prevTimezones) => {
-      let h = prevTimezones[0];
+    let h = homeSelectedTimezone;
+    const { date, hour12, abbr } = h;
 
+    setTimezonesClockCb((prevTimezones) => {
       const newTimezones = prevTimezones.map((tz, index) => {
         if (index === 0) {
           tz.diffHoursFromHome = getDifferenceHoursFromHome(h.name, h.name);
           tz.timeDials = getTimeDials(h, dialColor, h, true);
           h = tz;
         } else {
+          const d = `${date}, ${hour12}, ${abbr}`;
+          const nd = formatInTimeZone(new Date(d), tz.name, "eee, MMM d, y");
+          tz.date = nd;
           tz.diffHoursFromHome = getDifferenceHoursFromHome(tz.name, h.name);
           tz.timeDials = getTimeDials(tz, dialColor, h);
         }
@@ -52,34 +49,7 @@ export function useUpdateTimezonesClock(
 
       return newTimezones;
     });
-  }, [selectedDate]);
-
-  // const [selectedDate] = useAtom(selectedDateAtom);
-
-  // const prevdiffDatesFromLocalTimeRef = useRef(0);
-
-  // const diffDatesFromLocalTime = differenceInDays(
-  //   new Date(selectedDate),
-  //   new Date(getLocalTime())
-  // );
-
-  // useEffect(() => {
-  //   console.log("SD::", selectedDate);
-  //   setTimezonesClockCb((prevTimezones) => {
-  //     const newTimezones = prevTimezones.map((prevTimezone) => {
-  //       const date = getNextDay(
-  //         prevTimezone.date,
-  //         diffDatesFromLocalTime - prevdiffDatesFromLocalTimeRef.current
-  //       );
-
-  //       return { ...prevTimezone, date };
-  //     });
-
-  //     prevdiffDatesFromLocalTimeRef.current = diffDatesFromLocalTime;
-
-  //     return newTimezones;
-  //   });
-  // }, [selectedDate]);
+  }, [selectedDate, homeSelectedTimezone]);
 
   useEffect(() => {
     const requiredIntervalToBeAMinute =
@@ -117,7 +87,7 @@ export function useSelectedTimezones(): [
       return prevTimezones.map((tz) => {
         const timeDials = tz.timeDials.map((td) => {
           const { timeMeridian, hour12, hour24 } = td;
-          let isNewDay =
+          const isNewDay =
             (timeMeridian === "am" && (hour12 === 12 || hour12 === 12.5)) ||
             hour24 === 24 ||
             hour24 === 24.5;

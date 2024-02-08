@@ -9,8 +9,6 @@ import {
 import { cn } from "~/utils/cn";
 import { useSearchParams } from "react-router-dom";
 import TimeSelectionOverlay from "./TimeSelectionOverlay";
-import { getDifferenceHoursFromHome, getTimeDials } from "~/utils/timezones";
-import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 import { useAtom } from "jotai";
 import { selectedDateAtom } from "~/atoms/date";
 
@@ -47,10 +45,12 @@ export default function SelectedTimezones() {
     );
     const timezoneName = tzs.map((i) => i.name);
     reorderUrl(timezoneName);
-    const h = tzs[0];
-    const d = `${h.date}, ${h.hour12}, ${h.abbr}`;
+
+    const home = tzs[0];
+    const d = `${home.date}, ${home.hour12}, ${home.abbr}`;
+
     setSelectedTimezones(tzs);
-    setSelectedDate({ name: h.name, date: d });
+    setSelectedDate({ name: home.name, date: d });
   };
 
   return (

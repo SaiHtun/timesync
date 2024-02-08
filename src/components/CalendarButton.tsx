@@ -5,7 +5,7 @@ import { isDatePickerModelOpenAtom, startedMonthAtom } from "~/atoms/date";
 import Calendar from "./Calendar";
 import { cn } from "~/utils/cn";
 
-export function CalendarButton() {
+export default function CalendarButton() {
   const [isModelOpen, setIsModelOpen] = useAtom(isDatePickerModelOpenAtom);
   const [startedMonth] = useAtom(startedMonthAtom);
 

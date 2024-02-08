@@ -6,9 +6,7 @@ import { useTimezonesParams } from "~/utils/hooks/use-timezones-params";
 import { useEventListener } from "./utils/hooks/use-event-listener";
 import { setSearchTimezoneNameAtom } from "./atoms/search-timezone-name";
 import { detectAnyDOMsOnMouseEvent } from "./utils";
-import { dismissDatePickerModelAtom, startedDateAtom } from "./atoms/date";
-import { useSearchParams } from "react-router-dom";
-import { getLocalTime } from "./utils/timezones";
+import { dismissDatePickerModelAtom } from "./atoms/date";
 
 function App() {
   const timezonesName = useTimezonesParams();
@@ -17,17 +15,9 @@ function App() {
   const [, syncUrlToSelectedTimezones] = useAtom(
     syncUrlToSelectedTimezonesAtom
   );
-  const [searchParams] = useSearchParams();
-  const [, setStartedDate] = useAtom(startedDateAtom);
-
-  function setStartedAndSelectedDate() {
-    const startedDate = searchParams.get("selectedDate") || getLocalTime();
-    setStartedDate(new Date(startedDate));
-  }
 
   useEffect(() => {
     syncUrlToSelectedTimezones(timezonesName);
-    setStartedAndSelectedDate();
   }, [timezonesName]);
 
   function resetStatesOnOuterClick(e: MouseEvent) {
