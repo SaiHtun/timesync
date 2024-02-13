@@ -13,7 +13,7 @@ function NewDay({ date }: { date: string }) {
   return (
     <>
       <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
-        {dayOfWeek}
+        {dayOfWeek.toUpperCase()}
       </span>
       <div className={cn("text-xs")}>
         <p className="flex flex-col ">
@@ -71,7 +71,7 @@ export default function TimeDials({ timezone }: IProps) {
                         .map((strNum, index) => {
                           return (
                             <span
-                              className={cn("text-zinc-800 dark:text-white", {
+                              className={cn(" text-zinc-800 dark:text-white", {
                                 "text-[9px]": index === 1,
                                 "!text-zinc-100":
                                   dailyCircleBgColor.includes("midnight"),
@@ -84,7 +84,9 @@ export default function TimeDials({ timezone }: IProps) {
                         })}
                     </p>
                   ) : (
-                    <span>{isNewDay ? <NewDay date={date} /> : hour}</span>
+                    <p>
+                      {isNewDay ? <NewDay date={date} /> : <span>{hour}</span>}
+                    </p>
                   )}
                   {hoursFormat === "hour12" && (
                     <span className="text-[10px] ">{timeMeridian}</span>

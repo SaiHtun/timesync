@@ -1,15 +1,11 @@
 import { SetStateAction, Dispatch, useEffect, useCallback } from "react";
 import { useAtom } from "jotai";
-import {
-  homeSelectedTimezonesAtom,
-  selectedTimezonesAtom,
-} from "~/atoms/selected-timezones";
+import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 
 import { selectedDateAtom } from "~/atoms/date";
 import {
   currentTime,
   getDailyCircleColor,
-  getDifferenceHoursFromHome,
   getTimeDials,
 } from "~/utils/timezones";
 import { MILISECONDS_PER_MIN } from "~/constants/index";
@@ -24,32 +20,34 @@ export function useUpdateTimezonesClock(
   ]);
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
   const [selectedDate] = useAtom(selectedDateAtom);
-  const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
 
   useEffect(() => {
-    let h = homeSelectedTimezone;
-    const { date, hour12, abbr } = h;
-
+    let home = {} as ITimezone;
     setTimezonesClockCb((prevTimezones) => {
       const newTimezones = prevTimezones.map((tz, index) => {
         if (index === 0) {
-          tz.diffHoursFromHome = getDifferenceHoursFromHome(h.name, h.name);
-          tz.timeDials = getTimeDials(h, dialColor, h, true);
-          h = tz;
-        } else {
-          const d = `${date}, ${hour12}, ${abbr}`;
-          const nd = formatInTimeZone(new Date(d), tz.name, "eee, MMM d, y");
-          tz.date = nd;
-          tz.diffHoursFromHome = getDifferenceHoursFromHome(tz.name, h.name);
-          tz.timeDials = getTimeDials(tz, dialColor, h);
+          tz.date = selectedDate.date;
+          tz.timeDials = tz.timeDials.map((td) => {
+            const hours = td.date.split(", ").pop();
+            const newDate = `${tz.date}, ${hours}`;
+
+            return { ...td, date: newDate };
+          });
+          home = tz;
+          return tz;
         }
+
+        const dateStr = `${home.date}, ${home.hour12}`;
+
+        tz.date = formatInTimeZone(new Date(dateStr), tz.name, "eee, MMM d, y");
+        tz.timeDials = getTimeDials(tz, dialColor, home);
 
         return tz;
       });
 
       return newTimezones;
     });
-  }, [selectedDate, homeSelectedTimezone]);
+  }, [selectedDate]);
 
   useEffect(() => {
     const requiredIntervalToBeAMinute =
@@ -86,17 +84,12 @@ export function useSelectedTimezones(): [
     setSelectedTimezones((prevTimezones) => {
       return prevTimezones.map((tz) => {
         const timeDials = tz.timeDials.map((td) => {
-          const { timeMeridian, hour12, hour24 } = td;
-          const isNewDay =
-            (timeMeridian === "am" && (hour12 === 12 || hour12 === 12.5)) ||
-            hour24 === 24 ||
-            hour24 === 24.5;
           return {
             ...td,
             dailyCircleBgColor: getDailyCircleColor(
               td.hour24,
               dialColor,
-              isNewDay
+              td.isNewDay
             ),
           };
         });

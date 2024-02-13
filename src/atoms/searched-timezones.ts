@@ -6,7 +6,6 @@ import {
 import { searchTimezoneNameAtom } from "./search-timezone-name";
 import { appendSelectedTimezonesAtom } from "./selected-timezones";
 import { dismissDatePickerModelAtom } from "./date";
-import { urlTimezonesNameAtom } from "./url-timezones-name";
 
 export const searchedTimezonesAtom = atom<ITimezone[]>([]);
 
@@ -19,18 +18,13 @@ export const searchedSelectedTimezoneAtom = atom((get) => {
 });
 
 type KeydownArgs = {
-  e: React.KeyboardEvent<HTMLDivElement>;
+  e: React.KeyboardEvent<HTMLElement>;
 };
 
 export const handleKeydownSearchedTimezoneAtom = atom(
   null,
-  (get, set, { e }: KeydownArgs) => {
+  (_, set, { e }: KeydownArgs) => {
     if (e.code === "Enter") {
-      const newTimezoneName = get(searchedSelectedTimezoneAtom).name;
-      set(
-        urlTimezonesNameAtom,
-        get(urlTimezonesNameAtom).concat(newTimezoneName)
-      );
       set(appendSelectedTimezonesAtom);
     } else if (e.code === "Escape") {
       set(searchTimezoneNameAtom, "");

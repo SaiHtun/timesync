@@ -12,27 +12,19 @@ export const startedMonthAtom = atom((get) => {
 });
 
 function getDates(startDate: { name: string; date: string }) {
-  const formatStr = "eee, MMM d, y, h:mm aaa, zzz";
-
   return arrayRange(0, 3).map((val) => {
-    const startDateArray = startDate.date.split(", ");
-    const nextDay = getNextDay(
-      startDateArray.slice(0, 3).join(", "),
-      val,
-      formatStr
-    );
-    const newDay = nextDay.split(", ").slice(0, -1);
-    newDay.push(startDateArray[startDateArray.length - 1]);
-
     return {
       name: startDate?.name || getCurrentUserTimezoneName(),
-      date: newDay.join(", "),
+      date: getNextDay(startDate.date, val),
     };
   });
 }
 
 export const datesAtom = atom(
-  getDates({ name: getCurrentUserTimezoneName(), date: getLocalTime() })
+  getDates({
+    name: getCurrentUserTimezoneName(),
+    date: getLocalTime("eee, MMM d, y"),
+  })
 );
 
 export const readWriteDatesAtom = atom(
@@ -49,10 +41,8 @@ export const readWriteDatesAtom = atom(
     if (foundDate && selectedDate.name !== foundDate.name) {
       const firstDate = dates[0];
       const [dayOfWeek, day, year] = firstDate.date.split(", ");
-      const timezone = selectedDate.date.split(", ").pop();
 
-      const d = `${dayOfWeek}, ${day}, ${year}, ${timezone}`;
-
+      const d = `${dayOfWeek}, ${day}, ${year}`;
       const newDates = getDates({ name: selectedDate.name, date: d });
 
       return newDates;

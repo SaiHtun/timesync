@@ -43,10 +43,9 @@ export default function SelectedTimezones() {
     setUrlTimezonesName(timezonesName);
 
     const home = tzs[0];
-    const d = `${home.date}, ${home.hour12}, ${home.abbr}`;
 
     setSelectedTimezones(tzs);
-    setSelectedDate({ name: home.name, date: d });
+    setSelectedDate({ name: home.name, date: home.date });
   };
 
   return (

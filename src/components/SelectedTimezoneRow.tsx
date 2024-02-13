@@ -38,7 +38,7 @@ function Region({ timezone }: { timezone: ITimezone }) {
   return (
     <div>
       <p>
-        {city}
+        <span className="text-sm font-medium">{city}</span>
         <AbbrBadge abbr={timezone.abbr} />
       </p>
       <span className="text-sm primary_text_gray">

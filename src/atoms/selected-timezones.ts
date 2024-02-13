@@ -11,9 +11,10 @@ import { searchedTimezonesAtom } from "./searched-timezones";
 import { TIMEZONES_LIMIT } from "~/constants/index";
 
 import { dialColorWithLocalStorageAtom } from "./dial-colors-model";
-import { selectedDateAtom } from "./date";
-import { formatInTimeZone } from "date-fns-tz";
-import { popUrlTimezonesNameAtom } from "./url-timezones-name";
+import {
+  popUrlTimezonesNameAtom,
+  urlTimezonesNameAtom,
+} from "./url-timezones-name";
 
 let timezonesMap = new Map<string, ITimezone>();
 if (timezonesMap.size === 0) {
@@ -37,20 +38,15 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
         homeSelectedTimezone.name
       );
 
-      const { date, hour12, abbr } = homeSelectedTimezone;
-      const d = `${date}, ${hour12}, ${abbr}`;
-      const nd = formatInTimeZone(
-        new Date(d),
-        newTimezone.name,
-        "eee, MMM d, y"
-      );
-      newTimezone.date = nd;
-
       return preTzs.concat({
         ...newTimezone,
         timeDials: getTimeDials(newTimezone, dialColor, homeSelectedTimezone),
       });
     });
+
+    set(urlTimezonesNameAtom, (prevTimezonesName) =>
+      prevTimezonesName.concat(newTimezone.name)
+    );
   }
   set(searchTimezoneNameAtom, "");
 });
@@ -106,15 +102,9 @@ export const syncUrlToSelectedTimezonesAtom = atom(
 
 // the first timezone will always be HOME, and "diffHoursFromHome" will be re-caculated base on HOME
 export const homeSelectedTimezonesAtom = atom((get) => {
-  const selectedDate = get(selectedDateAtom);
   const timezone =
     get(selectedTimezonesAtom)[0] ||
     timezonesMap.get(getCurrentUserTimezoneName());
-
-  const d = selectedDate.date.split(", ").slice(0, 3).join(", ");
-
-  timezone.date = d;
-  timezone.timeDials.map((td) => (td.date = d));
 
   return timezone;
 });

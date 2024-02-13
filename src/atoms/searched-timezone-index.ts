@@ -5,7 +5,7 @@ export const searchedTimezoneIndexAtom = atom<number>(0);
 
 export const keydownAddTimezoneIndexAtom = atom(
   null,
-  (get, set, event: React.KeyboardEvent<HTMLDivElement>) => {
+  (get, set, event: React.KeyboardEvent<HTMLElement>) => {
     const searchedTimezonesLength = get(searchedTimezonesLengthAtom);
     const currentIndex = get(searchedTimezoneIndexAtom);
     let index = currentIndex;

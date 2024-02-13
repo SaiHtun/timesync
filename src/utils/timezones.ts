@@ -1,7 +1,7 @@
 import { format, formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 import { DialColors, colorsMap } from "~/constants/colorsMap";
 import { arrayRange } from ".";
-import { addDays } from "date-fns";
+import { addDays, addMinutes } from "date-fns";
 import { HoursFormat } from "~/atoms/hours-format";
 
 export function isDecimal(hour: number) {
@@ -49,6 +49,15 @@ export function getNextDay(
   return nextDay;
 }
 
+function transformNumHoursToStrHours(hours: number): string {
+  if (isDecimal(hours)) {
+    const h = Math.floor(hours);
+    return String(h) + ":30";
+  }
+
+  return String(hours) + ":00";
+}
+
 function createHomeTimeDials(
   hours: number[],
   dialColor: DialColors,
@@ -57,8 +66,12 @@ function createHomeTimeDials(
   return hours.map((hour, index) => {
     const timeMeridian: TimeMeriDian = hour >= 12 ? "pm" : "am";
 
-    const hour12 = hour % 12 || 12;
-    const hour24 = hour % 24 || 24;
+    const hour12 = hour % 12;
+    const hour24 = hour % 24;
+
+    const date = `${homeSelectedTimezone.date}, ${transformNumHoursToStrHours(
+      hour24
+    )}`;
 
     const isLastHour =
       (timeMeridian === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
@@ -69,12 +82,22 @@ function createHomeTimeDials(
       isNewDay: index === 0,
       hour12,
       hour24,
-      date: homeSelectedTimezone.date,
+      date,
       timeMeridian,
       dailyCircleBgColor: getDailyCircleColor(hour, dialColor, index === 0),
       isLastHour,
     };
   });
+}
+
+function convertTo12HourFormat(hour: number) {
+  if (hour > 12.5) {
+    return hour - 12;
+  } else if (hour === 0) {
+    return 12;
+  } else {
+    return hour;
+  }
 }
 
 function createChildsTimeDials(
@@ -83,42 +106,30 @@ function createChildsTimeDials(
   currentTimezone: ITimezone,
   homeSelectedTimezone: ITimezone
 ) {
+  const { timeDials, offset: homeTzOffset } = homeSelectedTimezone;
   return hours.map((_, index) => {
-    const { date, timeDials, diffHoursFromHome, abbr } = homeSelectedTimezone;
-    const { name } = currentTimezone;
+    const { offset: currentTzOffset } = currentTimezone;
     const dial = timeDials[index];
-    const hour = isDecimal(dial.hour12)
-      ? `${Math.floor(dial.hour12)}:30`
-      : `${dial.hour12}:00`;
 
-    const d = `${date}, ${hour} ${dial.timeMeridian}, ${abbr}`;
+    const newDate = addMinutes(
+      new Date(dial.date),
+      (currentTzOffset - homeTzOffset) * 60
+    );
 
-    const [h12, newDay] = formatInTimeZone(
-      new Date(d),
-      name,
-      "h:aaa-eee, MMM d, y"
-    ).split("-");
+    const formatStr = `eee, MMM d, y, h:mm`;
 
-    const h24 = formatInTimeZone(new Date(d), name, "k-eee, MMM d, y").split(
-      "-"
-    )[0];
+    const isOffsetDecimal =
+      isDecimal(homeTzOffset) || isDecimal(currentTzOffset);
 
-    function parsedHour(strHour: string) {
-      const decimal =
-        isDecimal(Number(diffHoursFromHome)) ||
-        isDecimal(Number(currentTimezone.diffHoursFromHome));
-      const parsedHour = Number(strHour);
-      return decimal ? parsedHour + 0.5 : parsedHour;
-    }
-
-    const [h, timeMeridian] = h12.split(":");
-    const hour12 = parsedHour(h);
-    const hour24 = parsedHour(h24);
+    const hour24 = newDate.getHours() + (isOffsetDecimal ? 0.5 : 0);
+    const hour12 = convertTo12HourFormat(hour24);
+    const timeMeridian = (hour24 >= 12 ? "pm" : "am") as TimeMeriDian;
 
     const isNewDay =
-      (timeMeridian === "am" && (hour12 === 12 || hour12 === 12.5)) ||
-      hour24 === 24 ||
-      hour24 === 24.5;
+      (timeMeridian === "am" && (hour12 === 0 || hour12 === 0.5)) ||
+      hour24 === 0 ||
+      hour24 === 0.5;
+
     const isLastHour =
       (timeMeridian === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
       hour24 === 23 ||
@@ -128,8 +139,8 @@ function createChildsTimeDials(
       isNewDay,
       hour12,
       hour24,
-      date: newDay,
-      timeMeridian: timeMeridian as TimeMeriDian,
+      date: format(newDate, formatStr),
+      timeMeridian,
       dailyCircleBgColor: getDailyCircleColor(hour24, dialColor, isNewDay),
       isLastHour,
     };
@@ -143,8 +154,9 @@ export function getTimeDials(
   isHome = false
 ): ITimeDial[] {
   const hours = arrayRange(0, 23);
+
   let td = [] as ITimeDial[];
-  if (isHome) {
+  if (isHome || !homeSelectedTimezone) {
     // home
     td = createHomeTimeDials(hours, dialColor, timezone);
   } else {
@@ -238,11 +250,13 @@ export function getTimezonesMap() {
   return map;
 }
 
-export function getLocalTime() {
+export function getLocalTime(
+  formatStr: string = "eee, MMM d, y, h:mm aaa, zzz"
+) {
   const res = formatInTimeZone(
     new Date(),
     getCurrentUserTimezoneName(),
-    "eee, MMM d, y, h:mm aaa, zzz"
+    formatStr
   );
   return res;
 }

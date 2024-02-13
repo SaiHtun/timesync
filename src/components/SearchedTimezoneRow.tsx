@@ -5,7 +5,6 @@ import { searchedTimezoneIndexAtom } from "~/atoms/searched-timezone-index";
 import { appendSelectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { hoursFormatAtom } from "~/atoms/hours-format";
 import { motion } from "framer-motion";
-import { urlTimezonesNameAtom } from "~/atoms/url-timezones-name";
 
 interface IProps {
   timezone: ITimezone;
@@ -21,16 +20,12 @@ export default function SearchedTimezoneRow({
   );
   const [hoursFormat] = useAtom(hoursFormatAtom);
   const [, appendSelectedTimezones] = useAtom(appendSelectedTimezonesAtom);
-  const [, setUrlTimezonesName] = useAtom(urlTimezonesNameAtom);
+
+  function handleAdd() {
+    appendSelectedTimezones();
+  }
 
   const isSelected = searchTimezoneIndex === currentTimezoneIndex;
-
-  function handleAddTimezones(timezone: ITimezone) {
-    appendSelectedTimezones();
-    setUrlTimezonesName((prevTimezonesName) =>
-      prevTimezonesName.concat(timezone.name)
-    );
-  }
 
   return (
     <motion.div>
@@ -40,7 +35,7 @@ export default function SearchedTimezoneRow({
           "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md",
           { "!bg-zinc-100 dark:!bg-zinc-700 !rounded-none": isSelected }
         )}
-        onClick={() => handleAddTimezones(timezone)}
+        onClick={() => handleAdd()}
         onMouseMove={() => setSearchedTimezoneIndex(currentTimezoneIndex)}
       >
         <p className="flex items-center gap-1">

@@ -1,9 +1,8 @@
 import SelectedTimezones from "~/components/SelectedTimezones";
-import Navbar from "./NavBar";
 import SearchdTimezonesModel from "./SearchedTimezonesModel";
-import MenuBar from "./MenuBar";
 import { useAtom } from "jotai";
 import { handleKeydownSearchedTimezoneAtom } from "~/atoms/searched-timezones";
+import MenuBar from "./MenuBar";
 
 export default function TimezonesBoard() {
   const [, handleKeydownSearchedTimezone] = useAtom(
@@ -11,13 +10,13 @@ export default function TimezonesBoard() {
   );
 
   return (
-    <div onKeyDown={(e) => handleKeydownSearchedTimezone({ e })}>
-      <Navbar />
+    <main
+      className="w-full relative"
+      onKeyDown={(e) => handleKeydownSearchedTimezone({ e })}
+    >
       <MenuBar />
-      <main className="relative w-full mt-6">
-        <SelectedTimezones />
-        <SearchdTimezonesModel />
-      </main>
-    </div>
+      <SelectedTimezones />
+      <SearchdTimezonesModel />
+    </main>
   );
 }
