@@ -13,7 +13,7 @@ import { selectedDateAtom } from "~/atoms/date";
 import { urlTimezonesNameAtom } from "~/atoms/url-timezones-name";
 
 export default function SelectedTimezones() {
-  const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
+  const [selectedTimezones] = useSelectedTimezones();
   const [, setUrlTimezonesName] = useAtom(urlTimezonesNameAtom);
   const [, setSelectedDate] = useAtom(selectedDateAtom);
 
@@ -31,9 +31,10 @@ export default function SelectedTimezones() {
 
   const onDragEnd: OnDragEndResponder = (result) => {
     const { source, destination } = result;
-    if (!destination) {
+    if (!destination || source.index === destination.index) {
       return;
     }
+
     const tzs = reorderTimezones(
       selectedTimezones,
       source.index,
@@ -44,7 +45,6 @@ export default function SelectedTimezones() {
 
     const home = tzs[0];
 
-    setSelectedTimezones(tzs);
     setSelectedDate({ name: home.name, date: home.date });
   };
 

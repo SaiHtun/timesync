@@ -38,10 +38,13 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
         homeSelectedTimezone.name
       );
 
-      return preTzs.concat({
-        ...newTimezone,
-        timeDials: getTimeDials(newTimezone, dialColor, homeSelectedTimezone),
-      });
+      newTimezone.timeDials = getTimeDials(
+        newTimezone,
+        dialColor,
+        homeSelectedTimezone
+      );
+
+      return preTzs.concat(newTimezone);
     });
 
     set(urlTimezonesNameAtom, (prevTimezonesName) =>
@@ -80,19 +83,18 @@ export const syncUrlToSelectedTimezonesAtom = atom(
         homeSelectedTimezone.name
       );
 
-      const timeDials = getTimeDials(
+      timezone.timeDials = getTimeDials(
         timezone,
         dialColor,
         homeSelectedTimezone,
         index === 0
       );
-      const newTimezone = { ...timezone, timeDials };
 
       if (index === 0) {
-        homeSelectedTimezone = newTimezone;
+        homeSelectedTimezone = timezone;
       }
 
-      return newTimezone;
+      return timezone;
     });
 
     set(selectedTimezonesAtom, timezones);

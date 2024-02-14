@@ -61,7 +61,7 @@ export const readWriteDatesAtom = atom(
 
 export const selectedDateAtom = atom({
   name: getCurrentUserTimezoneName(),
-  date: getLocalTime(),
+  date: getLocalTime("eee, MMM d, y"),
 });
 
 export const prevdiffDatesFromLocalTimeAtom = atom((get) => {

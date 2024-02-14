@@ -8,7 +8,6 @@ export default function DatePicker() {
   const [dates, setDates] = useAtom(readWriteDatesAtom);
   const [selectedDate] = useAtom(selectedDateAtom);
   const [originalDates] = useAtom(datesAtom);
-
   const foundDate = originalDates.find(
     (d) =>
       d.date.split(", ").slice(0, 3).join(", ") ===

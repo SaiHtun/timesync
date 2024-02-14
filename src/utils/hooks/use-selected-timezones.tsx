@@ -30,7 +30,6 @@ export function useUpdateTimezonesClock(
           tz.timeDials = tz.timeDials.map((td) => {
             const hours = td.date.split(", ").pop();
             const newDate = `${tz.date}, ${hours}`;
-
             return { ...td, date: newDate };
           });
           home = tz;
@@ -38,7 +37,6 @@ export function useUpdateTimezonesClock(
         }
 
         const dateStr = `${home.date}, ${home.hour12}`;
-
         tz.date = formatInTimeZone(new Date(dateStr), tz.name, "eee, MMM d, y");
         tz.timeDials = getTimeDials(tz, dialColor, home);
 
