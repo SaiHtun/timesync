@@ -10,11 +10,11 @@ export default function DatePicker() {
   const [originalDates] = useAtom(datesAtom);
   const foundDate = originalDates.find(
     (d) =>
-      d.date.split(", ").slice(0, 3).join(", ") ===
-      selectedDate.date.split(", ").slice(0, 3).join(", ")
+      d.split(", ").slice(0, 3).join(", ") ===
+      selectedDate.split(", ").slice(0, 3).join(", ")
   );
 
-  const isDatesChanged = originalDates[0].date !== dates[0].date;
+  const isDatesChanged = originalDates[0] !== dates[0];
 
   useEffect(() => {
     if (isDatesChanged && !foundDate) {
@@ -26,7 +26,7 @@ export default function DatePicker() {
     <div className="text-xs flex gap-2">
       <CalendarButton />
       {dates?.map((date, index) => {
-        return <DateDial key={index} dial={date} />;
+        return <DateDial key={index} date={date} />;
       })}
     </div>
   );

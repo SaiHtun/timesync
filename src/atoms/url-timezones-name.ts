@@ -28,12 +28,17 @@ export const readWriteUrlTimezonesNameAtom = atom(
 
     if (!isFoundName) {
       parsedNames.push(timezoneName);
-      set(urlTimezonesNameAtom, (prev) => ({
-        ...prev,
-        searchParams: new URLSearchParams([
-          ["timezones", JSON.stringify(parsedNames)],
-        ]),
-      }));
+      set(urlTimezonesNameAtom, (prev) => {
+        if (!prev.searchParams?.has("timezones")) {
+          console.log("no timezones..");
+          prev.searchParams?.append("timezones", JSON.stringify(parsedNames));
+        } else {
+          console.log("has timzones..");
+          prev.searchParams?.set("timezones", JSON.stringify(parsedNames));
+        }
+
+        return prev;
+      });
     }
   }
 );
@@ -41,6 +46,11 @@ export const readWriteUrlTimezonesNameAtom = atom(
 export const setUrlTimezonesNameAtom = atom(
   null,
   (_, set, timezonesName: string[]) => {
+    // set(urlTimezonesNameAtom, (prev) => {
+    //   prev.searchParams?.set("timezones", JSON.stringify(timezonesName));
+
+    //   return prev;
+    // });
     set(urlTimezonesNameAtom, (prev) => ({
       ...prev,
       searchParams: new URLSearchParams([

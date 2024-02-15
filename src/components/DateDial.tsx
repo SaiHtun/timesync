@@ -2,14 +2,11 @@ import { useAtom } from "jotai";
 import { selectedDateAtom } from "~/atoms/date";
 import { cn } from "~/utils/cn";
 interface IProps {
-  dial: {
-    name: string;
-    date: string;
-  };
+  date: string;
 }
 
-export default function DateDial({ dial }: IProps) {
-  const [dayOfWeek, monthAndDay] = dial.date.split(", ");
+export default function DateDial({ date }: IProps) {
+  const [dayOfWeek, monthAndDay] = date.split(", ");
   const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
   const [, numOfDay] = monthAndDay.split(" ");
 
@@ -17,11 +14,10 @@ export default function DateDial({ dial }: IProps) {
     return dateStr.split(", ").slice(0, 3).join(", ");
   }
 
-  const isSelectedDate =
-    dateSlicer(dial.date) === dateSlicer(selectedDate.date);
+  const isSelectedDate = dateSlicer(date) === dateSlicer(selectedDate);
 
   function handleClick() {
-    setSelectedDate(dial);
+    setSelectedDate(date);
   }
 
   return (

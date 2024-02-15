@@ -15,11 +15,11 @@ interface IProps {
 export default memo(function Calendar({ twClassNames }: IProps) {
   const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
 
-  const sd = selectedDate.date.split(", ").slice(0, 3).join(", ");
+  const sd = selectedDate.split(", ").slice(0, 3).join(", ");
 
   function handleDayClick(date: Date) {
     const newDate = format(date, "eee, MMM d, y");
-    setSelectedDate({ ...selectedDate, date: newDate });
+    setSelectedDate(newDate);
   }
 
   return (

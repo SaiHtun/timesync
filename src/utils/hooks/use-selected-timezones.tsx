@@ -30,7 +30,7 @@ export function useUpdateTimezonesClock(
       let home = homeSelectedTimezone;
       const newTimezones = prevTimezones.map((tz, index) => {
         if (index === 0) {
-          tz.date = selectedDate.date;
+          tz.date = selectedDate;
           tz.timeDials = home.timeDials.map((td) => {
             const hours = td.date.split(", ").pop();
             const newDate = `${tz.date}, ${hours}`;

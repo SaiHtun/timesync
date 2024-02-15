@@ -76,7 +76,7 @@ export default function SelectedTimezones() {
 
     const home = tzs[0];
     setSelectedTimezones(tzs);
-    setSelectedDate({ name: home.name, date: home.date });
+    setSelectedDate(home.date);
   };
 
   return (

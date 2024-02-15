@@ -1,31 +1,17 @@
 import { differenceInDays } from "date-fns";
 import { atom } from "jotai";
 import { arrayRange } from "~/utils/index";
-import {
-  getCurrentUserTimezoneName,
-  getLocalTime,
-  getNextDay,
-} from "~/utils/timezones";
+import { getLocalTime, getNextDay } from "~/utils/timezones";
 
 export const startedMonthAtom = atom((get) => {
-  return get(selectedDateAtom).date.split(", ")[1].split(" ")[0];
+  return get(selectedDateAtom).split(", ")[1].split(" ")[0];
 });
 
-function getDates(startDate: { name: string; date: string }) {
-  return arrayRange(0, 3).map((val) => {
-    return {
-      name: startDate?.name || getCurrentUserTimezoneName(),
-      date: getNextDay(startDate.date, val),
-    };
-  });
+function getDates(startDate: string) {
+  return arrayRange(0, 3).map((val) => getNextDay(startDate, val));
 }
 
-export const datesAtom = atom(
-  getDates({
-    name: getCurrentUserTimezoneName(),
-    date: getLocalTime("eee, MMM d, y"),
-  })
-);
+export const datesAtom = atom(getDates(getLocalTime("eee, MMM d, y")));
 
 export const readWriteDatesAtom = atom(
   (get) => {
@@ -35,12 +21,12 @@ export const readWriteDatesAtom = atom(
 
     const foundDate = dates.find(
       (d) =>
-        d.date.split(", ").slice(0, 3).join(", ") ===
-        selectedDate.date.split(", ").slice(0, 3).join(", ")
+        d.split(", ").slice(0, 3).join(", ") ===
+        selectedDate.split(", ").slice(0, 3).join(", ")
     );
 
-    if (foundDate && selectedDate.name !== foundDate.name) {
-      return dates.map((d) => ({ ...d, name: selectedDate.name }));
+    if (foundDate && selectedDate !== foundDate) {
+      return dates.map(() => selectedDate);
     }
 
     if (!foundDate) {
@@ -54,15 +40,12 @@ export const readWriteDatesAtom = atom(
   }
 );
 
-export const selectedDateAtom = atom({
-  name: getCurrentUserTimezoneName(),
-  date: getLocalTime("eee, MMM d, y"),
-});
+export const selectedDateAtom = atom(getLocalTime("eee, MMM d, y"));
 
 export const prevdiffDatesFromLocalTimeAtom = atom((get) => {
   const selectedDate = get(selectedDateAtom);
   const diffDatesFromLocalTime = differenceInDays(
-    new Date(selectedDate.date),
+    new Date(selectedDate),
     new Date(getLocalTime())
   );
 
