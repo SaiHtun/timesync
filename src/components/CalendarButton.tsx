@@ -35,7 +35,7 @@ export default function CalendarButton() {
         {isModelOpen && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 6 }}
+            animate={{ opacity: 1, y: 4 }}
             exit={{ opacity: 0, y: 0 }}
             className="absolute z-10 -left-3"
           >

@@ -5,7 +5,7 @@ import {
   selectedTimezonesAtom,
 } from "~/atoms/selected-timezones";
 
-import { selectedDateAtom } from "~/atoms/date";
+import { readWriteSelectedDateAtom } from "~/atoms/date";
 import {
   currentTime,
   getDailyCircleColor,
@@ -22,7 +22,7 @@ export function useUpdateTimezonesClock(
     setTimezonesClock,
   ]);
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
-  const [selectedDate] = useAtom(selectedDateAtom);
+  const [selectedDate] = useAtom(readWriteSelectedDateAtom);
   const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
 
   useEffect(() => {

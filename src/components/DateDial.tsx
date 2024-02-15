@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { selectedDateAtom } from "~/atoms/date";
+import { readWriteSelectedDateAtom } from "~/atoms/date";
 import { cn } from "~/utils/cn";
 interface IProps {
   date: string;
@@ -7,7 +7,7 @@ interface IProps {
 
 export default function DateDial({ date }: IProps) {
   const [dayOfWeek, monthAndDay] = date.split(", ");
-  const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
+  const [selectedDate, setSelectedDate] = useAtom(readWriteSelectedDateAtom);
   const [, numOfDay] = monthAndDay.split(" ");
 
   function dateSlicer(dateStr: string) {

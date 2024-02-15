@@ -11,7 +11,7 @@ import { useAtom } from "jotai";
 import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { isDecimal } from "~/utils/timezones";
 import { HoursFormat, hoursFormatAtom } from "~/atoms/hours-format";
-import { selectedDateAtom } from "~/atoms/date";
+import { readWriteSelectedDateAtom } from "~/atoms/date";
 
 function formatMeetingHours(
   timezone: ITimezone,
@@ -70,7 +70,7 @@ export default function TimeWindow({
   const timeWindowDivRef = useRef<HTMLDivElement>(null);
   const [, setSelectedTimezones] = useAtom(selectedTimezonesAtom);
   const [hoursFormat] = useAtom(hoursFormatAtom);
-  const [selectedDate] = useAtom(selectedDateAtom);
+  const [selectedDate] = useAtom(readWriteSelectedDateAtom);
 
   useEffect(() => {
     const { start, end } = timeWindowIndex;

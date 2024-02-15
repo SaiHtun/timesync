@@ -1,13 +1,12 @@
 import { atom } from "jotai";
 import { atomWithLocation } from "jotai-location";
-import { getCurrentUserTimezoneName } from "~/utils/timezones";
+import { getCurrentUserTimezoneName, getLocalTime } from "~/utils/timezones";
 
-export const urlTimezonesNameAtom = atomWithLocation();
+export const urlAtom = atomWithLocation();
 
 export const readWriteUrlTimezonesNameAtom = atom(
   (get) => {
-    const names =
-      get(urlTimezonesNameAtom).searchParams?.get("timezones") || "[]";
+    const names = get(urlAtom).searchParams?.get("timezones") || "[]";
     const parsedNames = JSON.parse(names);
     if (!parsedNames.length) {
       parsedNames.push(getCurrentUserTimezoneName());
@@ -16,8 +15,7 @@ export const readWriteUrlTimezonesNameAtom = atom(
     return parsedNames;
   },
   (get, set, timezoneName: string) => {
-    const names =
-      get(urlTimezonesNameAtom).searchParams?.get("timezones") || "[]";
+    const names = get(urlAtom).searchParams?.get("timezones") || "[]";
     const parsedNames = JSON.parse(names) as string[];
 
     if (!parsedNames.length) {
@@ -28,42 +26,36 @@ export const readWriteUrlTimezonesNameAtom = atom(
 
     if (!isFoundName) {
       parsedNames.push(timezoneName);
-      set(urlTimezonesNameAtom, (prev) => {
+      set(urlAtom, (prev) => {
         if (!prev.searchParams?.has("timezones")) {
-          console.log("no timezones..");
           prev.searchParams?.append("timezones", JSON.stringify(parsedNames));
         } else {
-          console.log("has timzones..");
           prev.searchParams?.set("timezones", JSON.stringify(parsedNames));
         }
 
         return prev;
       });
     }
+
+    return;
   }
 );
 
 export const setUrlTimezonesNameAtom = atom(
   null,
   (_, set, timezonesName: string[]) => {
-    // set(urlTimezonesNameAtom, (prev) => {
-    //   prev.searchParams?.set("timezones", JSON.stringify(timezonesName));
+    set(urlAtom, (prev) => {
+      prev.searchParams?.set("timezones", JSON.stringify(timezonesName));
 
-    //   return prev;
-    // });
-    set(urlTimezonesNameAtom, (prev) => ({
-      ...prev,
-      searchParams: new URLSearchParams([
-        ["timezones", JSON.stringify(timezonesName)],
-      ]),
-    }));
+      return prev;
+    });
   }
 );
 
 export const popUrlTimezonesNameAtom = atom(
   null,
   (get, set, timezoneName: string) => {
-    const timezonesName = get(urlTimezonesNameAtom);
+    const timezonesName = get(urlAtom);
 
     const tzs = timezonesName.searchParams?.get("timezones");
     if (tzs) {
@@ -72,12 +64,30 @@ export const popUrlTimezonesNameAtom = atom(
       const idx = parsedTzs.findIndex((tz) => tz === timezoneName);
       parsedTzs.splice(idx, 1);
 
-      set(urlTimezonesNameAtom, (prev) => ({
-        ...prev,
-        searchParams: new URLSearchParams([
-          ["timezones", JSON.stringify(parsedTzs)],
-        ]),
-      }));
+      set(urlAtom, (prev) => {
+        prev.searchParams?.set("timezones", JSON.stringify(parsedTzs));
+
+        return prev;
+      });
     }
+  }
+);
+
+export const readWriteUrlSelectedDateAtom = atom(
+  (get) => {
+    const urlSelectedDate = get(urlAtom).searchParams?.get("selectedDate");
+
+    return urlSelectedDate ? urlSelectedDate : getLocalTime("eee, MMM d, y");
+  },
+  (_, set, date: string) => {
+    set(urlAtom, (prev) => {
+      if (!prev.searchParams?.has("selectedDate")) {
+        prev.searchParams?.append("selectedDate", date);
+      } else {
+        prev.searchParams?.set("selectedDate", date);
+      }
+
+      return prev;
+    });
   }
 );

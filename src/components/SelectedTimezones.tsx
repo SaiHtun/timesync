@@ -9,11 +9,8 @@ import {
 import { cn } from "~/utils/cn";
 import TimeSelectionOverlay from "./TimeSelectionOverlay";
 import { useAtom } from "jotai";
-import { selectedDateAtom } from "~/atoms/date";
-import {
-  readWriteUrlTimezonesNameAtom,
-  setUrlTimezonesNameAtom,
-} from "~/atoms/url-timezones-name";
+import { readWriteSelectedDateAtom } from "~/atoms/date";
+import { setUrlTimezonesNameAtom } from "~/atoms/url-timezones-name";
 import { getDifferenceHoursFromHome, getTimeDials } from "~/utils/timezones";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 
@@ -21,16 +18,10 @@ export default function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
   const [, setUrlTimezonesName] = useAtom(setUrlTimezonesNameAtom);
-  const [, setSelectedDate] = useAtom(selectedDateAtom);
-  const [urlTimezonesName] = useAtom(readWriteUrlTimezonesNameAtom);
+  const [, setSelectedDate] = useAtom(readWriteSelectedDateAtom);
 
-  function recalculateTimezone(
-    timezones: ITimezone[],
-    urlTimezonesName: string[]
-  ): ITimezone[] {
+  function recalculateTimezone(timezones: ITimezone[]): ITimezone[] {
     let home = timezones[0];
-
-    if (home.name === urlTimezonesName[0]) return timezones;
 
     return timezones.map((timezone, index) => {
       timezone.diffHoursFromHome = getDifferenceHoursFromHome(
@@ -57,7 +48,7 @@ export default function SelectedTimezones() {
     const [removed] = result.splice(sourceIndex, 1);
     result.splice(destinationIndex, 0, removed);
 
-    return recalculateTimezone(result, urlTimezonesName);
+    return recalculateTimezone(result);
   }
 
   const onDragEnd: OnDragEndResponder = (result) => {

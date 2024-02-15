@@ -115,8 +115,6 @@ function createChildsTimeDials(
       (currentTzOffset - homeTzOffset) * 60
     );
 
-    const formatStr = `eee, MMM d, y, H:mm`;
-
     const isOffsetDecimal =
       isDecimal(homeTzOffset) || isDecimal(currentTzOffset);
 
@@ -124,6 +122,7 @@ function createChildsTimeDials(
     const hour12 = convertTo12HourFormat(hour24);
     const timeMeridian = (hour24 >= 12 ? "pm" : "am") as TimeMeriDian;
 
+    const formatStr = `eee, MMM d, y, H:mm`;
     const date = format(newDate, formatStr);
 
     const isNewDay =

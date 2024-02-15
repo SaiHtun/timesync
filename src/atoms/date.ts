@@ -1,10 +1,10 @@
-import { differenceInDays } from "date-fns";
 import { atom } from "jotai";
 import { arrayRange } from "~/utils/index";
 import { getLocalTime, getNextDay } from "~/utils/timezones";
+import { readWriteUrlSelectedDateAtom } from "./url-timezones-name";
 
 export const startedMonthAtom = atom((get) => {
-  return get(selectedDateAtom).split(", ")[1].split(" ")[0];
+  return get(readWriteSelectedDateAtom).split(", ")[1].split(" ")[0];
 });
 
 function getDates(startDate: string) {
@@ -17,17 +17,9 @@ export const readWriteDatesAtom = atom(
   (get) => {
     const dates = get(datesAtom);
 
-    const selectedDate = get(selectedDateAtom);
+    const selectedDate = get(readWriteSelectedDateAtom);
 
-    const foundDate = dates.find(
-      (d) =>
-        d.split(", ").slice(0, 3).join(", ") ===
-        selectedDate.split(", ").slice(0, 3).join(", ")
-    );
-
-    if (foundDate && selectedDate !== foundDate) {
-      return dates.map(() => selectedDate);
-    }
+    const foundDate = dates.find((d) => d === selectedDate);
 
     if (!foundDate) {
       return getDates(selectedDate);
@@ -36,21 +28,25 @@ export const readWriteDatesAtom = atom(
     return dates;
   },
   (get, set) => {
-    set(datesAtom, getDates(get(selectedDateAtom)));
+    const sd = get(readWriteSelectedDateAtom);
+    set(datesAtom, getDates(sd));
   }
 );
 
-export const selectedDateAtom = atom(getLocalTime("eee, MMM d, y"));
+export const selectedDateAtom = atom("");
 
-export const prevdiffDatesFromLocalTimeAtom = atom((get) => {
-  const selectedDate = get(selectedDateAtom);
-  const diffDatesFromLocalTime = differenceInDays(
-    new Date(selectedDate),
-    new Date(getLocalTime())
-  );
+export const readWriteSelectedDateAtom = atom(
+  (get) => {
+    const urlSelectedDate = get(readWriteUrlSelectedDateAtom);
+    const selectedDate = get(selectedDateAtom);
 
-  return diffDatesFromLocalTime;
-});
+    return selectedDate || urlSelectedDate || getLocalTime("eee, MMM d, y");
+  },
+  (_, set, date: string) => {
+    set(selectedDateAtom, date);
+    set(readWriteUrlSelectedDateAtom, date);
+  }
+);
 
 export const isDatePickerModelOpenAtom = atom(false);
 

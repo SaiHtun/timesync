@@ -16,6 +16,7 @@ import {
   readWriteUrlTimezonesNameAtom,
 } from "./url-timezones-name";
 import { addMinutes, format } from "date-fns";
+import { readWriteSelectedDateAtom } from "./date";
 
 let timezonesMap = new Map<string, ITimezone>();
 if (timezonesMap.size === 0) {
@@ -79,7 +80,9 @@ export const selectedTimezonesLengthAtom = atom(
 export const syncUrlToSelectedTimezonesAtom = atom(
   null,
   (get, set, timezonesName: string[] = []) => {
+    const selectedDate = get(readWriteSelectedDateAtom);
     let homeSelectedTimezone = get(homeSelectedTimezonesAtom);
+    homeSelectedTimezone.date = selectedDate;
 
     const dialColor = get(dialColorWithLocalStorageAtom);
 
@@ -98,8 +101,17 @@ export const syncUrlToSelectedTimezonesAtom = atom(
         index === 0
       );
 
-      if (index === 0) {
-        homeSelectedTimezone = timezone;
+      if (index !== 0) {
+        const d =
+          homeSelectedTimezone.date + ", " + homeSelectedTimezone.hour12;
+
+        timezone.date = format(
+          addMinutes(
+            new Date(d),
+            (timezone.offset - homeSelectedTimezone.offset) * 60
+          ),
+          "eee, MMM d, y"
+        );
       }
 
       return timezone;

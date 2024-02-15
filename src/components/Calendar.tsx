@@ -1,19 +1,18 @@
-import { memo } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ClassValue } from "clsx";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
-import { selectedDateAtom } from "~/atoms/date";
+import { readWriteSelectedDateAtom } from "~/atoms/date";
 import { format } from "date-fns";
 
 interface IProps {
   twClassNames?: ClassValue;
 }
 
-export default memo(function Calendar({ twClassNames }: IProps) {
-  const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
+export default function Calendar({ twClassNames }: IProps) {
+  const [selectedDate, setSelectedDate] = useAtom(readWriteSelectedDateAtom);
 
   const sd = selectedDate.split(", ").slice(0, 3).join(", ");
 
@@ -63,4 +62,4 @@ export default memo(function Calendar({ twClassNames }: IProps) {
       }}
     />
   );
-});
+}

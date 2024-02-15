@@ -10,7 +10,7 @@ export default function SearchedTimezones() {
       {searchedTimezones.length && (
         <motion.div
           id="searched-timezones"
-          className="primary_border w-[380px] min-w-[180px] max-h-[440px] overflow-hidden odd_childs even_childs z-10 absolute top-[72px] right-0 shadow-sm rounded-md"
+          className="primary_border w-[380px] min-w-[180px] max-h-[440px] overflow-hidden odd_childs even_childs z-10 absolute top-[68px] right-0 shadow-sm rounded-md"
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: -10 }}
           exit={{ opacity: 0, y: -12 }}
