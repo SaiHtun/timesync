@@ -32,13 +32,13 @@ export default function SearchedTimezoneRow({
       <button
         type="button"
         className={cn(
-          "w-full flex items-center justify-between px-4 py-3 text-sm first:rounded-t-md last:rounded-b-md",
+          "w-full flex items-center justify-between px-4 py-3 text-sm font-medium first:rounded-t-md last:rounded-b-md",
           { "!bg-zinc-100 dark:!bg-zinc-700 !rounded-none": isSelected }
         )}
         onClick={() => handleAdd()}
         onMouseMove={() => setSearchedTimezoneIndex(currentTimezoneIndex)}
       >
-        <p className="flex items-center gap-1">
+        <p className="text-sm flex items-center gap-1">
           <span>{timezone.name}</span>
           <span className="text-xs primary_text_gray">{timezone.abbr}</span>
         </p>

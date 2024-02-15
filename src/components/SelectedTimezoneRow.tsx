@@ -78,7 +78,7 @@ export default function SelectedTimezoneRow({
   return (
     <div
       className={cn(
-        "group relative grid grid-cols-[300px_1fr] gap-2 h-[80px] items-center p-2 pr-4 rounded-md",
+        "group relative grid grid-cols-[300px_1fr] gap-2 h-[76px] items-center p-2 pr-4 rounded-md",
         {
           "shadow-md": snapshot.isDragging,
         }

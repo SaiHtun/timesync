@@ -13,8 +13,9 @@ import { TIMEZONES_LIMIT } from "~/constants/index";
 import { dialColorWithLocalStorageAtom } from "./dial-colors-model";
 import {
   popUrlTimezonesNameAtom,
-  urlTimezonesNameAtom,
+  readWriteUrlTimezonesNameAtom,
 } from "./url-timezones-name";
+import { addMinutes, format } from "date-fns";
 
 let timezonesMap = new Map<string, ITimezone>();
 if (timezonesMap.size === 0) {
@@ -38,6 +39,14 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
         homeSelectedTimezone.name
       );
 
+      const dateStr = `${homeSelectedTimezone.date}, ${homeSelectedTimezone.hour12}`;
+      const newDate = addMinutes(
+        new Date(dateStr),
+        (newTimezone.offset - homeSelectedTimezone.offset) * 60
+      );
+
+      newTimezone.date = format(newDate, "eee, MMM d, y");
+
       newTimezone.timeDials = getTimeDials(
         newTimezone,
         dialColor,
@@ -47,9 +56,7 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
       return preTzs.concat(newTimezone);
     });
 
-    set(urlTimezonesNameAtom, (prevTimezonesName) =>
-      prevTimezonesName.concat(newTimezone.name)
-    );
+    set(readWriteUrlTimezonesNameAtom, newTimezone.name);
   }
   set(searchTimezoneNameAtom, "");
 });
@@ -72,8 +79,9 @@ export const selectedTimezonesLengthAtom = atom(
 export const syncUrlToSelectedTimezonesAtom = atom(
   null,
   (get, set, timezonesName: string[] = []) => {
-    const dialColor = get(dialColorWithLocalStorageAtom);
     let homeSelectedTimezone = get(homeSelectedTimezonesAtom);
+
+    const dialColor = get(dialColorWithLocalStorageAtom);
 
     const timezones = timezonesName.map((name, index) => {
       const timezone = timezonesMap.get(name) as ITimezone;
@@ -104,9 +112,10 @@ export const syncUrlToSelectedTimezonesAtom = atom(
 
 // the first timezone will always be HOME, and "diffHoursFromHome" will be re-caculated base on HOME
 export const homeSelectedTimezonesAtom = atom((get) => {
+  const firstTimezoneName = get(readWriteUrlTimezonesNameAtom)[0];
   const timezone =
     get(selectedTimezonesAtom)[0] ||
-    timezonesMap.get(getCurrentUserTimezoneName());
+    timezonesMap.get(firstTimezoneName || getCurrentUserTimezoneName());
 
   return timezone;
 });

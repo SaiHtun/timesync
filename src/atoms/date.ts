@@ -30,6 +30,7 @@ export const datesAtom = atom(
 export const readWriteDatesAtom = atom(
   (get) => {
     const dates = get(datesAtom);
+
     const selectedDate = get(selectedDateAtom);
 
     const foundDate = dates.find(
@@ -39,13 +40,7 @@ export const readWriteDatesAtom = atom(
     );
 
     if (foundDate && selectedDate.name !== foundDate.name) {
-      const firstDate = dates[0];
-      const [dayOfWeek, day, year] = firstDate.date.split(", ");
-
-      const d = `${dayOfWeek}, ${day}, ${year}`;
-      const newDates = getDates({ name: selectedDate.name, date: d });
-
-      return newDates;
+      return dates.map((d) => ({ ...d, name: selectedDate.name }));
     }
 
     if (!foundDate) {

@@ -10,12 +10,43 @@ import { cn } from "~/utils/cn";
 import TimeSelectionOverlay from "./TimeSelectionOverlay";
 import { useAtom } from "jotai";
 import { selectedDateAtom } from "~/atoms/date";
-import { urlTimezonesNameAtom } from "~/atoms/url-timezones-name";
+import {
+  readWriteUrlTimezonesNameAtom,
+  setUrlTimezonesNameAtom,
+} from "~/atoms/url-timezones-name";
+import { getDifferenceHoursFromHome, getTimeDials } from "~/utils/timezones";
+import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 
 export default function SelectedTimezones() {
-  const [selectedTimezones] = useSelectedTimezones();
-  const [, setUrlTimezonesName] = useAtom(urlTimezonesNameAtom);
+  const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
+  const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
+  const [, setUrlTimezonesName] = useAtom(setUrlTimezonesNameAtom);
   const [, setSelectedDate] = useAtom(selectedDateAtom);
+  const [urlTimezonesName] = useAtom(readWriteUrlTimezonesNameAtom);
+
+  function recalculateTimezone(
+    timezones: ITimezone[],
+    urlTimezonesName: string[]
+  ): ITimezone[] {
+    let home = timezones[0];
+
+    if (home.name === urlTimezonesName[0]) return timezones;
+
+    return timezones.map((timezone, index) => {
+      timezone.diffHoursFromHome = getDifferenceHoursFromHome(
+        timezone.name,
+        home.name
+      );
+
+      timezone.timeDials = getTimeDials(timezone, dialColor, home, index === 0);
+
+      if (index === 0) {
+        home = timezone;
+      }
+
+      return timezone;
+    });
+  }
 
   function reorderTimezones(
     timezones: ITimezone[],
@@ -26,7 +57,7 @@ export default function SelectedTimezones() {
     const [removed] = result.splice(sourceIndex, 1);
     result.splice(destinationIndex, 0, removed);
 
-    return result;
+    return recalculateTimezone(result, urlTimezonesName);
   }
 
   const onDragEnd: OnDragEndResponder = (result) => {
@@ -44,7 +75,7 @@ export default function SelectedTimezones() {
     setUrlTimezonesName(timezonesName);
 
     const home = tzs[0];
-
+    setSelectedTimezones(tzs);
     setSelectedDate({ name: home.name, date: home.date });
   };
 

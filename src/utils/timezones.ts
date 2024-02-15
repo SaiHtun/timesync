@@ -51,8 +51,7 @@ export function getNextDay(
 
 function transformNumHoursToStrHours(hours: number): string {
   if (isDecimal(hours)) {
-    const h = Math.floor(hours);
-    return String(h) + ":30";
+    return String(Math.floor(hours)) + ":30";
   }
 
   return String(hours) + ":00";
@@ -109,14 +108,14 @@ function createChildsTimeDials(
   const { timeDials, offset: homeTzOffset } = homeSelectedTimezone;
   return hours.map((_, index) => {
     const { offset: currentTzOffset } = currentTimezone;
-    const dial = timeDials[index];
+    const homeTimeDial = timeDials[index];
 
     const newDate = addMinutes(
-      new Date(dial.date),
+      new Date(homeTimeDial.date),
       (currentTzOffset - homeTzOffset) * 60
     );
 
-    const formatStr = `eee, MMM d, y, h:mm`;
+    const formatStr = `eee, MMM d, y, H:mm`;
 
     const isOffsetDecimal =
       isDecimal(homeTzOffset) || isDecimal(currentTzOffset);
@@ -124,6 +123,8 @@ function createChildsTimeDials(
     const hour24 = newDate.getHours() + (isOffsetDecimal ? 0.5 : 0);
     const hour12 = convertTo12HourFormat(hour24);
     const timeMeridian = (hour24 >= 12 ? "pm" : "am") as TimeMeriDian;
+
+    const date = format(newDate, formatStr);
 
     const isNewDay =
       (timeMeridian === "am" && (hour12 === 0 || hour12 === 0.5)) ||
@@ -139,7 +140,7 @@ function createChildsTimeDials(
       isNewDay,
       hour12,
       hour24,
-      date: format(newDate, formatStr),
+      date,
       timeMeridian,
       dailyCircleBgColor: getDailyCircleColor(hour24, dialColor, isNewDay),
       isLastHour,

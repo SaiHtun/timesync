@@ -1,6 +1,9 @@
 import { SetStateAction, Dispatch, useEffect, useCallback } from "react";
 import { useAtom } from "jotai";
-import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
+import {
+  homeSelectedTimezonesAtom,
+  selectedTimezonesAtom,
+} from "~/atoms/selected-timezones";
 
 import { selectedDateAtom } from "~/atoms/date";
 import {
@@ -10,7 +13,7 @@ import {
 } from "~/utils/timezones";
 import { MILISECONDS_PER_MIN } from "~/constants/index";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
-import { formatInTimeZone } from "date-fns-tz";
+import { addMinutes, format } from "date-fns";
 
 export function useUpdateTimezonesClock(
   setTimezonesClock: Dispatch<SetStateAction<ITimezone[]>>
@@ -20,24 +23,31 @@ export function useUpdateTimezonesClock(
   ]);
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
   const [selectedDate] = useAtom(selectedDateAtom);
+  const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
 
   useEffect(() => {
-    let home = {} as ITimezone;
     setTimezonesClockCb((prevTimezones) => {
+      let home = homeSelectedTimezone;
       const newTimezones = prevTimezones.map((tz, index) => {
         if (index === 0) {
           tz.date = selectedDate.date;
-          tz.timeDials = tz.timeDials.map((td) => {
+          tz.timeDials = home.timeDials.map((td) => {
             const hours = td.date.split(", ").pop();
             const newDate = `${tz.date}, ${hours}`;
             return { ...td, date: newDate };
           });
           home = tz;
-          return tz;
+
+          return home;
         }
 
         const dateStr = `${home.date}, ${home.hour12}`;
-        tz.date = formatInTimeZone(new Date(dateStr), tz.name, "eee, MMM d, y");
+        const newDate = addMinutes(
+          new Date(dateStr),
+          (tz.offset - home.offset) * 60
+        );
+
+        tz.date = format(newDate, "eee, MMM d, y");
         tz.timeDials = getTimeDials(tz, dialColor, home);
 
         return tz;

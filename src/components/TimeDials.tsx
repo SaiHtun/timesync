@@ -12,7 +12,7 @@ function NewDay({ date }: { date: string }) {
   const [month, numOfDay] = monthAndDay.split(" ");
   return (
     <>
-      <span className="absolute  inset-x-0 bottom-10 text-xs text-gray-400">
+      <span className="absolute  inset-x-0 bottom-[42px] text-[10px] text-gray-400">
         {dayOfWeek.toUpperCase()}
       </span>
       <div className={cn("text-xs")}>
@@ -30,7 +30,7 @@ export default function TimeDials({ timezone }: IProps) {
 
   return (
     <main>
-      <div className="h-[40px] w-[816px] flex items-center text-center text-sm">
+      <div className="h-[38px] w-[816px] flex items-center text-center text-xs">
         {timezone.timeDials.map((timeDial, index) => {
           const {
             dailyCircleBgColor,
