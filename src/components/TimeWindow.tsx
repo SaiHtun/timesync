@@ -3,53 +3,78 @@ import { END_INDEX, DEFAULT_WINDOW_WIDTH } from "./TimeSelectionOverlay";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
-import { isDecimal } from "~/utils/timezones";
+import { getNextDay, isDecimal } from "~/utils/timezones";
+import { HoursFormat } from "~/atoms/hours-format";
 
-function calMeetingHours(
+function transformHours(
+  timeDial: ITimeDial,
+  timeDialIndex: number,
+  isNewDay: boolean,
+  hoursFormat: HoursFormat
+): string[] {
+  let hours = timeDial[hoursFormat];
+  let minutes = 0;
+
+  if (isDecimal(hours) && isDecimal(timeDialIndex)) {
+    hours = Math.floor(hours) + 1;
+  } else if (isDecimal(timeDialIndex)) {
+    minutes = 30;
+  } else if (isDecimal(hours)) {
+    hours = Math.floor(hours);
+    minutes = 30;
+  }
+
+  const h = hoursFormat === "hour24" ? String(hours).padStart(2, "0") : hours;
+
+  const time =
+    h + ":" + (minutes ? minutes : "00") + " " + timeDial.timeMeridian;
+
+  const date = timeDial.date.split(", ").slice(0, 2).join(", ");
+
+  const d = isNewDay ? getNextDay(date, 1, "eee, MMM d") : date;
+  return [time, d];
+}
+
+function calMeetingHoursThreshold(
   timeDials: ITimeDial[],
   timeWindowIndex: { start: number; end: number }
 ) {
-  // const obj = {
-  //   hour12: {
-  //     start: [],
-  //     end: []
-  //   },
-  //   hour24: {
-  //     start: [],
-  //     end: []
-  //   }
-  // }
-
-  let meetingHours: Record<string, string[]> = {
-    end: [],
-    start: [],
+  let meetingHours: IMeetingHoursThreshold = {
+    hour12: {
+      start: [],
+      end: [],
+    },
+    hour24: {
+      start: [],
+      end: [],
+    },
   };
 
   for (const i in timeWindowIndex) {
-    const idx =
-      timeWindowIndex[i as keyof typeof timeWindowIndex] % timeDials.length;
+    const originIdx = timeWindowIndex[i as keyof typeof timeWindowIndex];
+    const idx = originIdx % timeDials.length;
+
+    const isNewDay = originIdx === 24;
+
     const timeDial = timeDials[Math.floor(idx)];
-    let hours = timeDial.hour24;
-    let minutes = 0;
 
-    if (isDecimal(hours) && isDecimal(idx)) {
-      hours = Math.floor(hours) + 1;
-    } else if (isDecimal(idx)) {
-      minutes = 30;
-    } else if (isDecimal(hours)) {
-      hours = Math.floor(hours);
-      minutes = 30;
-    }
-
-    const time =
-      hours + ":" + (minutes ? minutes : "00") + " " + timeDial.timeMeridian;
-
-    const r = [time, timeDial.date];
-
-    meetingHours[i as keyof typeof meetingHours] = r;
+    Object.keys(meetingHours).forEach((hours) => {
+      const h = hours as HoursFormat;
+      meetingHours[h][i] = transformHours(timeDial, idx, isNewDay, h);
+    });
   }
 
   return meetingHours;
+}
+
+function calTotalMeetingMinutes(timeWindowIndex: {
+  start: number;
+  end: number;
+}): number {
+  const { start, end } = timeWindowIndex;
+  const dx = end - start;
+
+  return dx * 60;
 }
 
 export interface ITimeWindowProps {
@@ -102,7 +127,11 @@ export default function TimeWindow({
   useEffect(() => {
     setSelectedTimezones((prevTimezones) => {
       return prevTimezones.map((tz) => {
-        calMeetingHours(tz.timeDials, timeWindowIndex);
+        tz.meetingHoursThreshold = calMeetingHoursThreshold(
+          tz.timeDials,
+          timeWindowIndex
+        );
+        tz.totalMeetingMinutes = calTotalMeetingMinutes(timeWindowIndex);
 
         return tz;
       });

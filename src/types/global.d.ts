@@ -1,9 +1,9 @@
-interface StartEndHours {
+interface IStartEndHours {
   start: string[];
   end: string[];
 }
 
-interface IMeetingHours {
+interface IMeetingHoursThreshold {
   hour12: StartEndHours;
   hour24: StartEndHours;
 }
@@ -15,7 +15,8 @@ interface ITimezone {
   date: string;
   hour12: string;
   hour24: string;
-  meetingHours?: IMeetingHours;
+  totalMeetingMinutes: number;
+  meetingHoursThreshold: IMeetingHoursThreshold;
   offset: number;
   diffHoursFromHome: string;
   timeDials: ITimeDial[];

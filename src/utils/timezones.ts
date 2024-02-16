@@ -51,10 +51,10 @@ export function getNextDay(
 
 function transformNumHoursToStrHours(hours: number): string {
   if (isDecimal(hours)) {
-    return String(Math.floor(hours)) + ":30";
+    return String(Math.floor(hours)).padStart(2, "0") + ":30";
   }
 
-  return String(hours) + ":00";
+  return String(hours).padStart(2, "0") + ":00";
 }
 
 function createHomeTimeDials(
@@ -122,7 +122,7 @@ function createChildsTimeDials(
     const hour12 = convertTo12HourFormat(hour24);
     const timeMeridian = (hour24 >= 12 ? "pm" : "am") as TimeMeriDian;
 
-    const formatStr = `eee, MMM d, y, H:mm`;
+    const formatStr = `eee, MMM d, y, HH:mm`;
     const date = format(newDate, formatStr);
 
     const isNewDay =
@@ -206,7 +206,7 @@ export function currentTime(
   hoursFormat: HoursFormat = "hour24"
 ) {
   const date = new Date();
-  const hour = hoursFormat === "hour24" ? "k" : "h";
+  const hour = hoursFormat === "hour24" ? "HH" : "h";
   const strFormat = `${hour}:mm a`;
 
   return formatInTimeZone(date, timezoneName, strFormat);
@@ -236,7 +236,8 @@ export function populateTimezones(): ITimezone[] {
       hour24,
       offset,
       diffHoursFromHome: "",
-      meetingHours: {
+      totalMeetingMinutes: 0,
+      meetingHoursThreshold: {
         hour12: { start: [], end: [] },
         hour24: { start: [], end: [] },
       },
