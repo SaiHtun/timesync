@@ -15,8 +15,8 @@ function NewDay({ date }: { date: string }) {
       <span className="absolute  inset-x-0 bottom-[42px] text-[10px] text-gray-400">
         {dayOfWeek.toUpperCase()}
       </span>
-      <div className={cn("text-xs")}>
-        <p className="flex flex-col ">
+      <div>
+        <p className="flex flex-col gap-1 text-[11px]">
           <span>{month}</span>
           <span>{numOfDay}</span>
         </p>

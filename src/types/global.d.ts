@@ -1,6 +1,11 @@
-interface IMeetingHours {
+interface StartEndHours {
   start: string[];
   end: string[];
+}
+
+interface IMeetingHours {
+  hour12: StartEndHours;
+  hour24: StartEndHours;
 }
 
 interface ITimezone {

@@ -1,41 +1,55 @@
-import {
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { END_INDEX, DEFAULT_WINDOW_WIDTH } from "./TimeSelectionOverlay";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
 import { isDecimal } from "~/utils/timezones";
-import { HoursFormat, hoursFormatAtom } from "~/atoms/hours-format";
-import { readWriteSelectedDateAtom } from "~/atoms/date";
 
-function formatMeetingHours(
-  timezone: ITimezone,
-  hoursFormat: HoursFormat,
-  timeDialIndex: number
+function calMeetingHours(
+  timeDials: ITimeDial[],
+  timeWindowIndex: { start: number; end: number }
 ) {
-  timeDialIndex = timeDialIndex % timezone.timeDials.length;
-  const timeDial = timezone.timeDials[Math.floor(timeDialIndex)];
-  let hours = timeDial[hoursFormat];
-  let minutes = 0;
+  // const obj = {
+  //   hour12: {
+  //     start: [],
+  //     end: []
+  //   },
+  //   hour24: {
+  //     start: [],
+  //     end: []
+  //   }
+  // }
 
-  if (isDecimal(hours) && isDecimal(timeDialIndex)) {
-    hours = Math.floor(hours) + 1;
-  } else if (isDecimal(timeDialIndex)) {
-    minutes = 30;
-  } else if (isDecimal(hours)) {
-    hours = Math.floor(hours);
-    minutes = 30;
+  let meetingHours: Record<string, string[]> = {
+    end: [],
+    start: [],
+  };
+
+  for (const i in timeWindowIndex) {
+    const idx =
+      timeWindowIndex[i as keyof typeof timeWindowIndex] % timeDials.length;
+    const timeDial = timeDials[Math.floor(idx)];
+    let hours = timeDial.hour24;
+    let minutes = 0;
+
+    if (isDecimal(hours) && isDecimal(idx)) {
+      hours = Math.floor(hours) + 1;
+    } else if (isDecimal(idx)) {
+      minutes = 30;
+    } else if (isDecimal(hours)) {
+      hours = Math.floor(hours);
+      minutes = 30;
+    }
+
+    const time =
+      hours + ":" + (minutes ? minutes : "00") + " " + timeDial.timeMeridian;
+
+    const r = [time, timeDial.date];
+
+    meetingHours[i as keyof typeof meetingHours] = r;
   }
 
-  const time =
-    hours + ":" + (minutes ? minutes : "00") + " " + timeDial.timeMeridian;
-
-  return [time, timeDial.date];
+  return meetingHours;
 }
 
 export interface ITimeWindowProps {
@@ -69,13 +83,6 @@ export default function TimeWindow({
   const [timeWindowIndex, setTimeWindowIndex] = useState({ start: 0, end: 0 });
   const timeWindowDivRef = useRef<HTMLDivElement>(null);
   const [, setSelectedTimezones] = useAtom(selectedTimezonesAtom);
-  const [hoursFormat] = useAtom(hoursFormatAtom);
-  const [selectedDate] = useAtom(readWriteSelectedDateAtom);
-
-  useEffect(() => {
-    const { start, end } = timeWindowIndex;
-    setTimeWindow(start, end);
-  }, [isStopTimeWindow, isBlockClicked, hoursFormat, selectedDate]);
 
   function getIndexOfLeftTimeDial() {
     const halfHour = sidesOfTimeWindow === "right" ? 0.5 : 0;
@@ -92,20 +99,15 @@ export default function TimeWindow({
     setTimeWindowIndex((p) => ({ ...p, start: getIndexOfLeftTimeDial() }));
   }
 
-  const setTimeWindow = useCallback(
-    (startIndex: number, endIndex: number) => {
-      setSelectedTimezones((selectedTimezones) => {
-        return selectedTimezones.map((timezone) => {
-          const meetingHours = {
-            start: formatMeetingHours(timezone, hoursFormat, startIndex),
-            end: formatMeetingHours(timezone, hoursFormat, endIndex),
-          };
-          return { ...timezone, meetingHours };
-        });
+  useEffect(() => {
+    setSelectedTimezones((prevTimezones) => {
+      return prevTimezones.map((tz) => {
+        calMeetingHours(tz.timeDials, timeWindowIndex);
+
+        return tz;
       });
-    },
-    [hoursFormat, selectedDate]
-  );
+    });
+  }, [isStopTimeWindow, isBlockClicked]);
 
   function handleMouseDown(event: React.MouseEvent) {
     stopTimeWindow();
@@ -118,8 +120,8 @@ export default function TimeWindow({
 
     function handleMouseMove(event: MouseEvent) {
       const dX = event.clientX - initialX;
-      const indexOfHalfTimeDial = Math.floor(dX / HALF_WINDOW_WIDTH) || 1;
-      const newWindowWidth = indexOfHalfTimeDial * HALF_WINDOW_WIDTH;
+      const numberOfHalfTimeDial = Math.floor(dX / HALF_WINDOW_WIDTH) || 1;
+      const newWindowWidth = numberOfHalfTimeDial * HALF_WINDOW_WIDTH;
       const indexOfLeftTimeDial = getIndexOfLeftTimeDial();
       const start = indexOfLeftTimeDial;
       const end = indexOfLeftTimeDial + newWindowWidth / DEFAULT_WINDOW_WIDTH;
@@ -128,7 +130,7 @@ export default function TimeWindow({
 
       const isWithinTimeDials =
         newWindowWidth > HALF_WINDOW_WIDTH &&
-        indexOfHalfTimeDial / 2 <= END_INDEX + 1 - indexOfLeftTimeDial;
+        numberOfHalfTimeDial / 2 <= END_INDEX + 1 - indexOfLeftTimeDial;
 
       setFrameWidth(isWithinTimeDials ? newWindowWidth : HALF_WINDOW_WIDTH);
     }

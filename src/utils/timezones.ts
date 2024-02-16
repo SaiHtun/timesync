@@ -236,7 +236,10 @@ export function populateTimezones(): ITimezone[] {
       hour24,
       offset,
       diffHoursFromHome: "",
-      meetingHours: { start: [], end: [] },
+      meetingHours: {
+        hour12: { start: [], end: [] },
+        hour24: { start: [], end: [] },
+      },
       timeDials: [],
     };
   });
