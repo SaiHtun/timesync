@@ -50,11 +50,39 @@ function Region({ timezone }: { timezone: ITimezone }) {
 
 function CurrentTime({ timezone }: { timezone: ITimezone }) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
-  const [dayOfWeek, monthAndDay] = timezone.date.split(", ");
+
+  if (timezone.totalMeetingMinutes) {
+    return (
+      <div className="flex gap-1">
+        {Object.entries(timezone.meetingHoursThreshold[hoursFormat]).map(
+          ([, time], index) => {
+            const [hours, date] = time as string[];
+            const key = `${hours}, ${date}`;
+
+            if (index === 0) {
+              return (
+                <div key={key} className="flex items-center gap-3">
+                  <Time key={key} hours={hours} date={date} />
+                  <div className="h-[2px] w-1 bg-zinc-600"></div>
+                </div>
+              );
+            }
+            return <Time key={key} hours={hours} date={date} />;
+          }
+        )}
+      </div>
+    );
+  }
+
+  return <Time hours={timezone[hoursFormat]} date={timezone.date} />;
+}
+
+function Time({ hours, date }: { hours: string; date: string }) {
+  const [dayOfWeek, monthAndDay] = date.split(", ");
 
   return (
-    <div className="text-right">
-      <Clock clock={timezone[hoursFormat]} />
+    <div className="text-right w-[68px]">
+      <Clock clock={hours} />
       <span className="text-xs primary_text_gray">
         {dayOfWeek + ", " + monthAndDay}
       </span>

@@ -129,5 +129,7 @@ export const homeSelectedTimezonesAtom = atom((get) => {
     get(selectedTimezonesAtom)[0] ||
     timezonesMap.get(firstTimezoneName || getCurrentUserTimezoneName());
 
+  // console.log("Home::", timezone);
+
   return timezone;
 });
