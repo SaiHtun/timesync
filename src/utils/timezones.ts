@@ -1,5 +1,5 @@
 import { format, formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
-import { DialColors, colorsMap } from "~/constants/colorsMap";
+import { DialColors, getColorsMap } from "~/constants/colorsMap";
 import { arrayRange } from ".";
 import { addDays, addMinutes } from "date-fns";
 import { HoursFormat } from "~/atoms/hours-format";
@@ -8,12 +8,12 @@ export function isDecimal(hour: number) {
   return hour % 1 !== 0;
 }
 
-export function getDailyCircleColor(
+export function getDailyCircleBgColor(
   hour: number,
   dialColor: DialColors,
   isNewDay: boolean
 ) {
-  const dailyCircleColor = colorsMap[dialColor];
+  const dailyCircleColor = getColorsMap("bg")[dialColor];
   if (isNewDay) {
     return dailyCircleColor["newday"];
   } else if (hour >= 6 && hour <= 7.5) {
@@ -65,7 +65,7 @@ function createHomeTimeDials(
   return hours.map((hour, index) => {
     const timeMeridian: TimeMeriDian = hour >= 12 ? "pm" : "am";
 
-    const hour12 = hour % 12;
+    const hour12 = hour % 12 || 12;
     const hour24 = hour % 24;
 
     const date = `${homeSelectedTimezone.date}, ${transformNumHoursToStrHours(
@@ -83,7 +83,7 @@ function createHomeTimeDials(
       hour24,
       date,
       timeMeridian,
-      dailyCircleBgColor: getDailyCircleColor(hour, dialColor, index === 0),
+      dailyCircleBgColor: getDailyCircleBgColor(hour, dialColor, index === 0),
       isLastHour,
     };
   });
@@ -126,7 +126,7 @@ function createChildsTimeDials(
     const date = format(newDate, formatStr);
 
     const isNewDay =
-      (timeMeridian === "am" && (hour12 === 0 || hour12 === 0.5)) ||
+      (timeMeridian === "am" && (hour12 === 12 || hour12 === 12.5)) ||
       hour24 === 0 ||
       hour24 === 0.5;
 
@@ -141,7 +141,7 @@ function createChildsTimeDials(
       hour24,
       date,
       timeMeridian,
-      dailyCircleBgColor: getDailyCircleColor(hour24, dialColor, isNewDay),
+      dailyCircleBgColor: getDailyCircleBgColor(hour24, dialColor, isNewDay),
       isLastHour,
     };
   });

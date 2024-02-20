@@ -89,7 +89,7 @@ export interface ITimeWindowProps {
   setFrameWidth: React.Dispatch<SetStateAction<number>>;
 }
 
-const HALF_WINDOW_WIDTH = 17;
+const HALF_WINDOW_WIDTH = 16;
 
 export default function TimeWindow({
   isStopTimeWindow,
@@ -127,16 +127,26 @@ export default function TimeWindow({
   useEffect(() => {
     setSelectedTimezones((prevTimezones) => {
       return prevTimezones.map((tz) => {
-        tz.meetingHoursThreshold = calMeetingHoursThreshold(
-          tz.timeDials,
-          timeWindowIndex
-        );
-        tz.totalMeetingMinutes = calTotalMeetingMinutes(timeWindowIndex);
+        tz.meetingHoursThreshold = isBlockClicked
+          ? calMeetingHoursThreshold(tz.timeDials, timeWindowIndex)
+          : {
+              hour12: {
+                start: [],
+                end: [],
+              },
+              hour24: {
+                start: [],
+                end: [],
+              },
+            };
+        tz.totalMeetingMinutes = isBlockClicked
+          ? calTotalMeetingMinutes(timeWindowIndex)
+          : 0;
 
         return tz;
       });
     });
-  }, [isStopTimeWindow, isBlockClicked]);
+  }, [isBlockClicked]);
 
   function handleMouseDown(event: React.MouseEvent) {
     stopTimeWindow();

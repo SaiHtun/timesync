@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "~/utils/cn";
 import TimeWindow, { type ITimeWindowProps } from "./TimeWindow";
 
-export const DEFAULT_WINDOW_WIDTH = 34;
+export const DEFAULT_WINDOW_WIDTH = 32;
 export const END_INDEX = 23;
 const START_INDEX = 0;
 
@@ -49,15 +49,17 @@ export default function TimeSelectionOverlay() {
 
   function RightBlock() {
     const rightIndex = END_INDEX - mouseXposition / DEFAULT_WINDOW_WIDTH;
+    // 23 is a magic number :D
     const width =
-      rightIndex * DEFAULT_WINDOW_WIDTH + (DEFAULT_WINDOW_WIDTH - frameWidth);
+      rightIndex * DEFAULT_WINDOW_WIDTH +
+      (DEFAULT_WINDOW_WIDTH - frameWidth + 23);
 
     return (
       <div
         className={cn("absolute right-0 h-full bg-zinc-400/20", {
           "cursor-e-resize": isStopTimeWindow && !isBlockClicked,
         })}
-        style={{ width: `${width + 16}px` }}
+        style={{ width: `${width}px` }}
       ></div>
     );
   }
@@ -77,7 +79,7 @@ export default function TimeSelectionOverlay() {
   return (
     <div
       ref={parentRef}
-      className="absolute right-0 top-0 !bg-transparent rounded-md w-[833px] h-full "
+      className="absolute right-0 top-0  rounded-md w-[793px] h-full !bg-transparent"
       onMouseMove={handleMouseMove}
     >
       {isStopTimeWindow && (

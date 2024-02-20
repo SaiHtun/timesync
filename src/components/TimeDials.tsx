@@ -2,6 +2,7 @@ import { isDecimal } from "~/utils/timezones";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import { hoursFormatAtom } from "~/atoms/hours-format";
+import { textColorSchemeAtom } from "~/atoms/dial-colors-model";
 
 interface IProps {
   timezone: ITimezone;
@@ -27,10 +28,11 @@ function NewDay({ date }: { date: string }) {
 
 export default function TimeDials({ timezone }: IProps) {
   const [hoursFormat] = useAtom(hoursFormatAtom);
+  const [textColor] = useAtom(textColorSchemeAtom);
 
   return (
     <main>
-      <div className="h-[38px] w-[816px] flex items-center text-center text-xs">
+      <div className="h-[38px] w-[768px] flex items-center text-center text-xs">
         {timezone.timeDials.map((timeDial, index) => {
           const {
             dailyCircleBgColor,
@@ -44,10 +46,11 @@ export default function TimeDials({ timezone }: IProps) {
             <div
               key={index}
               className={cn(
-                "leading-none w-[34px] h-full  p-1 relative flex flex-col items-center justify-center text-dial-newday dark:text-white",
+                "leading-none w-[32px] h-full  p-1 relative flex flex-col items-center justify-center text-dial-newday dark:text-white",
                 dailyCircleBgColor,
+                textColor["newday"],
                 {
-                  "!rounded-l-md !bg-dial-newday  !text-white": isNewDay,
+                  "!rounded-l-md !text-white": isNewDay,
                   "!rounded-r-md": isLastHour,
                   "!text-white": dailyCircleBgColor.includes("newday"),
                   "!text-zinc-100": dailyCircleBgColor.includes("midnight"),
@@ -71,7 +74,7 @@ export default function TimeDials({ timezone }: IProps) {
                         .map((strNum, index) => {
                           return (
                             <span
-                              className={cn(" text-zinc-800 dark:text-white", {
+                              className={cn({
                                 "text-[9px]": index === 1,
                                 "!text-zinc-100":
                                   dailyCircleBgColor.includes("midnight"),

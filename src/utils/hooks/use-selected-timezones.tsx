@@ -8,7 +8,7 @@ import {
 import { readWriteSelectedDateAtom } from "~/atoms/date";
 import {
   currentTime,
-  getDailyCircleColor,
+  getDailyCircleBgColor,
   getTimeDials,
 } from "~/utils/timezones";
 import { MILISECONDS_PER_MIN } from "~/constants/index";
@@ -94,7 +94,7 @@ export function useSelectedTimezones(): [
         const timeDials = tz.timeDials.map((td) => {
           return {
             ...td,
-            dailyCircleBgColor: getDailyCircleColor(
+            dailyCircleBgColor: getDailyCircleBgColor(
               td.hour24,
               dialColor,
               td.isNewDay

@@ -40,7 +40,7 @@ export default function SearchedTimezoneRow({
       >
         <p className="text-sm flex items-center gap-1">
           <span>{timezone.name}</span>
-          <span className="text-xs primary_text_gray">{timezone.abbr}</span>
+          <span className="text-[10px] primary_text_gray">{timezone.abbr}</span>
         </p>
         <Clock clock={timezone[hoursFormat]} />
       </button>
