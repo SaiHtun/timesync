@@ -1,5 +1,5 @@
 import { format, formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
-import { DialColors, getColorsMap } from "~/constants/colorsMap";
+import { DialColors, bgColorsMap } from "~/constants/colorsMap";
 import { arrayRange } from ".";
 import { addDays, addMinutes } from "date-fns";
 import { HoursFormat } from "~/atoms/hours-format";
@@ -13,7 +13,7 @@ export function getDailyCircleBgColor(
   dialColor: DialColors,
   isNewDay: boolean
 ) {
-  const dailyCircleColor = getColorsMap("bg")[dialColor];
+  const dailyCircleColor = bgColorsMap[dialColor];
   if (isNewDay) {
     return dailyCircleColor["newday"];
   } else if (hour >= 6 && hour <= 7.5) {
