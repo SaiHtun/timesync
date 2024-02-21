@@ -19,9 +19,9 @@ export default function DialColor({ dialColor }: Props) {
     <button
       className={cn(
         primaryColor,
-        "rounded-full w-5 h-5 hover:scale-110 hover:saturate-200 transition-all ease-linear",
+        "opacity-30 rounded-full w-5 h-5 hover:!opacity-100 transition-all ease-linear",
         {
-          "outline-dashed outline-2 outline-yellow-500": dialColorName === name,
+          "opacity-1": dialColorName === name,
         }
       )}
       type="button"

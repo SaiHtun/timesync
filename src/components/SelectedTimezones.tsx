@@ -20,8 +20,6 @@ export default function SelectedTimezones() {
   const [, setUrlTimezonesName] = useAtom(setUrlTimezonesNameAtom);
   const [, setSelectedDate] = useAtom(readWriteSelectedDateAtom);
 
-  console.log("s::", selectedTimezones);
-
   function recalculateTimezone(timezones: ITimezone[]): ITimezone[] {
     let home = timezones[0];
 

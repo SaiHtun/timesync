@@ -162,3 +162,7 @@ export const readWriteTotalMeetingMinutesAtom = atom(
     set(totalMeetingMinutesAtom, minutes);
   }
 );
+
+export const shouldDisableDatePickersAtom = atom(
+  (get) => !!get(readWriteTotalMeetingMinutesAtom)
+);
