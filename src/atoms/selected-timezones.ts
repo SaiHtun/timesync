@@ -17,6 +17,10 @@ import {
 } from "./url-timezones-name";
 import { addMinutes, format } from "date-fns";
 import { readWriteSelectedDateAtom } from "./date";
+import {
+  type FormatCbParamsType,
+  convertMinutesToHoursMinutesFormat,
+} from "~/utils/time-parser";
 
 let timezonesMap = new Map<string, ITimezone>();
 if (timezonesMap.size === 0) {
@@ -129,7 +133,32 @@ export const homeSelectedTimezonesAtom = atom((get) => {
     get(selectedTimezonesAtom)[0] ||
     timezonesMap.get(firstTimezoneName || getCurrentUserTimezoneName());
 
-  // console.log("Home::", timezone);
-
   return timezone;
 });
+
+export const totalMeetingMinutesAtom = atom(0);
+
+function formatCallback({ hours, minutes }: FormatCbParamsType) {
+  const hoursStr = hours > 0 ? hours + "h " : "";
+  const minutesStr = minutes > 0 ? minutes + "m " : "";
+
+  return hoursStr + minutesStr;
+}
+
+export const readWriteTotalMeetingMinutesAtom = atom(
+  (get) => {
+    const meetingMinutes = get(totalMeetingMinutesAtom);
+
+    if (meetingMinutes) {
+      return convertMinutesToHoursMinutesFormat(
+        meetingMinutes,
+        formatCallback
+      ) as string;
+    }
+
+    return "";
+  },
+  (_, set, minutes: number) => {
+    set(totalMeetingMinutesAtom, minutes);
+  }
+);

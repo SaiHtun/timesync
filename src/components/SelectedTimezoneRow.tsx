@@ -53,7 +53,7 @@ function CurrentTime({ timezone }: { timezone: ITimezone }) {
 
   if (timezone.totalMeetingMinutes) {
     return (
-      <div className="flex gap-1">
+      <div className="flex gap-1 ">
         {Object.entries(timezone.meetingHoursThreshold[hoursFormat]).map(
           ([, time], index) => {
             const [hours, date] = time as string[];
@@ -81,8 +81,8 @@ function Time({ hours, date }: { hours: string; date: string }) {
   const [dayOfWeek, monthAndDay] = date.split(", ");
 
   return (
-    <div className="text-right w-[68px]">
-      <Clock clock={hours} />
+    <div className="text-right w-[70px]">
+      <Clock clock={hours.toUpperCase()} />
       <span className="text-xs primary_text_gray">
         {dayOfWeek + ", " + monthAndDay}
       </span>
@@ -125,7 +125,7 @@ export default function SelectedTimezoneRow({
       </button>
       <div>
         <div
-          className="flex items-center justify-between px-2"
+          className="flex justify-between items-center pl-2 pr-3"
           {...provided.dragHandleProps}
         >
           <div className="flex items-center gap-2">

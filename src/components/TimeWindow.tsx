@@ -2,7 +2,10 @@ import { SetStateAction, useEffect, useRef, useState } from "react";
 import { END_INDEX, DEFAULT_WINDOW_WIDTH } from "./TimeSelectionOverlay";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
-import { selectedTimezonesAtom } from "~/atoms/selected-timezones";
+import {
+  readWriteTotalMeetingMinutesAtom,
+  selectedTimezonesAtom,
+} from "~/atoms/selected-timezones";
 import { getNextDay, isDecimal } from "~/utils/timezones";
 import { HoursFormat } from "~/atoms/hours-format";
 
@@ -108,6 +111,7 @@ export default function TimeWindow({
   const [timeWindowIndex, setTimeWindowIndex] = useState({ start: 0, end: 0 });
   const timeWindowDivRef = useRef<HTMLDivElement>(null);
   const [, setSelectedTimezones] = useAtom(selectedTimezonesAtom);
+  const [, setTotalMeetingMinutes] = useAtom(readWriteTotalMeetingMinutesAtom);
 
   function getIndexOfLeftTimeDial() {
     const halfHour = sidesOfTimeWindow === "right" ? 0.5 : 0;
@@ -125,6 +129,12 @@ export default function TimeWindow({
   }
 
   useEffect(() => {
+    const totalMeetingMinutes = isBlockClicked
+      ? calTotalMeetingMinutes(timeWindowIndex)
+      : 0;
+
+    setTotalMeetingMinutes(totalMeetingMinutes);
+
     setSelectedTimezones((prevTimezones) => {
       return prevTimezones.map((tz) => {
         tz.meetingHoursThreshold = isBlockClicked
@@ -139,9 +149,7 @@ export default function TimeWindow({
                 end: [],
               },
             };
-        tz.totalMeetingMinutes = isBlockClicked
-          ? calTotalMeetingMinutes(timeWindowIndex)
-          : 0;
+        tz.totalMeetingMinutes = totalMeetingMinutes;
 
         return tz;
       });
