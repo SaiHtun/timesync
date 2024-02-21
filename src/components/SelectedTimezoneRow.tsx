@@ -36,13 +36,15 @@ function Region({ timezone }: { timezone: ITimezone }) {
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
 
   return (
-    <div>
+    <div className="text-ellipsis ">
       <p>
         <span className="text-sm font-medium">{city}</span>
         <AbbrBadge abbr={timezone.abbr} />
       </p>
       <span className="text-sm primary_text_gray">
-        {country ? `${country}, ${continent}` : continent}
+        {country && !timezone.totalMeetingMinutes
+          ? `${country}, ${continent}`
+          : continent}
       </span>
     </div>
   );

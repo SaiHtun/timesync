@@ -22,12 +22,12 @@ interface ITimezone {
   timeDials: ITimeDial[];
 }
 
-type TimeMeriDian = "am" | "pm";
+type Period = "am" | "pm";
 
 interface ITimeDial {
   hour12: number;
   hour24: number;
-  timeMeridian: "am" | "pm";
+  period: Period;
   date: string;
   isNewDay: boolean;
   isLastHour: boolean;

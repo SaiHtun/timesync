@@ -34,13 +34,8 @@ export default function TimeDials({ timezone }: IProps) {
     <main>
       <div className="h-[38px] w-[768px] flex items-center text-center text-xs">
         {timezone.timeDials.map((timeDial, index) => {
-          const {
-            dailyCircleBgColor,
-            isNewDay,
-            date,
-            isLastHour,
-            timeMeridian,
-          } = timeDial;
+          const { dailyCircleBgColor, isNewDay, date, isLastHour, period } =
+            timeDial;
           const hour = timeDial[hoursFormat];
           return (
             <div
@@ -92,7 +87,7 @@ export default function TimeDials({ timezone }: IProps) {
                     </p>
                   )}
                   {hoursFormat === "hour12" && (
-                    <span className="text-[10px] ">{timeMeridian}</span>
+                    <span className="text-[10px] ">{period}</span>
                   )}
                 </>
               )}

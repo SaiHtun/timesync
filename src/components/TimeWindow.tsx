@@ -29,8 +29,7 @@ function transformHours(
 
   const h = hoursFormat === "hour24" ? String(hours).padStart(2, "0") : hours;
 
-  const time =
-    h + ":" + (minutes ? minutes : "00") + " " + timeDial.timeMeridian;
+  const time = h + ":" + (minutes ? minutes : "00") + " " + timeDial.period;
 
   const date = timeDial.date.split(", ").slice(0, 2).join(", ");
 

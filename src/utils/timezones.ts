@@ -63,7 +63,7 @@ function createHomeTimeDials(
   homeSelectedTimezone: ITimezone
 ): ITimeDial[] {
   return hours.map((hour, index) => {
-    const timeMeridian: TimeMeriDian = hour >= 12 ? "pm" : "am";
+    const period: Period = hour >= 12 ? "pm" : "am";
 
     const hour12 = hour % 12 || 12;
     const hour24 = hour % 24;
@@ -73,7 +73,7 @@ function createHomeTimeDials(
     )}`;
 
     const isLastHour =
-      (timeMeridian === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
+      (period === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
       hour24 === 23 ||
       hour24 === 23.5;
 
@@ -82,7 +82,7 @@ function createHomeTimeDials(
       hour12,
       hour24,
       date,
-      timeMeridian,
+      period,
       dailyCircleBgColor: getDailyCircleBgColor(hour, dialColor, index === 0),
       isLastHour,
     };
@@ -120,18 +120,18 @@ function createChildsTimeDials(
 
     const hour24 = newDate.getHours() + (isOffsetDecimal ? 0.5 : 0);
     const hour12 = convertTo12HourFormat(hour24);
-    const timeMeridian = (hour24 >= 12 ? "pm" : "am") as TimeMeriDian;
+    const period = (hour24 >= 12 ? "pm" : "am") as Period;
 
     const formatStr = `eee, MMM d, y, HH:mm`;
     const date = format(newDate, formatStr);
 
     const isNewDay =
-      (timeMeridian === "am" && (hour12 === 12 || hour12 === 12.5)) ||
+      (period === "am" && (hour12 === 12 || hour12 === 12.5)) ||
       hour24 === 0 ||
       hour24 === 0.5;
 
     const isLastHour =
-      (timeMeridian === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
+      (period === "pm" && (hour12 === 11 || hour12 === 11.5)) ||
       hour24 === 23 ||
       hour24 === 23.5;
 
@@ -140,7 +140,7 @@ function createChildsTimeDials(
       hour12,
       hour24,
       date,
-      timeMeridian,
+      period,
       dailyCircleBgColor: getDailyCircleBgColor(hour24, dialColor, isNewDay),
       isLastHour,
     };
