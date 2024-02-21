@@ -18,3 +18,10 @@ export function convertMinutesToHoursMinutesFormat(
 
   return hoursMinutes;
 }
+
+export function getHoursFromTimeString(timeStr: string) {
+  const time = timeStr.split(" ")[0];
+  const hour = time.split(":")[0];
+
+  return parseInt(hour, 10);
+}

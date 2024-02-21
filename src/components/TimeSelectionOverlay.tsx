@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "~/utils/cn";
 import TimeWindow, { type ITimeWindowProps } from "./TimeWindow";
+// import { readWriteTimeWindowIndexAtom } from "~/atoms/selected-timezones";
+import { useAtom } from "jotai";
+import {
+  homeSelectedTimezonesAtom,
+  selectedTimezonesLengthAtom,
+} from "~/atoms/selected-timezones";
+import { getHoursFromTimeString } from "~/utils/time-parser";
 
 export const DEFAULT_WINDOW_WIDTH = 32;
 export const END_INDEX = 23;
@@ -9,10 +16,30 @@ const START_INDEX = 0;
 export default function TimeSelectionOverlay() {
   const parentRef = useRef<HTMLDivElement>(null);
   const [parentsPosition, setParentsPosition] = useState({ x: 0, y: 0 });
+  const [homeSelectedTimezone] = useAtom(homeSelectedTimezonesAtom);
   const [mouseXposition, setMouseXposition] = useState(0);
   const [frameWidth, setFrameWidth] = useState(DEFAULT_WINDOW_WIDTH);
   const [isStopTimeWindow, setIsStopTimeWindow] = useState(false);
   const [isBlockClicked, setIsBlockClicked] = useState(false);
+  const [selectedTimezonesLength] = useAtom(selectedTimezonesLengthAtom);
+
+  function moveTimeWindowBarToHomeHours() {
+    const hour24 = getHoursFromTimeString(homeSelectedTimezone.hour24);
+
+    if (homeSelectedTimezone && homeSelectedTimezone.timeDials.length) {
+      let timeDialIndex = homeSelectedTimezone.timeDials.findIndex(
+        (td) => td.hour24 === hour24
+      );
+
+      if (!isStopTimeWindow) {
+        setMouseXposition(timeDialIndex * DEFAULT_WINDOW_WIDTH);
+      }
+    }
+  }
+
+  useEffect(() => {
+    moveTimeWindowBarToHomeHours();
+  }, [homeSelectedTimezone.timeDials]);
 
   useEffect(() => {
     if (parentRef.current) {
@@ -81,6 +108,7 @@ export default function TimeSelectionOverlay() {
       ref={parentRef}
       className="absolute right-0 top-0  rounded-md w-[793px] h-full !bg-transparent"
       onMouseMove={handleMouseMove}
+      onMouseLeave={() => moveTimeWindowBarToHomeHours()}
     >
       {isStopTimeWindow && (
         <div
@@ -98,7 +126,7 @@ export default function TimeSelectionOverlay() {
           <RightBlock />
         </div>
       )}
-      <TimeWindow {...timeWindowProps} />
+      {selectedTimezonesLength ? <TimeWindow {...timeWindowProps} /> : ""}
     </div>
   );
 }
