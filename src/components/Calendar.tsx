@@ -25,7 +25,7 @@ export default function Calendar({ twClassNames }: IProps) {
     <DayPicker
       selected={new Date(sd)}
       onDayClick={handleDayClick}
-      today={new Date(sd)}
+      today={new Date()}
       id="calendar"
       showOutsideDays
       className={cn(

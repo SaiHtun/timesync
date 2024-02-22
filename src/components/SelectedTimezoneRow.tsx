@@ -34,15 +34,16 @@ function DiffHoursFromHome({
 
 function Region({ timezone }: { timezone: ITimezone }) {
   const [continent, city, country] = timezone.name.replace("_", " ").split("/");
+  const { totalMeetingMinutes } = timezone;
 
   return (
-    <div className="text-ellipsis ">
+    <div>
       <p>
         <span className="text-sm font-medium">{city}</span>
-        <AbbrBadge abbr={timezone.abbr} />
+        {!totalMeetingMinutes && <AbbrBadge abbr={timezone.abbr} />}
       </p>
       <span className="text-sm primary_text_gray">
-        {country && !timezone.totalMeetingMinutes
+        {country && !totalMeetingMinutes
           ? `${country}, ${continent}`
           : continent}
       </span>
@@ -55,7 +56,7 @@ function CurrentTime({ timezone }: { timezone: ITimezone }) {
 
   if (timezone.totalMeetingMinutes) {
     return (
-      <div className="flex gap-1 ">
+      <div className="flex gap-1">
         {Object.entries(timezone.meetingHoursThreshold[hoursFormat]).map(
           ([, time], index) => {
             const [hours, date] = time as string[];
@@ -83,7 +84,7 @@ function Time({ hours, date }: { hours: string; date: string }) {
   const [dayOfWeek, monthAndDay] = date.split(", ");
 
   return (
-    <div className="text-right w-[70px]">
+    <div className="text-right w-[74px]">
       <Clock clock={hours.toUpperCase()} />
       <span className="text-xs primary_text_gray">
         {dayOfWeek + ", " + monthAndDay}
