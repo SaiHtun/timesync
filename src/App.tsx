@@ -8,6 +8,7 @@ import { detectAnyDOMsOnMouseEvent } from "./utils";
 import { dismissDatePickerModelAtom } from "./atoms/date";
 import { readWriteUrlTimezonesNameAtom } from "./atoms/url-timezones-name";
 import Navbar from "./components/NavBar";
+import { getCurrentUserTimezoneName } from "./utils/timezones";
 
 function App() {
   const [, setSearchTimezoneName] = useAtom(setSearchTimezoneNameAtom);
@@ -15,9 +16,22 @@ function App() {
   const [, syncUrlToSelectedTimezones] = useAtom(
     syncUrlToSelectedTimezonesAtom
   );
-  const [urlTimezonesName] = useAtom(readWriteUrlTimezonesNameAtom);
+  const [urlTimezonesName, setUrlTimezonesName] = useAtom(
+    readWriteUrlTimezonesNameAtom
+  );
+
+  function setDefaultUrlTimezoneName() {
+    const currentTimezoneName = getCurrentUserTimezoneName();
+    if (
+      urlTimezonesName.length === 1 &&
+      urlTimezonesName[0] === currentTimezoneName
+    ) {
+      setUrlTimezonesName(currentTimezoneName);
+    }
+  }
 
   useEffect(() => {
+    setDefaultUrlTimezoneName();
     syncUrlToSelectedTimezones(urlTimezonesName);
   }, []);
 

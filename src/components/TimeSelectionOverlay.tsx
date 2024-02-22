@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "~/utils/cn";
 import TimeWindow, { type ITimeWindowProps } from "./TimeWindow";
-// import { readWriteTimeWindowIndexAtom } from "~/atoms/selected-timezones";
 import { useAtom } from "jotai";
 import {
   homeSelectedTimezonesAtom,

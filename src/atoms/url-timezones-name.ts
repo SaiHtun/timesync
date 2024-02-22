@@ -18,10 +18,6 @@ export const readWriteUrlTimezonesNameAtom = atom(
     const names = get(urlAtom).searchParams?.get("timezones") || "[]";
     const parsedNames = JSON.parse(names) as string[];
 
-    if (!parsedNames.length) {
-      parsedNames.push(getCurrentUserTimezoneName());
-    }
-
     const isFoundName = parsedNames.find((n) => n === timezoneName);
 
     if (!isFoundName) {

@@ -52,10 +52,13 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
 
       newTimezone.date = format(newDate, "eee, MMM d, y");
 
+      const isHome = selectedTimezones.length === 0;
+
       newTimezone.timeDials = getTimeDials(
         newTimezone,
         dialColor,
-        homeSelectedTimezone
+        homeSelectedTimezone,
+        isHome
       );
 
       return preTzs.concat(newTimezone);
