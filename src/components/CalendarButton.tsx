@@ -4,12 +4,12 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { isDatePickerModelOpenAtom, startedMonthAtom } from "~/atoms/date";
 import Calendar from "./Calendar";
 import { cn } from "~/utils/cn";
-import { shouldDisableDatePickersAtom } from "~/atoms/selected-timezones";
+import { shouldDisabledFeaturesAtom } from "~/atoms/selected-timezones";
 
 export default function CalendarButton() {
   const [isModelOpen, setIsModelOpen] = useAtom(isDatePickerModelOpenAtom);
   const [startedMonth] = useAtom(startedMonthAtom);
-  const [shouldDisableDatePickers] = useAtom(shouldDisableDatePickersAtom);
+  const [shouldDisableDatePickers] = useAtom(shouldDisabledFeaturesAtom);
 
   return (
     <div className="relative">
@@ -20,6 +20,7 @@ export default function CalendarButton() {
             "bg-white text-zinc-900 dark:text-zinc-50": isModelOpen,
             "hover:text-zinc-900 dark:hover:text-zinc-50 ":
               !shouldDisableDatePickers,
+            "cursor-not-allowed": shouldDisableDatePickers,
           }
         )}
         onClick={() => setIsModelOpen(!isModelOpen)}

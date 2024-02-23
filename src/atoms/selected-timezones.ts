@@ -166,6 +166,6 @@ export const readWriteTotalMeetingMinutesAtom = atom(
   }
 );
 
-export const shouldDisableDatePickersAtom = atom(
+export const shouldDisabledFeaturesAtom = atom(
   (get) => !!get(readWriteTotalMeetingMinutesAtom)
 );

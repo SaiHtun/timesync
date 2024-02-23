@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { readWriteSelectedDateAtom } from "~/atoms/date";
-import { shouldDisableDatePickersAtom } from "~/atoms/selected-timezones";
+import { shouldDisabledFeaturesAtom } from "~/atoms/selected-timezones";
 import { cn } from "~/utils/cn";
 interface IProps {
   date: string;
@@ -10,7 +10,7 @@ export default function DateDial({ date }: IProps) {
   const [dayOfWeek, monthAndDay] = date.split(", ");
   const [selectedDate, setSelectedDate] = useAtom(readWriteSelectedDateAtom);
   const [, numOfDay] = monthAndDay.split(" ");
-  const [shouldDisableDatePickers] = useAtom(shouldDisableDatePickersAtom);
+  const [shouldDisableDatePickers] = useAtom(shouldDisabledFeaturesAtom);
 
   function dateSlicer(dateStr: string) {
     return dateStr.split(", ").slice(0, 3).join(", ");
@@ -28,7 +28,7 @@ export default function DateDial({ date }: IProps) {
         "flex flex-col items-center transition-colors p-[2px] w-9 rounded-md primary_border hover:text-zinc-900 dark:hover:text-zinc-50",
         {
           "shadow-inner  text-zinc-400": !isSelectedDate,
-          "!text-zinc-400": shouldDisableDatePickers,
+          "!text-zinc-400 cursor-not-allowed": shouldDisableDatePickers,
         }
       )}
       disabled={shouldDisableDatePickers}

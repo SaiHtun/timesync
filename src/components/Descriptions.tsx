@@ -17,6 +17,7 @@ const contexts: Content[] = [
     title: "Tips",
     descriptions: [
       "Organizing timezone's rows :: hover over the left hand side of the timezone's row to drag and drop for re-arranging timezones.",
+      "Schedule meeting minutes threshold :: click on the desire time's dial, move the pointer to the right direction horizontally and click on the blurry background.",
       "Deleting timezone :: a trash icon will appear as you hover over the left hand side of the timezone's row, and click to delete.",
     ],
   },

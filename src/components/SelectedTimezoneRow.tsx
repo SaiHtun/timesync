@@ -64,7 +64,7 @@ function CurrentTime({ timezone }: { timezone: ITimezone }) {
 
             if (index === 0) {
               return (
-                <div key={key} className="flex items-center gap-3">
+                <div key={key} className="flex items-center gap-4">
                   <Time key={key} hours={hours} date={date} />
                   <div className="h-[2px] w-1 bg-zinc-600"></div>
                 </div>
