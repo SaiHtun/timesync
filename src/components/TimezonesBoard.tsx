@@ -11,7 +11,7 @@ export default function TimezonesBoard() {
 
   return (
     <main
-      className="w-full relative"
+      className="min-h-[500px] w-[1148px] mx-auto relative"
       onKeyDown={(e) => handleKeydownSearchedTimezone({ e })}
     >
       <MenuBar />

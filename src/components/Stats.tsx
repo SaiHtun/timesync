@@ -7,6 +7,8 @@ const TIMEZONES_LIMIT = 10;
 export default function Stats() {
   const [selectedTimezonesLength] = useAtom(selectedTimezonesLengthAtom);
 
+  const timezone = selectedTimezonesLength > 1 ? "timezones" : "timezone";
+
   return (
     <div className="relative group group-hover:feature_bg">
       <button className="p-2 text-xs space-x-1">
@@ -26,7 +28,7 @@ export default function Stats() {
       primary_border bg-white dark:bg-zinc-800 shadow-sm w-[164px] p-2 absolute text-xs -top-8 right-[50%] translate-x-[50%] z-10"
       >
         <p>
-          "{selectedTimezonesLength}" timezones out of "{TIMEZONES_LIMIT}"{" "}
+          "{selectedTimezonesLength}" {timezone} out of "{TIMEZONES_LIMIT}"{" "}
         </p>
       </div>
     </div>

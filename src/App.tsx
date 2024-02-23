@@ -9,6 +9,8 @@ import { dismissDatePickerModelAtom } from "./atoms/date";
 import { readWriteUrlTimezonesNameAtom } from "./atoms/url-timezones-name";
 import Navbar from "./components/NavBar";
 import { getCurrentUserTimezoneName } from "./utils/timezones";
+import Descriptions from "./components/Descriptions";
+import MainFooter from "./components/MainFooter";
 
 function App() {
   const [, setSearchTimezoneName] = useAtom(setSearchTimezoneNameAtom);
@@ -53,11 +55,18 @@ function App() {
   useEventListener("click", resetStatesOnOuterClick);
 
   return (
-    <div className="h-screen w-screen dark:bg-zinc-900 dark:text-gray-100 py-10 overflow-scroll">
-      <main className="mx-8 lg:mx-auto w-[1148px] ">
-        <Navbar />
-        <TimezonesBoard />
+    <div className="w-fit xl:w-full">
+      <div className="main-bg-grid"></div>
+      <main className=" dark:bg-zinc-900 dark:text-gray-100 h-fit w-full xl:w-full xl:overflow-x-hidden flex flex-col items-start lg:items-center">
+        <div className="z-10 w-[1180px] mt-20 mx-8">
+          <Navbar />
+          <div className="py-4 px-2 mb-10 border primary_border bg-white dark:bg-zinc-900 rounded-md shadow-sm">
+            <TimezonesBoard />
+          </div>
+        </div>
+        <Descriptions />
       </main>
+      <MainFooter />
     </div>
   );
 }

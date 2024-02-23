@@ -22,13 +22,13 @@ function DiffHoursFromHome({
   diffHoursFromHome: string;
 }) {
   return (
-    <span
-      className={cn("w-8 text-center text-xs text-red-500", {
+    <p
+      className={cn("w-6 text-center text-xs text-red-500", {
         "text-green-500": parseInt(diffHoursFromHome) >= 0,
       })}
     >
       {diffHoursFromHome}
-    </span>
+    </p>
   );
 }
 
@@ -117,28 +117,32 @@ export default function SelectedTimezoneRow({
       ref={provided.innerRef}
       {...provided.draggableProps}
     >
-      <button
-        type="button"
-        className={cn(
-          "absolute top-[50%] translate-y-[-50%] -left-8 w-fit h-fit p-1 invisible group-hover:visible z-10"
-        )}
-        onClick={handlePopTimezone}
-      >
-        <Trash2 strokeWidth={1} size={20} className="hover:text-red-500" />
-      </button>
       <div>
         <div
           className="flex justify-between items-center pl-2 pr-3"
           {...provided.dragHandleProps}
         >
           <div className="flex items-center gap-2">
-            {isHome ? (
-              <Home size={20} className="w-8" />
-            ) : (
-              <DiffHoursFromHome
-                diffHoursFromHome={timezone.diffHoursFromHome}
+            <div className="w-8 group-hover:hidden">
+              {isHome ? (
+                <Home size={20} className="w-8" />
+              ) : (
+                <DiffHoursFromHome
+                  diffHoursFromHome={timezone.diffHoursFromHome}
+                />
+              )}
+            </div>
+            <button
+              type="button"
+              className={cn("w-8 h-8 p-1 hidden group-hover:block z-10")}
+              onClick={handlePopTimezone}
+            >
+              <Trash2
+                strokeWidth={2}
+                size={20}
+                className="hover:text-red-500"
               />
-            )}
+            </button>
             <Region timezone={timezone} />
           </div>
           <CurrentTime timezone={timezone} />
