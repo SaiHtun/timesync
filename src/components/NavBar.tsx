@@ -12,9 +12,9 @@ export default function Navbar() {
   }
 
   return (
-    <div className="flex items-center justify-between mb-10">
+    <div className="flex items-center justify-between mb-6">
       <div className="flex items-end gap-2">
-        <h1 className={"text-4xl font-bold"}>何时</h1>
+        <h1 className={"text-4xl font-bold"}>Timesync</h1>
         <h3 className="text-zinc-400">what time works for you?</h3>
       </div>
       <div className="flex items-center gap-3">
