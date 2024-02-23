@@ -124,11 +124,18 @@ export default function TimeWindow({
       : setFrameWidth(DEFAULT_WINDOW_WIDTH);
     setIsBlockClicked(false);
 
-    setTimeWindowIndex((p) => ({ ...p, start: getIndexOfLeftTimeDial() }));
+    const startIndex = getIndexOfLeftTimeDial();
+
+    setTimeWindowIndex((p) => ({
+      start: startIndex,
+      end: p.end || startIndex + 0.5,
+    }));
   }
 
   useEffect(() => {
-    const totalMeetingMinutes = isBlockClicked
+    if (!isStopTimeWindow) setTimeWindowIndex({ start: 0, end: 0 });
+
+    const totalMeetingMinutes = isStopTimeWindow
       ? calTotalMeetingMinutes(timeWindowIndex)
       : 0;
 
@@ -136,7 +143,7 @@ export default function TimeWindow({
 
     setSelectedTimezones((prevTimezones) => {
       return prevTimezones.map((tz) => {
-        tz.meetingHoursThreshold = isBlockClicked
+        tz.meetingHoursThreshold = isStopTimeWindow
           ? calMeetingHoursThreshold(tz.timeDials, timeWindowIndex)
           : {
               hour12: {
@@ -153,7 +160,7 @@ export default function TimeWindow({
         return tz;
       });
     });
-  }, [isBlockClicked]);
+  }, [isStopTimeWindow, frameWidth]);
 
   function handleMouseDown(event: React.MouseEvent) {
     stopTimeWindow();
@@ -203,6 +210,7 @@ export default function TimeWindow({
         {
           "transition-none cursor-e-resize":
             isStopTimeWindow && !isBlockClicked,
+          "border-green-500": isStopTimeWindow && isBlockClicked,
         }
       )}
       style={{

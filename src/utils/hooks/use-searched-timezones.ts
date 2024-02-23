@@ -17,7 +17,7 @@ export function useSearchedTimezones(): ITimezone[] {
 
   useEffect(() => {
     const fusedTimezones = new Fuse(timezones, {
-      keys: ["name", "abbr"],
+      keys: ["name", "abbr", "value"],
     })
       .search(deferredSearch)
       .map(({ item }) => ({

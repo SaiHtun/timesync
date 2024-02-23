@@ -17,8 +17,8 @@ const contexts: Content[] = [
     title: "Tips",
     descriptions: [
       "Organizing timezone's rows :: hover over the left hand side of the timezone's row to drag and drop for re-arranging timezones.",
-      "Schedule meeting minutes threshold :: click on the desire time's dial, move the pointer to the right direction horizontally and click on the blurry background.",
-      "Deleting timezone :: a trash icon will appear as you hover over the left hand side of the timezone's row, and click to delete.",
+      "Schedule meeting minutes threshold :: click on the desire time's dial, move the pointer to the right direction horizontally and click on the blurry background. Then, the dotted red squre will turn into green!",
+      "Deleting timezone :: a trash bin icon will appear as you hover over the left hand side of the timezone's row, and click to delete.",
     ],
   },
   {
@@ -27,6 +27,7 @@ const contexts: Content[] = [
     descriptions: [
       "Light, Dark mode.",
       "Lightning-fast fuzzy searching timezones.",
+      "Schedule meeting minutes threshold.",
       "Support 12/24 hours format.",
       "Dials color options.",
     ],
@@ -36,7 +37,7 @@ const contexts: Content[] = [
     title: "Constraints",
     descriptions: [
       "Better experience with desktop browser.",
-      "Not every cities are searchable but all timezones are. ( Ex: PST, GMT, ... )",
+      "Not every cities are searchable but all timezones are and they're case-insensitive. ( Ex: PST, gmt, pacific standard time, ... )",
     ],
   },
 ];
