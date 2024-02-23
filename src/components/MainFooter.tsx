@@ -10,7 +10,7 @@ export default function MainFooter() {
       </div>
       <div className="flex gap-4 items-center text-sm">
         <p>
-          <span className="text-zinc-400">built by</span> saihtun
+          <span className="text-zinc-400">built by</span> Sai
         </p>
         <Avatar />
       </div>

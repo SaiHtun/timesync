@@ -9,7 +9,7 @@ const contexts: Content[] = [
     id: 1,
     title: "About",
     descriptions: [
-      "WootTime is the ultimate web application for seamless global timezone coordination. Perfect for scheduling meetings, planning travel, and staying connected across different timezones!",
+      "Timesync is the ultimate web application for seamless global timezone coordination. Perfect for scheduling meetings, planning travel, and staying connected across different timezones!",
     ],
   },
   {
