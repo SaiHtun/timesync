@@ -10,14 +10,14 @@ import { cn } from "~/utils/cn";
 import TimeSelectionOverlay from "./TimeSelectionOverlay";
 import { useAtom } from "jotai";
 import { readWriteSelectedDateAtom } from "~/atoms/date";
-import { setUrlTimezonesNameAtom } from "~/atoms/url-timezones-name";
+import { readWriteUrlTimezonesNameAtom } from "~/atoms/hash-url";
 import { getDifferenceHoursFromHome, getTimeDials } from "~/utils/timezones";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
 
 export default function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
-  const [, setUrlTimezonesName] = useAtom(setUrlTimezonesNameAtom);
+  const [, setUrlTimezonesName] = useAtom(readWriteUrlTimezonesNameAtom);
   const [, setSelectedDate] = useAtom(readWriteSelectedDateAtom);
 
   function recalculateTimezone(timezones: ITimezone[]): ITimezone[] {

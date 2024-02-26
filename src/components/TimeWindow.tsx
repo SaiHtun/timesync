@@ -8,6 +8,10 @@ import {
 } from "~/atoms/selected-timezones";
 import { getNextDay, isDecimal } from "~/utils/timezones";
 import { HoursFormat } from "~/atoms/hours-format";
+import {
+  readWriteUrlTimeWindowIndexesAtom,
+  type TimeWindowIndexs,
+} from "~/atoms/hash-url";
 
 function transformHours(
   timeDial: ITimeDial,
@@ -107,7 +111,11 @@ export default function TimeWindow({
   const [sidesOfTimeWindow, setSidesOfTimeWindow] = useState<
     "left" | "right" | ""
   >("");
-  const [timeWindowIndex, setTimeWindowIndex] = useState({ start: 0, end: 0 });
+  const [urlTimeWindowIndexes, setUrlTimeWindowIndexes] = useAtom(
+    readWriteUrlTimeWindowIndexesAtom
+  );
+  const [timeWindowIndex, setTimeWindowIndex] =
+    useState<TimeWindowIndexs | null>(urlTimeWindowIndexes);
   const timeWindowDivRef = useRef<HTMLDivElement>(null);
   const [, setSelectedTimezones] = useAtom(selectedTimezonesAtom);
   const [, setTotalMeetingMinutes] = useAtom(readWriteTotalMeetingMinutesAtom);
@@ -128,39 +136,48 @@ export default function TimeWindow({
 
     setTimeWindowIndex((p) => ({
       start: startIndex,
-      end: p.end || startIndex + 0.5,
+      end: p?.end || startIndex + 0.5,
     }));
   }
 
   useEffect(() => {
-    if (!isStopTimeWindow) setTimeWindowIndex({ start: 0, end: 0 });
+    if (!isStopTimeWindow) {
+      setTimeWindowIndex(null);
+      setUrlTimeWindowIndexes(null);
+    }
 
-    const totalMeetingMinutes = isStopTimeWindow
-      ? calTotalMeetingMinutes(timeWindowIndex)
-      : 0;
+    if (isStopTimeWindow && isBlockClicked && timeWindowIndex) {
+      setUrlTimeWindowIndexes(timeWindowIndex);
+    }
+
+    const totalMeetingMinutes =
+      isStopTimeWindow && timeWindowIndex
+        ? calTotalMeetingMinutes(timeWindowIndex)
+        : 0;
 
     setTotalMeetingMinutes(totalMeetingMinutes);
 
     setSelectedTimezones((prevTimezones) => {
       return prevTimezones.map((tz) => {
-        tz.meetingHoursThreshold = isStopTimeWindow
-          ? calMeetingHoursThreshold(tz.timeDials, timeWindowIndex)
-          : {
-              hour12: {
-                start: [],
-                end: [],
-              },
-              hour24: {
-                start: [],
-                end: [],
-              },
-            };
+        tz.meetingHoursThreshold =
+          isStopTimeWindow && timeWindowIndex
+            ? calMeetingHoursThreshold(tz.timeDials, timeWindowIndex)
+            : {
+                hour12: {
+                  start: [],
+                  end: [],
+                },
+                hour24: {
+                  start: [],
+                  end: [],
+                },
+              };
         tz.totalMeetingMinutes = totalMeetingMinutes;
 
         return tz;
       });
     });
-  }, [isStopTimeWindow, frameWidth]);
+  }, [isStopTimeWindow, frameWidth, isBlockClicked]);
 
   function handleMouseDown(event: React.MouseEvent) {
     stopTimeWindow();
@@ -225,7 +242,7 @@ export default function TimeWindow({
     >
       <div
         className={cn(
-          "w-[17px] h-full absolute left-0 top-0 rounded-tl-md rounded-bl-md transition-colors",
+          "w-[16px] h-full absolute left-0 top-0 rounded-tl-md rounded-bl-md transition-colors",
           {
             "bg-red-600/10": sidesOfTimeWindow === "left" && !isBlockClicked,
           }
@@ -233,7 +250,7 @@ export default function TimeWindow({
       ></div>
       <div
         className={cn(
-          "w-[17px] h-full absolute right-0 top-0 rounded-tr-md rounded-br-md transition-colors",
+          "w-[16px] h-full absolute right-0 top-0 rounded-tr-md rounded-br-md transition-colors",
           {
             "bg-red-600/10": sidesOfTimeWindow === "right" && !isBlockClicked,
           }

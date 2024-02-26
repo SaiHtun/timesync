@@ -6,7 +6,7 @@ import { useEventListener } from "./utils/hooks/use-event-listener";
 import { setSearchTimezoneNameAtom } from "./atoms/search-timezone-name";
 import { detectAnyDOMsOnMouseEvent } from "./utils";
 import { dismissDatePickerModelAtom } from "./atoms/date";
-import { readWriteUrlTimezonesNameAtom } from "./atoms/url-timezones-name";
+import { readWriteUrlTimezonesNameAtom } from "./atoms/hash-url";
 import Navbar from "./components/NavBar";
 import { getCurrentUserTimezoneName } from "./utils/timezones";
 import Descriptions from "./components/Descriptions";
@@ -22,20 +22,17 @@ function App() {
     readWriteUrlTimezonesNameAtom
   );
 
-  function setDefaultUrlTimezoneName() {
-    const currentTimezoneName = getCurrentUserTimezoneName();
-    if (
-      urlTimezonesName.length === 1 &&
-      urlTimezonesName[0] === currentTimezoneName
-    ) {
-      setUrlTimezonesName(currentTimezoneName);
-    }
-  }
-
   useEffect(() => {
-    setDefaultUrlTimezoneName();
+    const timeoutId = setTimeout(() => {
+      if (!urlTimezonesName.length) {
+        setUrlTimezonesName(getCurrentUserTimezoneName());
+      }
+    }, 500);
+
     syncUrlToSelectedTimezones(urlTimezonesName);
-  }, []);
+
+    return () => clearTimeout(timeoutId);
+  }, [urlTimezonesName]);
 
   function resetStatesOnOuterClick(e: MouseEvent) {
     if (

@@ -3,7 +3,7 @@ import TimeDials from "./TimeDials";
 import { cn } from "~/utils/cn";
 import { useAtom } from "jotai";
 import AbbrBadge from "./AbbrBadge";
-import { popSelectedTimezonesAtom } from "~/atoms/selected-timezones";
+import { deleteSelectedTimezoneAtom } from "~/atoms/selected-timezones";
 import { Home, Trash2 } from "lucide-react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { hoursFormatAtom } from "~/atoms/hours-format";
@@ -99,11 +99,11 @@ export default function SelectedTimezoneRow({
   provided,
   snapshot,
 }: IProps) {
-  const [, popSelectedTimezones] = useAtom(popSelectedTimezonesAtom);
+  const [, deleteSelectedTimezone] = useAtom(deleteSelectedTimezoneAtom);
 
   function handlePopTimezone() {
     const { name } = timezone;
-    popSelectedTimezones(name);
+    deleteSelectedTimezone(name);
   }
 
   return (

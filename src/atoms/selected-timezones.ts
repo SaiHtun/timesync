@@ -12,9 +12,9 @@ import { TIMEZONES_LIMIT } from "~/constants/index";
 
 import { dialColorWithLocalStorageAtom } from "./dial-colors-model";
 import {
-  popUrlTimezonesNameAtom,
+  deleteUrlTimezoneNameAtom,
   readWriteUrlTimezonesNameAtom,
-} from "./url-timezones-name";
+} from "./hash-url";
 import { addMinutes, format } from "date-fns";
 import { readWriteSelectedDateAtom } from "./date";
 import {
@@ -69,14 +69,13 @@ export const appendSelectedTimezonesAtom = atom(null, (get, set) => {
   set(searchTimezoneNameAtom, "");
 });
 
-export const popSelectedTimezonesAtom = atom(
+export const deleteSelectedTimezoneAtom = atom(
   null,
   (_, set, timezoneName: string) => {
     set(selectedTimezonesAtom, (preTzs) =>
       preTzs.filter(({ name }) => name !== timezoneName)
     );
-
-    set(popUrlTimezonesNameAtom, timezoneName);
+    set(deleteUrlTimezoneNameAtom, timezoneName);
   }
 );
 

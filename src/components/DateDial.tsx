@@ -28,7 +28,8 @@ export default function DateDial({ date }: IProps) {
         "flex flex-col items-center transition-colors p-[2px] w-9 rounded-md primary_border hover:text-zinc-900 dark:hover:text-zinc-50",
         {
           "shadow-inner  text-zinc-400": !isSelectedDate,
-          "!text-zinc-400 cursor-not-allowed": shouldDisableDatePickers,
+          "cursor-not-allowed hover:text-zinc-400 dark:hover:text-zinc-400":
+            shouldDisableDatePickers && !isSelectedDate,
         }
       )}
       disabled={shouldDisableDatePickers}

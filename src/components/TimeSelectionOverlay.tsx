@@ -7,6 +7,7 @@ import {
   selectedTimezonesLengthAtom,
 } from "~/atoms/selected-timezones";
 import { getHoursFromTimeString } from "~/utils/time-parser";
+import { readWriteUrlTimeWindowIndexesAtom } from "~/atoms/hash-url";
 
 export const DEFAULT_WINDOW_WIDTH = 32;
 export const END_INDEX = 23;
@@ -21,8 +22,22 @@ export default function TimeSelectionOverlay() {
   const [isStopTimeWindow, setIsStopTimeWindow] = useState(false);
   const [isBlockClicked, setIsBlockClicked] = useState(false);
   const [selectedTimezonesLength] = useAtom(selectedTimezonesLengthAtom);
+  const [urlTimeWindowIndexes] = useAtom(readWriteUrlTimeWindowIndexesAtom);
 
   function moveTimeWindowBarToHomeHours() {
+    // if url has "timeWindowIndexes", remains! else go home's timezone hours
+    if (urlTimeWindowIndexes) {
+      const { start, end } = urlTimeWindowIndexes;
+      const newFrameWidth = (end - start) * DEFAULT_WINDOW_WIDTH;
+
+      setMouseXposition(start * DEFAULT_WINDOW_WIDTH);
+      setFrameWidth(newFrameWidth);
+      setIsStopTimeWindow(true);
+      setIsBlockClicked(true);
+
+      return;
+    }
+
     const hour24 = getHoursFromTimeString(homeSelectedTimezone.hour24);
 
     if (homeSelectedTimezone && homeSelectedTimezone.timeDials.length) {
@@ -38,7 +53,7 @@ export default function TimeSelectionOverlay() {
 
   useEffect(() => {
     moveTimeWindowBarToHomeHours();
-  }, [homeSelectedTimezone.timeDials]);
+  }, [homeSelectedTimezone.timeDials, urlTimeWindowIndexes]);
 
   useEffect(() => {
     if (parentRef.current) {

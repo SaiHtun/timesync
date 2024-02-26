@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { arrayRange } from "~/utils/index";
 import { getLocalTime, getNextDay } from "~/utils/timezones";
-import { readWriteUrlSelectedDateAtom } from "./url-timezones-name";
+import { readWriteUrlSelectedDateAtom } from "./hash-url";
 
 export const startedMonthAtom = atom((get) => {
   return get(readWriteSelectedDateAtom).split(", ")[1].split(" ")[0];
