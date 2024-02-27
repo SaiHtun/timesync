@@ -22,9 +22,9 @@ export default function CopyUrlBtn() {
   return (
     <button
       className={cn(
-        "flex items-center justify-center rounded-md bg-zinc-200 h-full w-[64px] px-3 shadow-sm text-zinc-800 transition-all hover:text-zinc-800/70 dark:hover:text-zinc-200/70",
+        "flex items-center justify-center rounded-md bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-50 h-full w-[64px] px-3 shadow-sm text-zinc-800 transition-all hover:text-zinc-800/70 dark:hover:text-zinc-200/70",
         {
-          "bg-green-500 !border-green-500/60 shadow-green-500/20 text-white hover:text-white dark:hover:text-zinc-50":
+          "!bg-green-500 !border-green-500/60 shadow-green-500/20 text-white hover:text-white dark:hover:text-zinc-50":
             isCopied,
         }
       )}

@@ -9,7 +9,7 @@ const contexts: Content[] = [
     id: 1,
     title: "About",
     descriptions: [
-      "Timesync is the ultimate web application for seamless global timezone coordination. Perfect for scheduling meetings, planning travel, and staying connected across different timezones!",
+      "Timesync is an ultimate web application for seamless global timezone coordination. Perfect for scheduling meetings, planning travel, and staying connected across different timezones. Excited to share the URL with your friends? we got you covered!",
     ],
   },
   {
@@ -18,6 +18,7 @@ const contexts: Content[] = [
     descriptions: [
       "Organizing timezone's rows :: hover over the left hand side of the timezone's row to drag and drop for re-arranging timezones.",
       "Schedule meeting minutes threshold :: click on the desire time's dial, move the pointer to the right direction horizontally and click on the blurry background. Then, the dotted red squre will turn into green!",
+      "Sharing URL :: we don't do tidious job here, just one click to copy and share with others.",
       "Deleting timezone :: a trash bin icon will appear as you hover over the left hand side of the timezone's row, and click to delete.",
     ],
   },
@@ -27,6 +28,7 @@ const contexts: Content[] = [
     descriptions: [
       "Light, Dark mode.",
       "Lightning-fast fuzzy searching timezones.",
+      "Share URL with beloved friends and family, and annoying co-workers.",
       "Schedule meeting minutes threshold.",
       "Support 12/24 hours format.",
       "Dials color options.",
