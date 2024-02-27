@@ -1,8 +1,8 @@
+import CopyUrlBtn from "./CopyUrlBtn";
 import DatePicker from "./DatePicker";
 import DialColorsPicker from "./DialColorsPicker";
 import HoursFormatBtn from "./HoursFormatBtn";
 import MeetingMinutes from "./MeetingMinutes";
-import Stats from "./Stats";
 
 export default function Controller() {
   return (
@@ -14,9 +14,9 @@ export default function Controller() {
         </div>
         <MeetingMinutes />
       </div>
-      <div className="flex justify-between items-center px-2">
+      <div className="flex justify-between items-center pl-2">
         <DatePicker />
-        <Stats />
+        <CopyUrlBtn />
       </div>
     </div>
   );

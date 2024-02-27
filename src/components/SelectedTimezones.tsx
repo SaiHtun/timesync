@@ -13,12 +13,14 @@ import { readWriteSelectedDateAtom } from "~/atoms/date";
 import { readWriteUrlTimezonesNameAtom } from "~/atoms/hash-url";
 import { getDifferenceHoursFromHome, getTimeDials } from "~/utils/timezones";
 import { dialColorWithLocalStorageAtom } from "~/atoms/dial-colors-model";
+import { shouldDisabledFeaturesAtom } from "~/atoms/selected-timezones";
 
 export default function SelectedTimezones() {
   const [selectedTimezones, setSelectedTimezones] = useSelectedTimezones();
   const [dialColor] = useAtom(dialColorWithLocalStorageAtom);
   const [, setUrlTimezonesName] = useAtom(readWriteUrlTimezonesNameAtom);
   const [, setSelectedDate] = useAtom(readWriteSelectedDateAtom);
+  const [shouldDisabledDrag] = useAtom(shouldDisabledFeaturesAtom);
 
   function recalculateTimezone(timezones: ITimezone[]): ITimezone[] {
     let home = timezones[0];
@@ -89,6 +91,7 @@ export default function SelectedTimezones() {
                 key={timezone.name}
                 draggableId={timezone.name}
                 index={index}
+                isDragDisabled={shouldDisabledDrag}
               >
                 {(provided, snapshot) => (
                   <SelectedTimezoneRow
