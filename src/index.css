@@ -9,7 +9,7 @@
 }
 
 .main-bg-grid {
-  background-image: url("/public/grid.svg");
+  background-image: url("/grid.svg");
   z-index: -10;
   position: fixed;
   width: 100%;

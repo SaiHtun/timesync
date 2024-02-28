@@ -1,4 +1,4 @@
-import Me from "../../public/sai_linkedin_img.jpeg";
+import Me from "/sai_linkedin_img.jpeg";
 
 export default function Avatar() {
   return (

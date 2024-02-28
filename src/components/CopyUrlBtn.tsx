@@ -22,7 +22,7 @@ export default function CopyUrlBtn() {
   return (
     <button
       className={cn(
-        "flex items-center justify-center rounded-md bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-50 h-full w-[64px] px-3 shadow-sm text-zinc-800 transition-all hover:text-zinc-800/70 dark:hover:text-zinc-200/70",
+        "flex items-center justify-center rounded-md primary_border hover:feature_bg dark:text-zinc-50 h-full w-[58px] px-3 shadow-sm text-zinc-800 transition-all ",
         {
           "!bg-green-500 !border-green-500/60 shadow-green-500/20 text-white hover:text-white dark:hover:text-zinc-50":
             isCopied,
@@ -32,12 +32,12 @@ export default function CopyUrlBtn() {
     >
       {isCopied ? (
         <div className="flex items-center gap-2">
-          <CopyCheck size={18} strokeWidth={2} />
+          <CopyCheck size={14} strokeWidth={2} />
         </div>
       ) : (
         <div className="flex items-center gap-2">
-          <Copy size={11} strokeWidth={3} />
-          <span className="text-xs font-semibold">URL</span>
+          <Copy size={11} strokeWidth={2} />
+          <span className="text-[11px]">URL</span>
         </div>
       )}
     </button>
